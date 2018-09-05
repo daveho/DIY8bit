@@ -11,7 +11,7 @@ At some point I will probably do a video on what equipment and supplies you will
 * LEDs
 * Resistors (some useful values are 220 Ω, 330 Ω, 1K Ω, 2.7K Ω, 4.7K Ω, 10K Ω)
 * Pushbutton switches
-* Multimeter: the ANENG multimeters (such as the [AN8008](https://www.amazon.com/ANENG-AN8008-Multimeter-Resistance-Capacitance/dp/B076GZK62B) are quite good)
+* Multimeter: the ANENG multimeters (such as the [AN8008](https://www.amazon.com/ANENG-AN8008-Multimeter-Resistance-Capacitance/dp/B076GZK62B)) are quite good
 
 ## Digital logic ICs
 
