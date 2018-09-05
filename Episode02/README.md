@@ -11,14 +11,15 @@ At some point I will probably do a video on what equipment and supplies you will
 * LEDs
 * Resistors (some useful values are 220 Ω, 330 Ω, 1K Ω, 2.7K Ω, 4.7K Ω, 10K Ω)
 * Pushbutton switches
+* Multimeter: the ANENG multimeters (such as the [AN8008](https://www.amazon.com/ANENG-AN8008-Multimeter-Resistance-Capacitance/dp/B076GZK62B) are quite good)
 
 ## Digital logic ICs
 
-Having a variety of digital logic ICs is essential for experimentation.  I would recommend getting 74HCT series parts.  Make sure you through hole parts, not surface mount!  If you are in the USA, [Unicorn Electronics](https://www.unicornelectronics.com/) is a great place to find these, including some of the more obscure/obsolete ones.
+Having a variety of digital logic ICs is essential for experimentation.  I would recommend getting 74HCT series parts.  Make sure you through hole parts, not surface mount!  If you are in the USA, [Unicorn Electronics](https://www.unicornelectronics.com/) is a great place to find these, including some of the more obscure/obsolete ones.  It's also an excellent place to find datasheets.
 
 Ebay is not a bad place to look as well, and if you're patient you can get some good deals.
 
-Here are several lists.
+Here are several lists.  I would consider 5 to be the useful minimum quantity of any part.  More is better.
 
 ### Basic logic gates
 
@@ -55,4 +56,25 @@ There are probably others that I'm forgetting.
 
 * 74HCT74 (dual D-type flip flop: absolute must have)
 * 74HCT175
-* 74HCT374 or 74HCT574 (note that the '574 version is more pleasant to work with)
+* 74HCT374 or 74HCT574 ('574 is more pleasant to work with)
+* 74HCT373 or 74HCT583 ('573 is more pleasant to work with)
+
+### Buffers and transceivers
+
+* 74HCT244 or 74HCT541 ('541 is more pleasant to work with)
+* 74HCT125 (quad buffer gate)
+* 74HCT365 (hex buffer gate)
+* 74HCT245 (transceiver, but can also be used as buffer)
+* 74HCT540 (like the '541, but inverting)
+
+### Counters
+
+* 74HCT161
+* 74HCT163 (is fully synchronous, including reset)
+* 74HCT191
+* 74HCT193
+* 74HCT393
+
+## Other active components
+
+Having some oscillator modules is quite useful.
