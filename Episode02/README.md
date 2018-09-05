@@ -15,7 +15,7 @@ At some point I will probably do a video on what equipment and supplies you will
 
 ## Digital logic ICs
 
-Having a variety of digital logic ICs is essential for experimentation.  I would recommend getting 74HCT series parts.  Make sure you through hole parts, not surface mount!  If you are in the USA, [Unicorn Electronics](https://www.unicornelectronics.com/) is a great place to find these, including some of the more obscure/obsolete ones.  It's also an excellent place to find datasheets.
+Having a variety of digital logic ICs is essential for experimentation.  I would recommend getting 74HCT series parts.  Make sure you get through hole parts (DIP/DIL package), not surface mount!  If you are in the USA, [Unicorn Electronics](https://www.unicornelectronics.com/) is a great place to find these, including some of the more obscure/obsolete ones.  It's also an excellent place to find datasheets.
 
 Ebay is not a bad place to look as well, and if you're patient you can get some good deals.
 
