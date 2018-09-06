@@ -42,13 +42,14 @@ You could get some 74HCT86 (quad XOR) too, I suppose.
 * 74HCT27
 * 74HCT30
 
-These are logic gates with more than 2 inputs per gate.  Surprisingly useful.
+These are logic gates with more than 2 inputs per gate.  Surprisingly useful.  I have found *all* of these useful at one time or another.
 
 ### Other combinational logic ICs
 
 * 74HCT138 (3 to 8 decoder)
 * 74HCT153 or 74HCT253 (dual 4 input multiplexer)
 * 74HCT157 or 74HCT257 (quad 2 input multiplexer)
+* 74HCT147 (10 to 4 priority encoder)
 
 There are probably others that I'm forgetting.
 
@@ -77,4 +78,4 @@ There are probably others that I'm forgetting.
 
 ## Other active components
 
-Having some oscillator modules is quite useful.
+Having some oscillator modules is quite useful.  Ones that produce a frequency that can be divided to get a baud rate are very useful: see [Crystal oscillator frequencies](https://en.wikipedia.org/wiki/Crystal_oscillator_frequencies).  I have also found 4 MHz and 8 MHz oscillators useful.
