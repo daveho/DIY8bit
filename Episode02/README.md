@@ -58,7 +58,7 @@ There are probably others that I'm forgetting.
 * 74HCT74 (dual D-type flip flop: absolute must have)
 * 74HCT175
 * 74HCT374 or 74HCT574 ('574 is more pleasant to work with)
-* 74HCT373 or 74HCT583 ('573 is more pleasant to work with)
+* 74HCT373 or 74HCT573 ('573 is more pleasant to work with)
 
 ### Buffers and transceivers
 
@@ -75,6 +75,13 @@ There are probably others that I'm forgetting.
 * 74HCT191
 * 74HCT193
 * 74HCT393
+
+### Shift registers
+
+* 74HCT165 (parallel input, serial output)
+* 74HCT595 (serial input, parallel output)
+
+Note that the HCT versions of these ICs are fairly hard to find: for example, Unicorn Electronics doesn't stock them.  Depending on how you plan to use them, the HC variants (74HC165 and 74HC595) could be useful.  I use a 74HC165 in my circuit for scanning the keyboard matrix.  But if you can find the HCT versions, that's better.
 
 ## Other active components
 
