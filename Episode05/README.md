@@ -14,6 +14,6 @@ With an 806 Ohm resistor, we can apply Ohm's Law as follows:
 >
 > 2.6 = I × 806
 >
-> I = 2.6 / 806 = 0.003.225
+> I = 2.6 / 806 = 0.003225
 
 So, the current through the LED is limited to about 3.2 mA, which is well within what the 74HC ICs I'm using can source.
