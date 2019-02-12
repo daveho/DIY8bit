@@ -1,4 +1,5 @@
 EESchema Schematic File Version 4
+LIBS:SRLatch-cache
 EELAYER 26 0
 EELAYER END
 $Descr USLetter 11000 8500
@@ -347,10 +348,6 @@ Wire Wire Line
 	6550 4200 5100 4200
 Wire Wire Line
 	5100 4200 5100 1750
-Text Label 6250 3050 0    50   ~ 0
-R
-Text Label 6250 4200 0    50   ~ 0
-S
 $Comp
 L device:R R5
 U 1 1 5C61D1DE
@@ -675,4 +672,8 @@ Wire Wire Line
 Wire Wire Line
 	6100 6350 5650 6350
 Connection ~ 5650 6350
+Text Label 6200 3050 0    50   ~ 0
+-S
+Text Label 6200 4200 0    50   ~ 0
+-R
 $EndSCHEMATC
