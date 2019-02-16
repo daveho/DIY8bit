@@ -1,0 +1,100 @@
+EESchema Schematic File Version 4
+EELAYER 26 0
+EELAYER END
+$Descr USLetter 11000 8500
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L ya68k:MAX708 U1
+U 1 1 5C684220
+P 4300 3200
+F 0 "U1" H 4300 3687 60  0000 C CNN
+F 1 "MAX708" H 4300 3581 60  0000 C CNN
+F 2 "" H 4300 3200 60  0000 C CNN
+F 3 "" H 4300 3200 60  0000 C CNN
+	1    4300 3200
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3700 3000 3550 3000
+Wire Wire Line
+	3550 3000 3550 2750
+$Comp
+L power:VCC #PWR?
+U 1 1 5C6842B1
+P 3550 2750
+F 0 "#PWR?" H 3550 2600 50  0001 C CNN
+F 1 "VCC" H 3567 2923 50  0000 C CNN
+F 2 "" H 3550 2750 50  0001 C CNN
+F 3 "" H 3550 2750 50  0001 C CNN
+	1    3550 2750
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3700 3100 3550 3100
+Wire Wire Line
+	3550 3100 3550 3450
+$Comp
+L power:GND #PWR?
+U 1 1 5C68431F
+P 3550 3750
+F 0 "#PWR?" H 3550 3500 50  0001 C CNN
+F 1 "GND" H 3555 3577 50  0000 C CNN
+F 2 "" H 3550 3750 50  0001 C CNN
+F 3 "" H 3550 3750 50  0001 C CNN
+	1    3550 3750
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3700 3300 3200 3300
+$Comp
+L Switch:SW_Push SW1
+U 1 1 5C6843B0
+P 3000 3300
+F 0 "SW1" H 3000 3585 50  0000 C CNN
+F 1 "SW_Push" H 3000 3494 50  0000 C CNN
+F 2 "" H 3000 3500 50  0001 C CNN
+F 3 "" H 3000 3500 50  0001 C CNN
+	1    3000 3300
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2800 3300 2650 3300
+Wire Wire Line
+	2650 3300 2650 3750
+$Comp
+L power:GND #PWR?
+U 1 1 5C68446C
+P 2650 3750
+F 0 "#PWR?" H 2650 3500 50  0001 C CNN
+F 1 "GND" H 2655 3577 50  0000 C CNN
+F 2 "" H 2650 3750 50  0001 C CNN
+F 3 "" H 2650 3750 50  0001 C CNN
+	1    2650 3750
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3700 3450 3550 3450
+Connection ~ 3550 3450
+Wire Wire Line
+	3550 3450 3550 3750
+Wire Wire Line
+	4900 3000 5650 3000
+Wire Wire Line
+	4900 3100 5650 3100
+Text Label 5500 3000 0    50   ~ 0
+~RST
+Text Label 5500 3100 0    50   ~ 0
+RST
+Text Notes 6400 7000 0    50   ~ 0
+MAX707/MAX708 power on reset circuit
+$EndSCHEMATC
