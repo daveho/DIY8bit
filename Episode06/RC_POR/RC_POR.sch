@@ -1,4 +1,5 @@
 EESchema Schematic File Version 4
+LIBS:RC_POR-cache
 EELAYER 26 0
 EELAYER END
 $Descr USLetter 11000 8500
@@ -18,7 +19,7 @@ L device:C C1
 U 1 1 5C683EF9
 P 3500 4150
 F 0 "C1" H 3615 4196 50  0000 L CNN
-F 1 "760 nF" H 3615 4105 50  0000 L CNN
+F 1 "1 uF" H 3615 4105 50  0000 L CNN
 F 2 "" H 3538 4000 50  0001 C CNN
 F 3 "" H 3500 4150 50  0001 C CNN
 	1    3500 4150
@@ -83,7 +84,7 @@ L device:R R1
 U 1 1 5C6841D7
 P 3500 3050
 F 0 "R1" H 3570 3096 50  0000 L CNN
-F 1 "60K" H 3570 3005 50  0000 L CNN
+F 1 "50K" H 3570 3005 50  0000 L CNN
 F 2 "" V 3430 3050 50  0001 C CNN
 F 3 "" H 3500 3050 50  0001 C CNN
 	1    3500 3050
@@ -110,7 +111,7 @@ L device:D D1
 U 1 1 5C68446C
 P 2950 3050
 F 0 "D1" V 2904 3129 50  0000 L CNN
-F 1 "D" V 2995 3129 50  0000 L CNN
+F 1 "1N4001" V 2995 3129 50  0000 L CNN
 F 2 "" H 2950 3050 50  0001 C CNN
 F 3 "" H 2950 3050 50  0001 C CNN
 	1    2950 3050
@@ -133,5 +134,7 @@ Wire Wire Line
 Text Notes 6400 6950 0    50   ~ 0
 RC power on reset circuit
 Text Notes 2400 5150 0    50   ~ 0
-The resistor and capacitor values are chosen somewhat arbitrarily:\nthe goal is that the RC time constant is about 50 ms.  (Using the\nvalues shown, the RC time constant will be about 45 ms.)
+The resistor and capacitor values are chosen with the goal\nthat the RC time constant is about 50 ms.
+Text Notes 1750 3200 0    50   ~ 0
+Make sure this diode has\na reasonably small forward\nvoltage, and also that it can\npass enough current to\ndischarge the capacitor.
 $EndSCHEMATC
