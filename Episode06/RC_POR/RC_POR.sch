@@ -14,17 +14,6 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
-$Comp
-L device:C C1
-U 1 1 5C683EF9
-P 3500 4150
-F 0 "C1" H 3615 4196 50  0000 L CNN
-F 1 "1 uF" H 3615 4105 50  0000 L CNN
-F 2 "" H 3538 4000 50  0001 C CNN
-F 3 "" H 3500 4150 50  0001 C CNN
-	1    3500 4150
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	3500 4300 3500 4550
 $Comp
@@ -133,8 +122,19 @@ Wire Wire Line
 	3500 2700 3500 2550
 Text Notes 6400 6950 0    50   ~ 0
 RC power on reset circuit
-Text Notes 2400 5150 0    50   ~ 0
-The resistor and capacitor values are chosen with the goal\nthat the RC time constant is about 50 ms.
-Text Notes 1750 3200 0    50   ~ 0
+Text Notes 2400 5250 0    50   ~ 0
+The resistor and capacitor values are chosen with the goal\nthat the RC time constant is about 50 ms.  You can use either\na polarized or non-polarized capacitor, but if you use a\npolarized capacitor, make sure it's wired with its negative\nterminal connected to ground.
+Text Notes 1700 3200 0    50   ~ 0
 Make sure this diode has\na reasonably small forward\nvoltage, and also that it can\npass enough current to\ndischarge the capacitor.
+$Comp
+L device:CP C1
+U 1 1 5C69625F
+P 3500 4150
+F 0 "C1" H 3618 4196 50  0000 L CNN
+F 1 "1 uF" H 3618 4105 50  0000 L CNN
+F 2 "" H 3538 4000 50  0001 C CNN
+F 3 "" H 3500 4150 50  0001 C CNN
+	1    3500 4150
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC
