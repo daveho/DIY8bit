@@ -501,7 +501,7 @@ Wire Wire Line
 Text Notes 5500 2900 0    50   ~ 0
 Crystal frequency should be between 2 and 4 MHz.\nI used 3.8668 MHz.
 Text Notes 5300 1350 0    50   ~ 0
-You can omit the LED and resistor.  I add it as\na power indicator, and also a reset indicator\n(the LED turns off when reset is asserted.)
+You can omit the LED and resistor.  I add it as\na power indicator, and also a reset indicator\n(the LED turns off when reset is asserted.)\nUsing a high-efficiency LED and limiting the\ncurrent to a few mA is a good idea.
 Text Notes 6400 6950 0    50   ~ 0
 6809 freerun circuit
 Text Notes 3350 3050 0    50   ~ 0
