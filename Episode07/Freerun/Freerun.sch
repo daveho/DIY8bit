@@ -1,4 +1,5 @@
 EESchema Schematic File Version 4
+LIBS:Freerun-cache
 EELAYER 26 0
 EELAYER END
 $Descr USLetter 11000 8500
@@ -486,7 +487,7 @@ F 3 "" H 7800 5900 50  0001 C CNN
 	1    7800 5900
 	1    0    0    -1  
 $EndComp
-Text Notes 6800 6350 0    50   ~ 0
+Text Notes 6800 6600 0    50   ~ 0
 Make all of the pull-up/pull-down resistors connected\nto the data bus (D0..D7) fairly large, e.g., 4.7K.  The\nresistors cause the CPU to read the value 0x12 when\nan instruction is fetched.  0x12 is the opcode of the\nNOP instruction.
 Wire Wire Line
 	3300 3750 3000 3750
@@ -499,7 +500,7 @@ Connection ~ 3000 3650
 Wire Wire Line
 	3000 3650 3000 3350
 Text Notes 5500 2900 0    50   ~ 0
-Crystal frequency should be between 2 and 4 MHz.\nI used 3.8668 MHz.
+Crystal frequency should be between 2 and 4 MHz.\nI used 3.6864 MHz.
 Text Notes 5300 1350 0    50   ~ 0
 You can omit the LED and resistor.  I add it as\na power indicator, and also a reset indicator\n(the LED turns off when reset is asserted.)\nUsing a high-efficiency LED and limiting the\ncurrent to a few mA is a good idea.
 Text Notes 6400 6950 0    50   ~ 0
