@@ -215,7 +215,7 @@ $EndComp
 Wire Wire Line
 	4800 4250 5450 4250
 Wire Wire Line
-	5450 4250 5450 3550
+	5450 4250 5450 3950
 Connection ~ 5450 3550
 $Comp
 L device:Crystal Y1
@@ -507,4 +507,9 @@ Text Notes 6400 6950 0    50   ~ 0
 6809 freerun circuit
 Text Notes 3350 3050 0    50   ~ 0
 CPU could also be MC6809 or HD6309.
+Wire Wire Line
+	4800 3950 5450 3950
+Connection ~ 5450 3950
+Wire Wire Line
+	5450 3950 5450 3550
 $EndSCHEMATC
