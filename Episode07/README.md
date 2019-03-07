@@ -2,7 +2,7 @@
 
 ## Freerun
 
-In this episode we build and test a *freerun* circuit using the 6809 CPU.
+In this episode we build and test a *freerun* circuit using the 6809 CPU.  The [Freerun](Freerun) directory has the schematic (KiCad and PDF versions).
 
 Rather than interfacing the 6809 with actual memory devices (such as RAM and ROM), the data bus lines (D0..D7) are tied high or low to force a specific pattern of 0 or 1 values to be read when the CPU fetches a value from the bus—specifically, the value &#36;12 (&#36; means base 16, so &#36; is 1x16 + 2x1, meaning 18 decimal).  The address lines, which normally are used to select which device is accessed, are essentially ignored.  From the CPU's perspective, it is as though the entire 64K address space is filled with bytes containing the data value &#36;12.
 
