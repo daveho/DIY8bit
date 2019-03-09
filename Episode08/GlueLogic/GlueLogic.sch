@@ -1098,4 +1098,6 @@ F 3 "" H 2800 7700 50  0001 C CNN
 	1    2800 7700
 	1    0    0    -1  
 $EndComp
+Text Notes 12250 5000 0    50   ~ 0
+U107 can be omitted if\n~IODEV0~-~IODEV7~ are\nsufficient for planned I/O\ndevices.
 $EndSCHEMATC
