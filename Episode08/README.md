@@ -1,6 +1,6 @@
 # Episode 8: Address decoding
 
-This episode covers address decoding.  The [GlueLogic](GlueLogic) directory has the schematic showing the full glue logic (bus signals and address decoding), along with the CPU and reset circuit.  This design forms the core of the system.
+This episode covers address decoding.  The [GlueLogic](GlueLogic) directory has the schematic showing the full glue logic (bus signals and address decoding), along with the CPU and reset circuit.  This design forms the core of the 6809 microcomputer system.
 
 ## Resources
 
