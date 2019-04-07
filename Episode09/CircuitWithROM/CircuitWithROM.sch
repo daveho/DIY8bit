@@ -1094,17 +1094,6 @@ Text Label 3550 5050 0    50   ~ 0
 D6
 Text Label 3550 5150 0    50   ~ 0
 D7
-$Comp
-L memory:27C512 U108
-U 1 1 5CA69FAE
-P 2350 7500
-F 0 "U108" H 2350 8678 50  0000 C CNN
-F 1 "27C512" H 2350 8587 50  0000 C CNN
-F 2 "" H 2350 7500 50  0001 C CNN
-F 3 "" H 2350 7500 50  0001 C CNN
-	1    2350 7500
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	1650 6600 1000 6600
 Wire Wire Line
@@ -1136,7 +1125,7 @@ Wire Wire Line
 Wire Wire Line
 	1650 8000 1000 8000
 Wire Wire Line
-	1650 8100 1100 8100
+	1650 8200 700  8200
 Text Label 1350 6600 0    50   ~ 0
 A0
 Text Label 1350 6700 0    50   ~ 0
@@ -1167,19 +1156,6 @@ Text Label 1350 7900 0    50   ~ 0
 A13
 Text Label 1350 8000 0    50   ~ 0
 A14
-Wire Wire Line
-	1100 8100 1100 8650
-$Comp
-L power:GND #PWR?
-U 1 1 5CA83A54
-P 1100 8650
-F 0 "#PWR?" H 1100 8400 50  0001 C CNN
-F 1 "GND" H 1105 8477 50  0000 C CNN
-F 2 "" H 1100 8650 50  0001 C CNN
-F 3 "" H 1100 8650 50  0001 C CNN
-	1    1100 8650
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	3050 6600 3400 6600
 Wire Wire Line
@@ -1213,15 +1189,13 @@ D6
 Text Label 3200 7300 0    50   ~ 0
 D7
 Wire Wire Line
-	1650 8300 1250 8300
-Wire Wire Line
 	1650 8400 1250 8400
-Text Label 1300 8300 0    50   ~ 0
-~ROMEN~
+Wire Wire Line
+	1650 8300 1250 8300
 Text Label 1300 8400 0    50   ~ 0
+~ROMEN~
+Text Label 1300 8300 0    50   ~ 0
 ~RMEM~
-Text Notes 1750 8700 0    50   ~ 0
-64K EEPROM or Flash Memory:\nW27C512, 27SF512, or similar
 Wire Wire Line
 	1900 4250 1550 4250
 Wire Wire Line
@@ -1672,8 +1646,6 @@ Wire Wire Line
 	4300 7950 3950 7950
 Wire Wire Line
 	4300 8150 3950 8150
-Text Label 4000 7950 0    50   ~ 0
-R~W~
 Text Label 4000 8150 0    50   ~ 0
 ~IODEV0~
 $Comp
@@ -1837,6 +1809,47 @@ F 3 "" H 8600 10250 50  0001 C CNN
 	1    8600 10250
 	1    0    0    -1  
 $EndComp
+Text Label 4000 7950 0    50   ~ 0
+~WMEM~
+$Comp
+L memory:28C256 U108
+U 1 1 5CAEF11C
+P 2350 7500
+F 0 "U108" H 2350 8678 50  0000 C CNN
+F 1 "28C256" H 2350 8587 50  0000 C CNN
+F 2 "" H 2350 7500 50  0001 C CNN
+F 3 "" H 2350 7500 50  0001 C CNN
+	1    2350 7500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	700  8050 700  8200
+$Comp
+L power:VCC #PWR?
+U 1 1 5CBAF808
+P 700 8050
+F 0 "#PWR?" H 700 7900 50  0001 C CNN
+F 1 "VCC" H 717 8223 50  0000 C CNN
+F 2 "" H 700 8050 50  0001 C CNN
+F 3 "" H 700 8050 50  0001 C CNN
+	1    700  8050
+	1    0    0    -1  
+$EndComp
+$Comp
+L device:C C110
+U 1 1 5CBB0670
+P 1750 9350
+F 0 "C110" H 1865 9396 50  0000 L CNN
+F 1 "C" H 1865 9305 50  0000 L CNN
+F 2 "" H 1788 9200 50  0001 C CNN
+F 3 "" H 1750 9350 50  0001 C CNN
+	1    1750 9350
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1750 9200 1750 9050
+Wire Wire Line
+	1750 9650 1750 9500
 Wire Bus Line
 	1000 5800 3750 5800
 Wire Bus Line
@@ -1851,4 +1864,28 @@ Wire Bus Line
 	1450 4350 1450 5700
 Wire Bus Line
 	900  5900 900  7900
+$Comp
+L power:VCC #PWR?
+U 1 1 5CBE8002
+P 1750 9050
+F 0 "#PWR?" H 1750 8900 50  0001 C CNN
+F 1 "VCC" H 1767 9223 50  0000 C CNN
+F 2 "" H 1750 9050 50  0001 C CNN
+F 3 "" H 1750 9050 50  0001 C CNN
+	1    1750 9050
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 5CBE80E7
+P 1750 9650
+F 0 "#PWR?" H 1750 9400 50  0001 C CNN
+F 1 "GND" H 1755 9477 50  0000 C CNN
+F 2 "" H 1750 9650 50  0001 C CNN
+F 3 "" H 1750 9650 50  0001 C CNN
+	1    1750 9650
+	1    0    0    -1  
+$EndComp
+Text Notes 1250 10100 0    50   ~ 0
+Put C110 near power pins\nof U108.
 $EndSCHEMATC
