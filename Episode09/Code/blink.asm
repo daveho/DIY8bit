@@ -1,4 +1,4 @@
-;; Blink
+;; Blink demo
 
 ;;**********************************************************************
 ;; This is a demo program for Episode 9, using the "CircuitWithROM"
@@ -13,8 +13,8 @@
 ;; There is a 74HCT574 mapped at $8000.  Its outputs are sent to
 ;; a common-anode 7 segment LED display.  Bits 0-6 control segments
 ;; A-F, and bit 7 controls the decimal point.  Set a bit to 0
-;; (logic low) to light the corresponding LED.  Set a bit to 1
-;; (logic high) to turn off the corresponding LED.
+;; to light the corresponding LED.  Set a bit to 1 to turn off the
+;; corresponding LED.
 OPORT EQU $8000
 
 ;; Bits controlling LED display segments.
@@ -38,12 +38,31 @@ SEG_G EQU (1<<6)
 	;; code and read-only data are located.
 	ORG $9000
 
-	;; Entry point for the blink program
+	;; Entry point for blink program
 blink_entry
+
+	;; B is a counter selecting one of the 16 possible
+	;; hex digit values to display.
+	ldb #0
+
+	;; Main loop for the blink program.
+main_loop
 	ldx #hexfont
-	lda ,X
+	lda B,X
 	sta OPORT
-	jmp blink_entry
+
+	;; Delay loop
+	ldx #0
+1
+	leax 1,X
+	cmpx #$FFFF
+	blo 1B
+
+	;; Increment B and then mask all but low 4 bits
+	incb
+	andb #$0F
+
+	jmp main_loop
 
 	;; Bit patterns for the hex digits 0-9 and A-F
 hexfont
