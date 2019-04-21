@@ -4,3 +4,6 @@
 	asm6809 -B $< -o $*.bin
 
 all : blink.bin
+
+clean :
+	rm -f *.bin
