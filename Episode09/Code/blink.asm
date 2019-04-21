@@ -47,9 +47,9 @@ blink_entry
 
 	;; Main loop for the blink program.
 main_loop
-	ldx #hexfont
-	lda B,X
-	sta OPORT
+	ldx #hexfont               ; Load base address of hex font
+	lda B,X                    ; Load bit pattern for hex digit
+	sta OPORT                  ; Write bit pattern to output port
 
 	;; Delay loop
 	ldx #0
