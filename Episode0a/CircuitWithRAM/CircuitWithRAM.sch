@@ -1,0 +1,325 @@
+EESchema Schematic File Version 4
+LIBS:CircuitWithRAM-cache
+EELAYER 26 0
+EELAYER END
+$Descr User 14173 10953
+encoding utf-8
+Sheet 1 3
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+Text Notes 9600 9400 0    50   ~ 0
+6809 circuit with glue logic, ROM, and output port
+$Sheet
+S 2200 1700 1000 5050
+U 5CFA6AAA
+F0 "CPUandGlueLogic" 50
+F1 "CPUandGlueLogic.sch" 50
+F2 "A0" O R 3200 2350 50 
+F3 "A1" O R 3200 2450 50 
+F4 "A2" O R 3200 2550 50 
+F5 "A3" O R 3200 2650 50 
+F6 "A4" O R 3200 2750 50 
+F7 "A5" O R 3200 2850 50 
+F8 "A6" O R 3200 2950 50 
+F9 "A7" O R 3200 3050 50 
+F10 "A8" O R 3200 3150 50 
+F11 "A9" O R 3200 3250 50 
+F12 "A10" O R 3200 3350 50 
+F13 "A11" O R 3200 3450 50 
+F14 "A12" O R 3200 3550 50 
+F15 "A13" O R 3200 3650 50 
+F16 "A14" O R 3200 3750 50 
+F17 "A15" O R 3200 3850 50 
+F18 "D0" B R 3200 4000 50 
+F19 "D1" B R 3200 4100 50 
+F20 "D2" B R 3200 4200 50 
+F21 "D3" B R 3200 4300 50 
+F22 "D4" B R 3200 4400 50 
+F23 "D5" B R 3200 4500 50 
+F24 "D6" B R 3200 4600 50 
+F25 "D7" B R 3200 4700 50 
+F26 "E" O R 3200 1800 50 
+F27 "~RMEM~" O R 3200 1900 50 
+F28 "~WMEM~" O R 3200 2000 50 
+F29 "RST" O R 3200 2100 50 
+F30 "~RST~" O R 3200 2200 50 
+F31 "~IODEV0~" O R 3200 5100 50 
+F32 "~IODEV1~" O R 3200 5200 50 
+F33 "~IODEV2~" O R 3200 5300 50 
+F34 "~IODEV3~" O R 3200 5400 50 
+F35 "~IODEV4~" O R 3200 5500 50 
+F36 "~IODEV5~" O R 3200 5600 50 
+F37 "~IODEV6~" O R 3200 5700 50 
+F38 "~IODEV7~" O R 3200 5800 50 
+F39 "~IODEV8~" O R 3200 5900 50 
+F40 "~IODEV9~" O R 3200 6000 50 
+F41 "~IODEV10~" O R 3200 6100 50 
+F42 "~IODEV11~" O R 3200 6200 50 
+F43 "~IODEV12~" O R 3200 6300 50 
+F44 "~IODEV13~" O R 3200 6400 50 
+F45 "~IODEV14~" O R 3200 6500 50 
+F46 "~IODEV15~" O R 3200 6600 50 
+F47 "~ROMEN~" O R 3200 4850 50 
+F48 "~RAMEN~" O R 3200 4950 50 
+$EndSheet
+$Sheet
+S 4250 1700 950  2200
+U 5D49B078
+F0 "Memory" 50
+F1 "Memory.sch" 50
+F2 "A0" I L 4250 2300 50 
+F3 "A1" I L 4250 2400 50 
+F4 "A2" I L 4250 2500 50 
+F5 "A3" I L 4250 2600 50 
+F6 "A4" I L 4250 2700 50 
+F7 "A5" I L 4250 2800 50 
+F8 "A6" I L 4250 2900 50 
+F9 "A7" I L 4250 3000 50 
+F10 "A8" I L 4250 3100 50 
+F11 "A9" I L 4250 3200 50 
+F12 "A10" I L 4250 3300 50 
+F13 "A11" I L 4250 3400 50 
+F14 "A12" I L 4250 3500 50 
+F15 "A13" I L 4250 3600 50 
+F16 "A14" I L 4250 3700 50 
+F17 "~RMEM~" I L 4250 1800 50 
+F18 "~WMEM~" I L 4250 1900 50 
+F19 "~ROMEN~" I L 4250 2050 50 
+F20 "~RAMEN~" I L 4250 2150 50 
+F21 "D0" B R 5200 2300 50 
+F22 "D1" B R 5200 2400 50 
+F23 "D2" B R 5200 2500 50 
+F24 "D3" B R 5200 2600 50 
+F25 "D4" B R 5200 2700 50 
+F26 "D5" B R 5200 2800 50 
+F27 "D6" B R 5200 2900 50 
+F28 "D7" B R 5200 3000 50 
+$EndSheet
+Wire Wire Line
+	3200 2350 3400 2350
+Wire Wire Line
+	3200 2450 3400 2450
+Wire Wire Line
+	3200 2550 3400 2550
+Wire Wire Line
+	3200 2650 3400 2650
+Wire Wire Line
+	3200 2750 3400 2750
+Wire Wire Line
+	3200 2850 3400 2850
+Wire Wire Line
+	3200 2950 3400 2950
+Wire Wire Line
+	3200 3050 3400 3050
+Wire Wire Line
+	3200 3150 3400 3150
+Wire Wire Line
+	3200 3250 3400 3250
+Wire Wire Line
+	3200 3350 3400 3350
+Wire Wire Line
+	3200 3450 3400 3450
+Wire Wire Line
+	3200 3550 3400 3550
+Wire Wire Line
+	3200 3650 3400 3650
+Wire Wire Line
+	3200 3750 3400 3750
+Wire Wire Line
+	3200 3850 3400 3850
+Text Label 3250 2350 0    50   ~ 0
+A0
+Text Label 3250 2450 0    50   ~ 0
+A1
+Text Label 3250 2550 0    50   ~ 0
+A2
+Text Label 3250 2650 0    50   ~ 0
+A3
+Text Label 3250 2750 0    50   ~ 0
+A4
+Text Label 3250 2850 0    50   ~ 0
+A5
+Text Label 3250 2950 0    50   ~ 0
+A6
+Text Label 3250 3050 0    50   ~ 0
+A7
+Text Label 3250 3150 0    50   ~ 0
+A8
+Text Label 3250 3250 0    50   ~ 0
+A9
+Text Label 3250 3350 0    50   ~ 0
+A10
+Text Label 3250 3450 0    50   ~ 0
+A11
+Text Label 3250 3550 0    50   ~ 0
+A12
+Text Label 3250 3650 0    50   ~ 0
+A13
+Text Label 3250 3750 0    50   ~ 0
+A14
+Text Label 3250 3850 0    50   ~ 0
+A15
+Wire Wire Line
+	4050 2300 4250 2300
+Wire Wire Line
+	4050 2400 4250 2400
+Wire Wire Line
+	4050 2500 4250 2500
+Wire Wire Line
+	4050 2600 4250 2600
+Wire Wire Line
+	4050 2700 4250 2700
+Wire Wire Line
+	4050 2800 4250 2800
+Wire Wire Line
+	4050 2900 4250 2900
+Wire Wire Line
+	4050 3000 4250 3000
+Wire Wire Line
+	4050 3100 4250 3100
+Wire Wire Line
+	4050 3200 4250 3200
+Wire Wire Line
+	4050 3300 4250 3300
+Wire Wire Line
+	4050 3400 4250 3400
+Wire Wire Line
+	4050 3500 4250 3500
+Wire Wire Line
+	4050 3600 4250 3600
+Wire Wire Line
+	4050 3700 4250 3700
+Text Label 4100 2300 0    50   ~ 0
+A0
+Text Label 4100 2400 0    50   ~ 0
+A1
+Text Label 4100 2500 0    50   ~ 0
+A2
+Text Label 4100 2600 0    50   ~ 0
+A3
+Text Label 4100 2700 0    50   ~ 0
+A4
+Text Label 4100 2800 0    50   ~ 0
+A5
+Text Label 4100 2900 0    50   ~ 0
+A6
+Text Label 4100 3000 0    50   ~ 0
+A7
+Text Label 4100 3100 0    50   ~ 0
+A8
+Text Label 4100 3200 0    50   ~ 0
+A9
+Text Label 4100 3300 0    50   ~ 0
+A10
+Text Label 4100 3400 0    50   ~ 0
+A11
+Text Label 4100 3500 0    50   ~ 0
+A12
+Text Label 4100 3600 0    50   ~ 0
+A13
+Text Label 4100 3700 0    50   ~ 0
+A14
+Wire Wire Line
+	3200 4000 3400 4000
+Wire Wire Line
+	3200 4100 3400 4100
+Wire Wire Line
+	3200 4200 3400 4200
+Wire Wire Line
+	3200 4300 3400 4300
+Wire Wire Line
+	3200 4400 3400 4400
+Wire Wire Line
+	3200 4500 3400 4500
+Wire Wire Line
+	3200 4600 3400 4600
+Wire Wire Line
+	3200 4700 3400 4700
+Text Label 3250 4000 0    50   ~ 0
+D0
+Text Label 3250 4100 0    50   ~ 0
+D1
+Text Label 3250 4200 0    50   ~ 0
+D2
+Text Label 3250 4300 0    50   ~ 0
+D3
+Text Label 3250 4400 0    50   ~ 0
+D4
+Text Label 3250 4500 0    50   ~ 0
+D5
+Text Label 3250 4600 0    50   ~ 0
+D6
+Text Label 3250 4700 0    50   ~ 0
+D7
+Wire Wire Line
+	5200 2300 5400 2300
+Wire Wire Line
+	5200 2400 5400 2400
+Wire Wire Line
+	5200 2500 5400 2500
+Wire Wire Line
+	5200 2600 5400 2600
+Wire Wire Line
+	5200 2700 5400 2700
+Wire Wire Line
+	5200 2800 5400 2800
+Wire Wire Line
+	5200 2900 5400 2900
+Wire Wire Line
+	5200 3000 5400 3000
+Text Label 5250 2300 0    50   ~ 0
+D0
+Text Label 5250 2400 0    50   ~ 0
+D1
+Text Label 5250 2500 0    50   ~ 0
+D2
+Text Label 5250 2600 0    50   ~ 0
+D3
+Text Label 5250 2700 0    50   ~ 0
+D4
+Text Label 5250 2800 0    50   ~ 0
+D5
+Text Label 5250 2900 0    50   ~ 0
+D6
+Text Label 5250 3000 0    50   ~ 0
+D7
+Wire Wire Line
+	3200 1900 3500 1900
+Wire Wire Line
+	3200 2000 3500 2000
+Text Label 3250 1900 0    50   ~ 0
+~RMEM~
+Text Label 3250 2000 0    50   ~ 0
+~WMEM~
+Wire Wire Line
+	3950 1800 4250 1800
+Wire Wire Line
+	3950 1900 4250 1900
+Text Label 4000 1800 0    50   ~ 0
+~RMEM~
+Text Label 4000 1900 0    50   ~ 0
+~WMEM~
+Wire Wire Line
+	3200 4850 3600 4850
+Wire Wire Line
+	3200 4950 3600 4950
+Text Label 3250 4850 0    50   ~ 0
+~ROMEN~
+Text Label 3250 4950 0    50   ~ 0
+~RAMEN~
+Wire Wire Line
+	3850 2050 4250 2050
+Wire Wire Line
+	3850 2150 4250 2150
+Text Label 3900 2050 0    50   ~ 0
+~ROMEN~
+Text Label 3900 2150 0    50   ~ 0
+~RAMEN~
+$EndSCHEMATC
