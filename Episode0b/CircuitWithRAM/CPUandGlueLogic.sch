@@ -501,15 +501,10 @@ Wire Wire Line
 	6700 2200 7700 2200
 Text Label 6750 2200 0    50   ~ 0
 A15
-Text Label 10050 2200 0    50   ~ 0
-~RAMEN
 Wire Wire Line
 	9050 2500 8850 2500
 Wire Wire Line
 	8850 2500 8850 2200
-Connection ~ 8850 2200
-Wire Wire Line
-	8850 2200 10350 2200
 Wire Wire Line
 	9650 2600 10350 2600
 Text Label 10050 2600 0    50   ~ 0
@@ -877,8 +872,6 @@ Text Notes 9800 950  0    50   ~ 0
 ~RMEM~ goes low when the CPU is reading from memory
 Text Notes 9800 1550 0    50   ~ 0
 ~WMEM~ goes low when the CPU is writing to memory
-Text Notes 9800 2050 0    50   ~ 0
-~RAMEN~ goes low when the CPU accesses the RAM\nat addresses $0000..$7FFF
 Text Notes 9800 2450 0    50   ~ 0
 ~ROMEN~ goes low when the CPU accesses the ROM\nat addresses $9000..$FFFF
 Text Notes 8500 5700 0    50   ~ 0
@@ -1862,8 +1855,6 @@ Wire Wire Line
 Connection ~ 3450 1850
 Text HLabel 10350 2600 2    50   Output ~ 0
 ~ROMEN~
-Text HLabel 10350 2200 2    50   Output ~ 0
-~RAMEN~
 Wire Wire Line
 	6050 6350 6400 6350
 Wire Wire Line
@@ -1881,16 +1872,6 @@ F 3 "" H 6400 6300 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	5250 7150 5250 7250
-Wire Bus Line
-	1000 5700 3650 5700
-Wire Bus Line
-	3750 5250 3750 5600
-Wire Bus Line
-	1350 4250 1350 5600
-Wire Bus Line
-	4500 4450 4500 7250
-Wire Bus Line
-	2450 6150 2450 9200
 $Comp
 L power:GND #PWR?
 U 1 1 5DC72C2F
@@ -1902,4 +1883,14 @@ F 3 "" H 5250 7250 50  0001 C CNN
 	1    5250 7250
 	1    0    0    -1  
 $EndComp
+Wire Bus Line
+	1000 5700 3650 5700
+Wire Bus Line
+	3750 5250 3750 5600
+Wire Bus Line
+	1350 4250 1350 5600
+Wire Bus Line
+	4500 4450 4500 7250
+Wire Bus Line
+	2450 6150 2450 9200
 $EndSCHEMATC

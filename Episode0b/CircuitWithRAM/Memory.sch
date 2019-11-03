@@ -162,8 +162,6 @@ Text HLabel 1050 6150 0    50   Input ~ 0
 ~WMEM~
 Text HLabel 1050 5400 0    50   Input ~ 0
 ~ROMEN~
-Text HLabel 5600 5400 0    50   Input ~ 0
-~RAMEN~
 Text HLabel 2950 1200 0    50   BiDi ~ 0
 D0
 Text HLabel 2950 1300 0    50   BiDi ~ 0
@@ -309,8 +307,6 @@ Wire Wire Line
 	7900 4650 7900 6150
 Wire Wire Line
 	7900 6150 1050 6150
-Wire Wire Line
-	5600 5400 7550 5400
 Wire Wire Line
 	7550 5400 7550 4800
 Wire Wire Line
@@ -630,18 +626,32 @@ Text Notes 9100 2300 0    50   ~ 0
 Place near power pins\nof U200 and U201
 Text Notes 6400 6950 0    50   ~ 0
 Memory devices
+Wire Wire Line
+	1100 2700 1400 2700
+Text Label 1200 2700 0    50   ~ 0
+A15
+Text HLabel 1100 2700 0    50   Input ~ 0
+A15
+Entry Wire Line
+	1400 2700 1500 2800
+Wire Wire Line
+	7550 5400 6100 5400
+Entry Wire Line
+	6000 5300 6100 5400
 Wire Bus Line
 	1600 3150 5900 3150
 Wire Bus Line
-	3300 1300 3300 2850
+	7850 3050 7850 4300
 Wire Bus Line
 	4300 3250 4300 4200
 Wire Bus Line
-	7850 3050 7850 4300
+	3300 1300 3300 2850
 Wire Bus Line
 	2050 3250 2050 4900
 Wire Bus Line
-	6000 3250 6000 5000
+	6000 3250 6000 5300
 Wire Bus Line
 	1500 1300 1500 3050
+Text Label 6200 5400 0    50   ~ 0
+A15
 $EndSCHEMATC
