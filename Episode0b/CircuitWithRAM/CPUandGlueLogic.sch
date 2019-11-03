@@ -1859,6 +1859,28 @@ Text Notes 5400 8550 0    50   ~ 0
 Place C108-C111 near the\npower pins of U100, U101, U104, U105
 Wire Wire Line
 	4150 1850 3450 1850
+Connection ~ 3450 1850
+Text HLabel 10350 2600 2    50   Output ~ 0
+~ROMEN~
+Text HLabel 10350 2200 2    50   Output ~ 0
+~RAMEN~
+Wire Wire Line
+	6050 6350 6400 6350
+Wire Wire Line
+	6400 6350 6400 6300
+$Comp
+L power:VCC #PWR?
+U 1 1 5DC2F3B1
+P 6400 6300
+F 0 "#PWR?" H 6400 6150 50  0001 C CNN
+F 1 "VCC" H 6417 6473 50  0000 C CNN
+F 2 "" H 6400 6300 50  0001 C CNN
+F 3 "" H 6400 6300 50  0001 C CNN
+	1    6400 6300
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5250 7150 5250 7250
 Wire Bus Line
 	1000 5700 3650 5700
 Wire Bus Line
@@ -1869,9 +1891,15 @@ Wire Bus Line
 	4500 4450 4500 7250
 Wire Bus Line
 	2450 6150 2450 9200
-Connection ~ 3450 1850
-Text HLabel 10350 2600 2    50   Output ~ 0
-~ROMEN~
-Text HLabel 10350 2200 2    50   Output ~ 0
-~RAMEN~
+$Comp
+L power:GND #PWR?
+U 1 1 5DC72C2F
+P 5250 7250
+F 0 "#PWR?" H 5250 7000 50  0001 C CNN
+F 1 "GND" H 5255 7077 50  0000 C CNN
+F 2 "" H 5250 7250 50  0001 C CNN
+F 3 "" H 5250 7250 50  0001 C CNN
+	1    5250 7250
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC
