@@ -1,6 +1,6 @@
 EESchema Schematic File Version 4
 LIBS:CircuitWithRAM-cache
-EELAYER 26 0
+EELAYER 30 0
 EELAYER END
 $Descr User 14173 10953
 encoding utf-8

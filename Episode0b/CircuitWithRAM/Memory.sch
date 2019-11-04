@@ -1,6 +1,6 @@
 EESchema Schematic File Version 4
 LIBS:CircuitWithRAM-cache
-EELAYER 26 0
+EELAYER 30 0
 EELAYER END
 $Descr USLetter 11000 8500
 encoding utf-8
@@ -439,8 +439,6 @@ Entry Bus Bus
 	5900 3150 6000 3250
 Entry Bus Bus
 	3300 2850 3400 2950
-Wire Bus Line
-	3400 2950 7750 2950
 Entry Bus Bus
 	7750 2950 7850 3050
 Wire Wire Line
@@ -492,7 +490,7 @@ Entry Wire Line
 Entry Wire Line
 	4200 4300 4300 4200
 Entry Bus Bus
-	4200 3150 4300 3250
+	4200 2950 4300 3050
 Wire Wire Line
 	7400 3700 7750 3700
 Wire Wire Line
@@ -638,12 +636,16 @@ Wire Wire Line
 	7550 5400 6100 5400
 Entry Wire Line
 	6000 5300 6100 5400
+Text Label 6200 5400 0    50   ~ 0
+A15
+Wire Bus Line
+	3400 2950 7750 2950
 Wire Bus Line
 	1600 3150 5900 3150
 Wire Bus Line
 	7850 3050 7850 4300
 Wire Bus Line
-	4300 3250 4300 4200
+	4300 3050 4300 4200
 Wire Bus Line
 	3300 1300 3300 2850
 Wire Bus Line
@@ -652,6 +654,4 @@ Wire Bus Line
 	6000 3250 6000 5300
 Wire Bus Line
 	1500 1300 1500 3050
-Text Label 6200 5400 0    50   ~ 0
-A15
 $EndSCHEMATC
