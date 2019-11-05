@@ -5,5 +5,8 @@
 
 all : blink.bin
 
+program : blink.bin
+	eeprog -f blink.bin -p /dev/ttyUSB0 -D -v -N
+
 clean :
 	rm -f *.bin
