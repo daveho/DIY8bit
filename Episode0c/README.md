@@ -1,5 +1,7 @@
 # DIY 8-bit computer, Episode 0C
 
+Link to video: <https://youtu.be/R_h59Ce4cac>
+
 The [CircuitWithRAM2](CircuitWithRAM2) has very slightly revised
 schematics compared to the [previous episode](../Episode0b).
 I accidentally swapped the RST and ~RST signals feeding into the the
