@@ -78,4 +78,5 @@ The 2x40 female right-angle connectors for the circuit modules came from
 connectors on the backplane PCB were just cheap ones from Ebay.
 
 The 10x15 cm IC-pattern protoboards I mentioned buying from Ebay no longer
-seem to be available.  I think I received the last ones!
+seem to be available.  I think I received the last ones!  Update:
+I found it on Ali Express, here is the [Ali Express link for the 10x15cm IC pattern protoboard](https://www.aliexpress.com/item/32977034212.html?spm=a2g0o.productlist.0.0.297a5b99Ol9nk5&algo_pvid=2f0b5eb8-0782-4cf5-89d6-5bc5bde7886e&algo_expid=2f0b5eb8-0782-4cf5-89d6-5bc5bde7886e-3&btsid=42ecd5d1-63f1-4a32-a1e1-df2bc8a1498d&ws_ab_test=searchweb0_0,searchweb201602_2,searchweb201603_55)
