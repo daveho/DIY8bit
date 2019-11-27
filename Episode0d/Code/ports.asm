@@ -1,0 +1,11 @@
+;; Ports for peripheral devices
+
+;; 82C55A peripheral interface
+PORT_I82C55A_BASE EQU $8000
+PORT_I82C55A_A    EQU (PORT_I82C55A_BASE + 0)
+PORT_I82C55A_B    EQU (PORT_I82C55A_BASE + 1)
+PORT_I82C55A_C    EQU (PORT_I82C55A_BASE + 2)
+PORT_I82C55A_CTRL EQU (PORT_I82C55A_BASE + 3)
+
+;; vim:ft=asm6809:
+;; vim:ts=4:
