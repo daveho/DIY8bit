@@ -1,7 +1,7 @@
 # Makefile for Episode D
 
 %.bin : %.asm
-	asm6809 -B $< -o $*.bin
+	asm6809 -l $*.lst -B $< -o $*.bin
 
 all : i82c55a_test.bin i82c55a_count.bin
 
@@ -14,4 +14,4 @@ program :
 	fi
 
 clean :
-	rm -f *.bin
+	rm -f *.bin *.lst
