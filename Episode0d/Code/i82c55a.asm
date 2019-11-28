@@ -27,3 +27,5 @@ I82C55A_CTRL_GROUPB_PORTB_OUT       EQU 0       ; group B: configure port B for 
 I82C55A_CTRL_GROUPB_PORTC_LOWER_IN  EQU $01     ; group B: configure port C lower for input
 I82C55A_CTRL_GROUPB_PORTC_LOWER_OUT EQU 0       ; group B: configure port C lower for output
 
+;; vim:ft=asm6809:
+;; vim:ts=4:
