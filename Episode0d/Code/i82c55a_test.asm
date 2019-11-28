@@ -15,6 +15,9 @@ bitval EQU $7001
 count EQU $7002
 
 entry
+	;; put system stack at top of RAM
+	lds #$7FFE
+
 	;; Initialize the i82c55a device
 	jsr i82c55a_init
 
