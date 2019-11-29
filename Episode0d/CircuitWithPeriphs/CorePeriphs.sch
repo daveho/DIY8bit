@@ -382,6 +382,55 @@ Wire Wire Line
 Wire Wire Line
 	4450 7300 4150 7300
 Connection ~ 4150 7300
+Wire Wire Line
+	6350 2800 6500 2800
+Wire Wire Line
+	6500 2800 6500 2300
+$Comp
+L power:VCC #PWR?
+U 1 1 5DE3C94B
+P 6500 1100
+F 0 "#PWR?" H 6500 950 50  0001 C CNN
+F 1 "VCC" H 6517 1273 50  0000 C CNN
+F 2 "" H 6500 1100 50  0001 C CNN
+F 3 "" H 6500 1100 50  0001 C CNN
+	1    6500 1100
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6350 1800 6500 1800
+Connection ~ 6500 1800
+Wire Wire Line
+	6500 1800 6500 1100
+Wire Wire Line
+	6350 2300 6500 2300
+Connection ~ 6500 2300
+Wire Wire Line
+	6500 2300 6500 1800
+Text HLabel 6100 700  0    50   Input ~ 0
+E
+Wire Wire Line
+	6350 2700 6600 2700
+Wire Wire Line
+	6600 2700 6600 2200
+Wire Wire Line
+	6600 700  6100 700 
+Wire Wire Line
+	6350 1700 6600 1700
+Connection ~ 6600 1700
+Wire Wire Line
+	6600 1700 6600 700 
+Wire Wire Line
+	6350 2200 6600 2200
+Connection ~ 6600 2200
+Wire Wire Line
+	6600 2200 6600 1700
+Wire Wire Line
+	6350 1900 7000 1900
+Wire Wire Line
+	6350 2400 7000 2400
+Wire Wire Line
+	6350 2900 7000 2900
 Wire Bus Line
 	4750 1700 4750 5600
 Wire Bus Line
