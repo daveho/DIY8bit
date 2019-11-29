@@ -8,4 +8,5 @@
   (lib (name memory)(type Legacy)(uri ${KIPRJMOD}/memory.lib)(options "")(descr ""))
   (lib (name Display_Character)(type Legacy)(uri ${KIPRJMOD}/Display_Character.lib)(options "")(descr ""))
   (lib (name Interface)(type Legacy)(uri ${KIPRJMOD}/Interface.lib)(options "")(descr ""))
+  (lib (name intel)(type Legacy)(uri ${KIPRJMOD}/intel.lib)(options "")(descr ""))
 )

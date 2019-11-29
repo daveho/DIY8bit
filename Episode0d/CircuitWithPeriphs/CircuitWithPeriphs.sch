@@ -15,7 +15,7 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 Text Notes 9600 9400 0    50   ~ 0
-6809 circuit with glue logic, ROM, and output port
+6809 microcomputer circuit
 $Sheet
 S 2200 1700 1000 5050
 U 5CFA6AAA
@@ -328,5 +328,90 @@ F4 "~RMEM" I L 6200 2050 50
 F5 "~WMEM" I L 6200 2150 50 
 F6 "A0" I L 6200 2550 50 
 F7 "A1" I L 6200 2650 50 
+F8 "D0" B R 7200 2550 50 
+F9 "D1" B R 7200 2650 50 
+F10 "D2" B R 7200 2750 50 
+F11 "D3" B R 7200 2850 50 
+F12 "D4" B R 7200 2950 50 
+F13 "D5" B R 7200 3050 50 
+F14 "D6" B R 7200 3150 50 
+F15 "D7" B R 7200 3250 50 
+F16 "~82C54_CS" I L 6200 2400 50 
 $EndSheet
+Wire Wire Line
+	3200 5100 3600 5100
+Wire Wire Line
+	3200 5200 3600 5200
+Text Label 3250 5100 0    50   ~ 0
+~IODEV0
+Text Label 3250 5200 0    50   ~ 0
+~IODEV1
+Wire Wire Line
+	5800 2300 6200 2300
+Wire Wire Line
+	5800 2400 6200 2400
+Text Label 5850 2300 0    50   ~ 0
+~IODEV0
+Text Label 5850 2400 0    50   ~ 0
+~IODEV1
+Wire Wire Line
+	6000 2550 6200 2550
+Wire Wire Line
+	6000 2650 6200 2650
+Text Label 6050 2550 0    50   ~ 0
+A0
+Text Label 6050 2650 0    50   ~ 0
+A1
+Wire Wire Line
+	7200 2550 7400 2550
+Wire Wire Line
+	7200 2650 7400 2650
+Wire Wire Line
+	7200 2750 7400 2750
+Wire Wire Line
+	7200 2850 7400 2850
+Wire Wire Line
+	7200 2950 7400 2950
+Wire Wire Line
+	7200 3050 7400 3050
+Wire Wire Line
+	7200 3150 7400 3150
+Wire Wire Line
+	7200 3250 7400 3250
+Text Label 7250 2550 0    50   ~ 0
+D0
+Text Label 7250 2650 0    50   ~ 0
+D1
+Text Label 7250 2750 0    50   ~ 0
+D2
+Text Label 7250 2850 0    50   ~ 0
+D3
+Text Label 7250 2950 0    50   ~ 0
+D4
+Text Label 7250 3050 0    50   ~ 0
+D5
+Text Label 7250 3150 0    50   ~ 0
+D6
+Text Label 7250 3250 0    50   ~ 0
+D7
+Wire Wire Line
+	5900 2050 6200 2050
+Wire Wire Line
+	5900 2150 6200 2150
+Text Label 5950 2050 0    50   ~ 0
+~RMEM~
+Text Label 5950 2150 0    50   ~ 0
+~WMEM~
+Wire Wire Line
+	3200 2100 3500 2100
+Text Label 3250 2100 0    50   ~ 0
+RST
+Wire Wire Line
+	6200 1800 5900 1800
+Text Label 5950 1800 0    50   ~ 0
+RST
+Wire Wire Line
+	3200 1800 3500 1800
+Text Label 3250 1800 0    50   ~ 0
+E
 $EndSCHEMATC
