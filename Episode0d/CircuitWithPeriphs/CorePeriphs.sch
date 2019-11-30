@@ -26,7 +26,7 @@ F 3 "http://jap.hu/electronic/8255.pdf" H 2950 3200 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Text Notes 6350 6950 0    50   ~ 0
-core peripheral devices
+core peripheral devices: GPIO, timer, serial
 Wire Wire Line
 	2950 1300 3200 1300
 Wire Wire Line
@@ -338,14 +338,14 @@ F 3 "" H 5950 1100 50  0001 C CNN
 	1    5950 1100
 	1    0    0    -1  
 $EndComp
-Text HLabel 1100 5050 0    50   Input ~ 0
+Text HLabel 4350 5050 0    50   Input ~ 0
 ~82C54_CS
 Wire Wire Line
 	5150 3000 4650 3000
 Wire Wire Line
 	4650 3000 4650 5050
 Wire Wire Line
-	4650 5050 1100 5050
+	4650 5050 4350 5050
 Wire Wire Line
 	5750 3300 5750 3450
 $Comp
@@ -531,14 +531,14 @@ Wire Wire Line
 Wire Wire Line
 	9600 700  6600 700 
 Connection ~ 6600 700 
-Text HLabel 6100 600  0    50   Input ~ 0
+Text HLabel 7300 600  0    50   Input ~ 0
 R~W
 Wire Wire Line
 	9500 2750 9700 2750
 Wire Wire Line
 	9700 2750 9700 600 
 Wire Wire Line
-	9700 600  6100 600 
+	9700 600  7300 600 
 Wire Wire Line
 	7900 1900 7900 1850
 Wire Wire Line
@@ -550,12 +550,12 @@ Wire Wire Line
 Wire Wire Line
 	7900 1950 7900 1900
 Connection ~ 7900 1900
-Text HLabel 1100 5150 0    50   Input ~ 0
+Text HLabel 7300 800  0    50   Input ~ 0
 ~6850_CS
 Wire Wire Line
-	1100 5150 7550 5150
+	7300 800  7550 800 
 Wire Wire Line
-	7550 5150 7550 2450
+	7550 800  7550 2450
 Wire Wire Line
 	7550 2450 8000 2450
 Wire Wire Line
@@ -588,13 +588,133 @@ Wire Wire Line
 Connection ~ 4450 6750
 Wire Wire Line
 	4950 7300 4450 7300
+Connection ~ 4450 7300
+Entry Bus Bus
+	10100 5700 10200 5600
+$Comp
+L Connector_Generic:Conn_01x05 J303
+U 1 1 5DE6A143
+P 8900 3950
+F 0 "J303" H 8850 3600 50  0000 L CNN
+F 1 "Conn_01x05" H 8700 3500 50  0000 L CNN
+F 2 "" H 8900 3950 50  0001 C CNN
+F 3 "~" H 8900 3950 50  0001 C CNN
+	1    8900 3950
+	1    0    0    -1  
+$EndComp
+Text Notes 8300 4550 0    50   ~ 0
+Connections to FT232RL breakout
+Text Notes 9000 3800 0    50   ~ 0
+TX
+Text Notes 9000 3900 0    50   ~ 0
+RX
+Text Notes 9000 4000 0    50   ~ 0
+CTS
+Text Notes 9000 4100 0    50   ~ 0
+RTS
+Text Notes 9000 4200 0    50   ~ 0
+GND
+Wire Wire Line
+	8000 1750 7600 1750
+Wire Wire Line
+	7600 1750 7600 3750
+Wire Wire Line
+	8000 2150 7650 2150
+Wire Wire Line
+	7650 2150 7650 3850
+Wire Wire Line
+	8000 2050 7500 2050
+Wire Wire Line
+	7500 2050 7500 3950
+Wire Wire Line
+	9500 1650 9800 1650
+Wire Wire Line
+	9800 1650 9800 1050
+Wire Wire Line
+	9800 1050 7450 1050
+Wire Wire Line
+	7450 1050 7450 4050
+Wire Wire Line
+	7450 4150 7450 4300
+$Comp
+L power:GND #PWR?
+U 1 1 5DE7EF8C
+P 7450 4300
+F 0 "#PWR?" H 7450 4050 50  0001 C CNN
+F 1 "GND" H 7455 4127 50  0000 C CNN
+F 2 "" H 7450 4300 50  0001 C CNN
+F 3 "" H 7450 4300 50  0001 C CNN
+	1    7450 4300
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7450 4150 8700 4150
+$Comp
+L device:R R301
+U 1 1 5DE91934
+P 8350 3750
+F 0 "R301" V 8300 3500 50  0000 C CNN
+F 1 "2k7" V 8300 3950 50  0000 C CNN
+F 2 "" V 8280 3750 50  0001 C CNN
+F 3 "" H 8350 3750 50  0001 C CNN
+	1    8350 3750
+	0    1    1    0   
+$EndComp
+$Comp
+L device:R R302
+U 1 1 5DE954B6
+P 8350 3850
+F 0 "R302" V 8300 3600 50  0000 C CNN
+F 1 "2k7" V 8300 4050 50  0000 C CNN
+F 2 "" V 8280 3850 50  0001 C CNN
+F 3 "" H 8350 3850 50  0001 C CNN
+	1    8350 3850
+	0    1    1    0   
+$EndComp
+$Comp
+L device:R R303
+U 1 1 5DE98E9C
+P 8350 3950
+F 0 "R303" V 8300 3700 50  0000 C CNN
+F 1 "2k7" V 8300 4150 50  0000 C CNN
+F 2 "" V 8280 3950 50  0001 C CNN
+F 3 "" H 8350 3950 50  0001 C CNN
+	1    8350 3950
+	0    1    1    0   
+$EndComp
+$Comp
+L device:R R304
+U 1 1 5DE98EA2
+P 8350 4050
+F 0 "R304" V 8300 3800 50  0000 C CNN
+F 1 "2k7" V 8300 4250 50  0000 C CNN
+F 2 "" V 8280 4050 50  0001 C CNN
+F 3 "" H 8350 4050 50  0001 C CNN
+	1    8350 4050
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	7600 3750 8200 3750
+Wire Wire Line
+	7650 3850 8200 3850
+Wire Wire Line
+	7500 3950 8200 3950
+Wire Wire Line
+	7450 4050 8200 4050
+Wire Wire Line
+	8500 3750 8700 3750
+Wire Wire Line
+	8500 3850 8700 3850
+Wire Wire Line
+	8500 3950 8700 3950
+Wire Wire Line
+	8500 4050 8700 4050
 Wire Bus Line
-	1950 5700 10200 5700
-Wire Bus Line
-	10200 1950 10200 5700
+	1950 5700 10100 5700
 Wire Bus Line
 	4750 1700 4750 5600
 Wire Bus Line
+	10200 1950 10200 5600
+Wire Bus Line
 	1850 2900 1850 6650
-Connection ~ 4450 7300
 $EndSCHEMATC

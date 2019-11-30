@@ -10,4 +10,5 @@
   (lib (name Interface)(type Legacy)(uri ${KIPRJMOD}/Interface.lib)(options "")(descr ""))
   (lib (name intel)(type Legacy)(uri ${KIPRJMOD}/intel.lib)(options "")(descr ""))
   (lib (name MC6850)(type Legacy)(uri ${KIPRJMOD}/MC6850.lib)(options "")(descr ""))
+  (lib (name Connector_Generic)(type Legacy)(uri ${KIPRJMOD}/Connector_Generic.lib)(options "")(descr ""))
 )
