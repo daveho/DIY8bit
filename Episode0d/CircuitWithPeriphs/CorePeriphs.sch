@@ -303,8 +303,6 @@ Entry Bus Bus
 	1850 5800 1950 5700
 Entry Bus Bus
 	4650 5700 4750 5600
-Wire Bus Line
-	4650 5700 1950 5700
 Wire Wire Line
 	5150 2500 4850 2500
 Wire Wire Line
@@ -426,13 +424,177 @@ Connection ~ 6600 2200
 Wire Wire Line
 	6600 2200 6600 1700
 Wire Wire Line
-	6350 1900 7000 1900
-Wire Wire Line
 	6350 2400 7000 2400
 Wire Wire Line
 	6350 2900 7000 2900
+$Comp
+L MC6850:MC6850 U303
+U 1 1 5DE258A4
+P 8750 2200
+F 0 "U303" H 8750 3115 50  0000 C CNN
+F 1 "MC6850" H 8750 3024 50  0000 C CNN
+F 2 "MODULE" H 8750 2200 50  0001 C CNN
+F 3 "DOCUMENTATION" H 8750 2200 50  0001 C CNN
+	1    8750 2200
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8000 2750 7900 2750
+Wire Wire Line
+	7900 2750 7900 3300
+Wire Wire Line
+	7900 3300 7750 3300
+Wire Wire Line
+	7750 3300 7750 3200
+$Comp
+L power:VCC #PWR?
+U 1 1 5DE28823
+P 7750 3200
+F 0 "#PWR?" H 7750 3050 50  0001 C CNN
+F 1 "VCC" H 7767 3373 50  0000 C CNN
+F 2 "" H 7750 3200 50  0001 C CNN
+F 3 "" H 7750 3200 50  0001 C CNN
+	1    7750 3200
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8000 1650 7900 1650
+Wire Wire Line
+	7900 1650 7900 1150
+Wire Wire Line
+	7900 1150 7750 1150
+Wire Wire Line
+	7750 1150 7750 1250
+$Comp
+L power:GND #PWR?
+U 1 1 5DE2A229
+P 7750 1250
+F 0 "#PWR?" H 7750 1000 50  0001 C CNN
+F 1 "GND" H 7755 1077 50  0000 C CNN
+F 2 "" H 7750 1250 50  0001 C CNN
+F 3 "" H 7750 1250 50  0001 C CNN
+	1    7750 1250
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9500 1850 10100 1850
+Wire Wire Line
+	9500 1950 10100 1950
+Wire Wire Line
+	9500 2050 10100 2050
+Wire Wire Line
+	9500 2150 10100 2150
+Wire Wire Line
+	9500 2250 10100 2250
+Wire Wire Line
+	9500 2350 10100 2350
+Wire Wire Line
+	9500 2450 10100 2450
+Wire Wire Line
+	9500 2550 10100 2550
+Text Label 9900 1850 0    50   ~ 0
+D0
+Text Label 9900 1950 0    50   ~ 0
+D1
+Text Label 9900 2050 0    50   ~ 0
+D2
+Text Label 9900 2150 0    50   ~ 0
+D3
+Text Label 9900 2250 0    50   ~ 0
+D4
+Text Label 9900 2350 0    50   ~ 0
+D5
+Text Label 9900 2450 0    50   ~ 0
+D6
+Text Label 9900 2550 0    50   ~ 0
+D7
+Entry Wire Line
+	10100 1850 10200 1950
+Entry Wire Line
+	10100 1950 10200 2050
+Entry Wire Line
+	10100 2050 10200 2150
+Entry Wire Line
+	10100 2150 10200 2250
+Entry Wire Line
+	10100 2250 10200 2350
+Entry Wire Line
+	10100 2350 10200 2450
+Entry Wire Line
+	10100 2450 10200 2550
+Entry Wire Line
+	10100 2550 10200 2650
+Wire Wire Line
+	9500 2650 9600 2650
+Wire Wire Line
+	9600 2650 9600 700 
+Wire Wire Line
+	9600 700  6600 700 
+Connection ~ 6600 700 
+Text HLabel 6100 600  0    50   Input ~ 0
+R~W
+Wire Wire Line
+	9500 2750 9700 2750
+Wire Wire Line
+	9700 2750 9700 600 
+Wire Wire Line
+	9700 600  6100 600 
+Wire Wire Line
+	7900 1900 7900 1850
+Wire Wire Line
+	7900 1850 8000 1850
+Wire Wire Line
+	6350 1900 7900 1900
+Wire Wire Line
+	8000 1950 7900 1950
+Wire Wire Line
+	7900 1950 7900 1900
+Connection ~ 7900 1900
+Text HLabel 1100 5150 0    50   Input ~ 0
+~6850_CS
+Wire Wire Line
+	1100 5150 7550 5150
+Wire Wire Line
+	7550 5150 7550 2450
+Wire Wire Line
+	7550 2450 8000 2450
+Wire Wire Line
+	8000 2350 7900 2350
+Wire Wire Line
+	7900 2350 7900 2550
+Connection ~ 7900 2750
+Wire Wire Line
+	8000 2550 7900 2550
+Connection ~ 7900 2550
+Wire Wire Line
+	7900 2550 7900 2750
+$Comp
+L device:C C303
+U 1 1 5DEAC8D1
+P 4950 7050
+F 0 "C303" H 5065 7096 50  0000 L CNN
+F 1 "C" H 5065 7005 50  0000 L CNN
+F 2 "" H 4988 6900 50  0001 C CNN
+F 3 "" H 4950 7050 50  0001 C CNN
+	1    4950 7050
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4950 6900 4950 6750
+Wire Wire Line
+	4950 7200 4950 7300
+Wire Wire Line
+	4950 6750 4450 6750
+Connection ~ 4450 6750
+Wire Wire Line
+	4950 7300 4450 7300
+Wire Bus Line
+	1950 5700 10200 5700
+Wire Bus Line
+	10200 1950 10200 5700
 Wire Bus Line
 	4750 1700 4750 5600
 Wire Bus Line
 	1850 2900 1850 6650
+Connection ~ 4450 7300
 $EndSCHEMATC
