@@ -48,12 +48,12 @@ entry
 	;; Initialize the i82c54 device
 	jsr i82c54_init
 
-;	;; Initialize the ACIA
-;	jsr acia_init
-;
-;	;; ACIA test: transmit a message
-;	ldx #ALL_YOUR_BASE
-;	jsr acia_send_string
+	;; Initialize the ACIA
+	jsr acia_init
+
+	;; ACIA test: transmit a message
+	ldx #ALL_YOUR_BASE
+	jsr acia_send_string
 
 	;; clear count variable
 	lda #0
