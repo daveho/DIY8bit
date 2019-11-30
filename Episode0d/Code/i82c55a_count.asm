@@ -1,8 +1,4 @@
-	INCLUDE "i82c55a.asm"
-	INCLUDE "i82c54.asm"
-
-	;; Device includes need to precede the port includes
-	INCLUDE "ports.asm"
+	INCLUDE "iodev.asm"
 
 	;; The first 4K of the upper 32K is not used because it
 	;; is reserved for I/O devices.

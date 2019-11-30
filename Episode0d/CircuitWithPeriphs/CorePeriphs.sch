@@ -56,9 +56,9 @@ F 3 "" H 2950 4650 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	2250 2400 850  2400
+	2250 2400 1450 2400
 Wire Wire Line
-	2250 2500 850  2500
+	2250 2500 1350 2500
 Wire Wire Line
 	2250 1900 1950 1900
 Wire Wire Line
@@ -315,10 +315,6 @@ Text Label 950  2400 0    50   ~ 0
 A0
 Text Label 950  2500 0    50   ~ 0
 A1
-Wire Wire Line
-	5150 2700 4850 2700
-Wire Wire Line
-	5150 2800 4850 2800
 Text Label 4900 2700 0    50   ~ 0
 A0
 Text Label 4900 2800 0    50   ~ 0
@@ -338,14 +334,14 @@ F 3 "" H 5950 1100 50  0001 C CNN
 	1    5950 1100
 	1    0    0    -1  
 $EndComp
-Text HLabel 4350 5050 0    50   Input ~ 0
+Text HLabel 4150 5050 0    50   Input ~ 0
 ~82C54_CS
 Wire Wire Line
-	5150 3000 4650 3000
+	5150 3000 4600 3000
 Wire Wire Line
-	4650 3000 4650 5050
+	4600 3000 4600 5050
 Wire Wire Line
-	4650 5050 4350 5050
+	4600 5050 4150 5050
 Wire Wire Line
 	5750 3300 5750 3450
 $Comp
@@ -709,6 +705,36 @@ Wire Wire Line
 	8500 3950 8700 3950
 Wire Wire Line
 	8500 4050 8700 4050
+Text Label 7950 2650 0    50   ~ 0
+A0
+Wire Wire Line
+	4400 2700 4400 5500
+Wire Wire Line
+	4400 5500 1450 5500
+Wire Wire Line
+	1450 5500 1450 2400
+Wire Wire Line
+	4400 2700 5150 2700
+Connection ~ 1450 2400
+Wire Wire Line
+	1450 2400 850  2400
+Wire Wire Line
+	4500 2800 4500 5600
+Wire Wire Line
+	4500 5600 1350 5600
+Wire Wire Line
+	1350 5600 1350 2500
+Wire Wire Line
+	4500 2800 5150 2800
+Connection ~ 1350 2500
+Wire Wire Line
+	1350 2500 850  2500
+Wire Wire Line
+	7300 2650 7300 5500
+Wire Wire Line
+	7300 5500 4400 5500
+Wire Wire Line
+	7300 2650 8000 2650
 Wire Bus Line
 	1950 5700 10100 5700
 Wire Bus Line
@@ -717,4 +743,5 @@ Wire Bus Line
 	10200 1950 10200 5600
 Wire Bus Line
 	1850 2900 1850 6650
+Connection ~ 4400 5500
 $EndSCHEMATC
