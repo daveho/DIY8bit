@@ -1,6 +1,6 @@
 # DIY 8-bit computer, Episode 0D
 
-Link to video: TODO, coming soon
+Link to video: <https://youtu.be/YS9_oOxCDp8>
 
 In this episode we add a ZIF socket to the backplane (to allow
 easy insertion and removal of the EEPROM during firmware development),
@@ -25,7 +25,7 @@ Link to passive backplane design: <https://github.com/daveho/easycpu/tree/master
 The USB to serial breakout module I use is this one (this is a random
 AliExpress link): [FT232RL breakout module at AliExpress](https://www.aliexpress.com/item/32481520135.html?spm=a2g0o.productlist.0.0.4b60167cbK8WUB&algo_pvid=3afa4b8a-bc32-4eb2-8a0c-f9376003cf0a&algo_expid=3afa4b8a-bc32-4eb2-8a0c-f9376003cf0a-0&btsid=68c0a29e-85d7-4c57-8f76-9afcbfc6fa93&ws_ab_test=searchweb0_0,searchweb201602_2,searchweb201603_55)
 
-I learned out to interface an ACIA to a FT232RL breakout from [Grant
+I learned how to interface an ACIA to a FT232RL breakout from [Grant
 Searle's minimal 6809 system](https://searle.x10host.com/6809/Simple6809.html).
 
 Since one signal (R/-W) was added to the backplane, here is an updated
