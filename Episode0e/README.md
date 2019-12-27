@@ -1,6 +1,6 @@
 # DIY 8-bit computer, Episode 0E
 
-Link to video: TODO
+Link to video: <https://youtu.be/j3bbaLHWuI0>
 
 In this episode, we add three peripheral chips to the second
 module (the "peripheral" module).  A hardware fault results in
