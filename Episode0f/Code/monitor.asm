@@ -55,6 +55,8 @@ vmoncmdlen RZB 1
 
 ;; Current address used in the monitor
 vmonaddr RZB 2
+;
+;vrcount RZB 1
 
 ;;**********************************************************************
 ;; Code
@@ -90,9 +92,21 @@ entry
 	; Set initial monitor address to 0
 	ldd #0
 	std vmonaddr
+;
+;	lda #0
+;	sta vrcount
 
 main_loop
+	; Print current address as part of prompt
+	ldd vmonaddr
+	jsr mon_print_hex_d
+	ldx #MONITOR_PROMPT
+	jsr acia_send_string
+
 	jsr mon_read_command          ; read user command
+	jsr mon_exec_command          ; attempt to execute the command
+;	ldx #vmonbuf
+;	jsr acia_send_string
 
 	jmp main_loop                 ; repeat main loop
 
@@ -214,6 +228,88 @@ mon_skip_ws
 
 	leax -1,X                 ; adjust X to point to first non-WS character
 	rts
+
+;; Print the hex representation of byte in A.
+;; Clobbers B and X, modifies A.
+mon_print_hex
+	leas -3,S                ; reserve 3 bytes on user stack
+	tfr S, X                 ; put buffer address in X
+	jsr mon_fmt_hex          ; format byte as hex
+	tfr S, X                 ; restore buffer address to X
+	lda #0                   ; nul terminator
+	sta 2,S                  ; store nul terminator
+	jsr acia_send_string     ; print the string
+	leas 3,S                 ; restore user stack
+	rts
+
+;; Print the hex representation of the 16 bit value in D.
+;; Modifies A and B (i.e., modifies D), clobbers X.
+mon_print_hex_d
+	leas -5,S                ; reserve 5 bytes on user stack
+	tfr S, X                 ; put buffer address in X
+	jsr mon_fmt_hex_d        ; format value as hex
+	tfr S, X                 ; restore buffer address to X
+	lda #0                   ; nul terminator
+	sta 4,S                  ; store the nul terminator
+	jsr acia_send_string     ; print the string
+	leas 5,S                 ; restore user stack
+	rts
+
+;; Format the hex representation of byte in A, storing
+;; the (2 byte) representation at the address specified by X.
+;; Clobbers A, B, and Y.
+mon_fmt_hex
+	ldy #HEX_DIGITS
+	tfr A, B                 ; copy A to B
+	andb #$0F                ; get low 4 bits
+	ldb B,Y                  ; convert to hex
+	stb 1,X                  ; store in second byte of dest buffer
+	lsra                     ; get high 4 bits by shifting right
+	lsra
+	lsra
+	lsra
+	lda A,Y                  ; convert to hex
+	sta ,X                   ; store in first byte of dest buffer
+	rts
+
+;; Format the hex representation of the 2-byte value in D,
+;; storing the (4 byte) representation at the address specified
+;; by X.  Clobbers A, B, and Y, modifies X.
+mon_fmt_hex_d
+	pshs B                   ; save B (mon_fmt_hex clobbers it)
+	jsr mon_fmt_hex          ; format MSB of value (in A)
+	puls B                   ; restore B
+	tfr B, A                 ; copy B (LSB) in A
+	leax 2,X                 ; advance X to correct position in dest buffer
+	jsr mon_fmt_hex          ; format LSB of value
+	rts
+
+;; Convert the single hex digit in A to a numeric value.
+;; Result is returned in A.  Clobbers B and Y.  Does NOT touch X.
+mon_hex_convert
+	; If character is lower case, convert it to upper case.
+	cmpa #97                 ; compare to 'a'
+	blo 50F                  ; not lower case, no conversion needed
+	suba #(97-65)            ; convert to upper case
+
+50
+	ldy #HEX_DIGITS          ; load Y with base addr of hex digits string
+	ldb #0                   ; use B as index
+51
+	cmpb #16                 ; at end of hex digits string?
+	beq 66F                  ; if at end, fail (input digit is invalid)
+	cmpa B,Y                 ; compare hex digit to table entry
+	beq 70F                  ; if equal, we found a valid entry
+	incb                     ; advance to next entry
+	jmp 51B                  ; continue loop
+
+66
+	lda #0                   ; return 0 for invalid input
+	rts                      ; unsuccessful return
+
+70
+	tfr B, A                 ; B is the correct value, transfer to A
+	rts                      ; successful return
 
 ;;------------------------------------------------------------------
 ;; Monitor command routines
@@ -340,6 +436,10 @@ acia_recv
 	ldb PORT_ACIA_STATUS
 	andb #ACIA_STATUS_RDRF
 	beq 1B
+;
+;	inc vrcount
+;	lda vrcount
+;	sta PORT_I82C55A_A
 
 	; Read the data byte
 	lda PORT_ACIA_RECV
@@ -352,6 +452,8 @@ acia_recv
 
 ;; This is printed on startup
 ALL_YOUR_BASE FCB "All your base are belong to us",CR,NL,0
+
+HEX_DIGITS FCB "0123456789ABCDEF"
 
 ;; ROM monitor prompt
 MONITOR_PROMPT FCB "> ",0
