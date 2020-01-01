@@ -1,3 +1,7 @@
+;;**********************************************************************
+;; ROM monitor for DIY 6809 computer
+;;**********************************************************************
+
 	INCLUDE "iodev.asm"
 
 ;;**********************************************************************
@@ -21,13 +25,41 @@ ACIA_CLKDIV EQU 6
 ;; synchronization of the rx/tx data and clocks.
 ACIA_INIT EQU (ACIA_CTRL_CLKDIV_16 | ACIA_CTRL_SEL_8N1 | ACIA_CTRL_XMIT_RTS_LOW_TX_INT_DIS | ACIA_CTRL_RX_INT_DIS)
 
+;; Number of characters that can be stored in the command buffer
+;; (actual buffer is 1 larger to allow room for the nul terminator.)
+;; This size is chosen to allow ihex records with 32 data bytes to
+;; be read (these will be 75 bytes).
+MONITOR_BUFSIZE equ 99
+
 ;;**********************************************************************
-;; Variables
+;; Variables (RAM area)
+;;
+;; Since the goal is to generate a ROM image, this
+;; part is discarded.  It's very useful, however, to have
+;; the assembler determine the addresses of variables
+;; and determine the overall amount of memory needed for
+;; them.
 ;;**********************************************************************
-count_var EQU $1000
+
+	ORG $0000
+
+;; Leave the first 16 bytes unused
+vunused RZB 16
+
+;; Command buffer used by the monitor
+vmonbuf RZB (MONITOR_BUFSIZE+1)
+
+;; Stores the length of the command read into the command
+;; buffer most recently (not including nul terminator)
+vmoncmdlen RZB 1
+
+;; Current address used in the monitor
+vmonaddr RZB 2
 
 ;;**********************************************************************
 ;; Code
+;;
+;; Everything from $8000 onward is part of the ROM image.
 ;;**********************************************************************
 
 	;; The first 4K of the upper 32K is not used because it
@@ -51,23 +83,157 @@ entry
 	;; Initialize the ACIA
 	jsr acia_init
 
-	;; ACIA test: transmit a message
+	;; Welcome message
 	ldx #ALL_YOUR_BASE
 	jsr acia_send_string
 
-	;; clear count variable
-	lda #0
-	sta count_var
+	; Set initial monitor address to 0
+	ldd #0
+	std vmonaddr
 
 main_loop
-	lda count_var                 ; load count variable
-	sta PORT_I82C55A_A            ; store to i82c55a port A register
+	jsr mon_read_command          ; read user command
 
-	inca                          ; increment count
-	sta count_var                 ; store updated value to count
-
-	jsr delay                     ; delay
 	jmp main_loop                 ; repeat main loop
+
+;;------------------------------------------------------------------
+;; Monitor routines
+;;------------------------------------------------------------------
+
+;; Read a line of text into the monitor command buffer.
+;; Clobbers A, B, and X.
+mon_read_command
+	; X points to where next character will be stored
+	ldx #vmonbuf
+
+1
+	jsr acia_recv                    ; read a character
+	jsr acia_send                    ; echo the character
+	cmpa #NL                         ; was it a newline?
+	beq 3F                           ; if so, we're done
+
+	cmpa #CR                         ; was it a CR? (we ignore these)
+	beq 2F
+
+	cmpx #(vmonbuf+MONITOR_BUFSIZE)  ; buf size exceeded?
+	beq 2F
+
+	sta ,X+                          ; store the character in the buffer
+
+2
+	jmp 1B                           ; continue reading characters
+
+3
+	; Compute command length
+	tfr X, D
+	subd #vmonbuf
+	stb vmoncmdlen
+
+;	; Just for debugging, print the command length
+;	tfr b, a
+;	jsr mon_print_hex
+
+	; Store nul terminator
+	lda #0
+	sta ,X+
+
+	; Done
+	rts
+
+;; Execute the command currently stored in the command buffer.
+;; Clobbers A, B, X, and Y.
+mon_exec_command
+	ldx #vmonbuf
+
+	jsr mon_skip_ws            ; Seach for first non-WS byte
+
+	; Dispatch logic
+	ldy #MONITOR_COMMANDS
+1
+	ldb ,Y+                    ; get next defined command byte
+
+	cmpb #0                    ; reached end of defined commands?
+	beq 66F                    ; display error message and return
+
+	cmpb ,X                    ; entered command matches? (X points to command)
+	beq 20F                    ; get ready to dispatch
+	jmp 1B                     ; continue matching against defined commands
+
+20
+	; Increment X to advance past the command character,
+	; and skip whitespace again.  This will position X at
+	; the address of the first non-WS character after
+	; the command.
+	leax 1,X
+	jsr mon_skip_ws
+
+	; At this point, Y is the address of the matched command
+	; character in the MONITOR_COMMANDS string.
+	; Subtract the base address of MONITOR_COMMANDS+1 from it to
+	; recover the index of the command.  (The +1 is because there
+	; was one extra increment to Y that needs to be undone.)
+	tfr Y, D                   ; copy Y to D
+	subd #(MONITOR_COMMANDS + 1)
+	; B (the LSB of D) now contains the index.
+	; Shift it left (to multiply it by 2.)
+	lslb
+
+	; Compute the address of the handler routine.
+	addd #MONITOR_DISPATCH_TABLE
+
+	; Fetch address of handler.
+	; Note that this is an indirect reference because
+	; D contains the address of the memory location containing
+	; the address we want to dispatch to.
+	tfr D, Y
+	ldy ,Y
+
+	; Dispatch to the handler!
+	jsr ,Y
+
+	jmp 99F                    ; done
+
+66
+	ldx #MONITOR_ERR_MSG
+	jsr acia_send_string
+
+99
+	rts
+
+;; In nul-terminated string pointed to by X, skip leading
+;; whitespace (space and tab) characters.  X is updated
+;; to point to the first non-WS character, and the value
+;; of the first non-WS character is stored in A.
+mon_skip_ws
+1
+	lda ,X+                   ; get character from buffer (advancing X)
+	cmpa #SPACE               ; is a space?
+	beq 1B                    ; continue searching
+	cmpa #TAB                 ; is a tab?
+	beq 1B                    ; continue searching
+
+	leax -1,X                 ; adjust X to point to first non-WS character
+	rts
+
+;;------------------------------------------------------------------
+;; Monitor command routines
+;;------------------------------------------------------------------
+
+;; Question command: prints an identification string
+mon_ques_cmd
+	ldx #MONITOR_IDENT_MSG
+	jsr acia_send_string
+	rts
+
+;; 'e' (echo) command: just prints back the portion of the command
+;; following the command character
+mon_e_cmd
+	jsr acia_send_string
+	rts
+
+;;------------------------------------------------------------------
+;; Delay subroutines
+;;------------------------------------------------------------------
 
 ;; Delay routine: clobbers A and X.
 delay
@@ -87,6 +253,10 @@ delay_inner
 	cmpx #$fff
 	blo 1B
 	rts
+
+;;------------------------------------------------------------------
+;; Hardware device routines
+;;------------------------------------------------------------------
 
 i82c55a_init
 	; For now, set both groups to mode 0, and configure all ports
@@ -180,7 +350,27 @@ acia_recv
 ;; Constant data
 ;;**********************************************************************
 
+;; This is printed on startup
 ALL_YOUR_BASE FCB "All your base are belong to us",CR,NL,0
+
+;; ROM monitor prompt
+MONITOR_PROMPT FCB "> ",0
+
+;; Monitor error message
+MONITOR_ERR_MSG FCB "?",CR,NL,0
+
+;; Monitor identification message (printed when '?' command is entered)
+MONITOR_IDENT_MSG FCB "6809 ROM monitor, (c) 2019-2020 by daveho hacks",CR,NL,0
+
+;; Monitor command codes.
+;; This must be NUL-terminated.
+MONITOR_COMMANDS FCB "?e",0
+
+;; Handler routines for monitor commands.
+;; Order should match MONITOR_COMMANDS.
+MONITOR_DISPATCH_TABLE
+	FDB mon_ques_cmd
+	FDB mon_e_cmd
 
 ;;**********************************************************************
 ;; Interrupt vectors
