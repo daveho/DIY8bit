@@ -394,19 +394,23 @@ mon_parse_ihex
 	lda 0,S                       ; retrieve the data length
 	lsla                          ; multiply by 2 (2 hex digits per data byte)
 	adda #9                       ; colon, data len, address, and rec type
-;	pshs A, B, X
-;	jsr mon_print_hex
-;	puls A, B, X
-;	ldb vmoncmdlen                ; load command length into B
-;	pshs A, B, X
-;	tfr B, A
-;	jsr mon_print_hex
-;	puls A, B, X
 	cmpa vmoncmdlen               ; compare min required to command length
 	bhi 66f                       ; error if min required > command length
 
 	; Load data into memory!
-	; TODO
+	ldb 0,S                       ; use B as byte count
+	ldy 2,S                       ; use Y as destination address
+44
+	cmpb #0                       ; has byte count reached 0?
+	beq 80f                       ; if so, done
+	pshs B, Y                     ; preserve B and Y
+	jsr mon_parse_hex             ; parse one byte of hex data
+	puls B, Y                     ; restore B and Y
+	sta ,Y+                       ; store byte value and increment Y
+	decb                          ; decrement byte count
+	jmp 44b                       ; continue loop
+
+80
 	lda #IHEX_DATA
 	jmp 99f
 
