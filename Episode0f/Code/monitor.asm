@@ -362,6 +362,36 @@ mon_a_cmd
 	std vmonaddr
 	rts
 
+;; Command handler for 'r' (read) command.
+;; Parses two hex digits and prints out the hex representation
+;; of that many values from memory at the current address.
+;; Updates the current address by the number of bytes read.
+mon_r_cmd
+	jsr mon_parse_hex             ; get number of bytes to read
+	tfr A, B                      ; put # bytes to read in B
+	ldx vmonaddr                  ; put current monitor addr in X
+
+	; loop to print bytes
+10
+	cmpb #0                       ; more bytes to read?
+	beq 99f                       ; if not, we're done
+
+	pshs B, X                     ; save B and X
+	lda ,X                        ; get next byte
+	jsr mon_print_hex             ; print hex representation of byte
+	puls B, X                     ; restore B and X
+	leax 1,X                      ; advance to next byte
+	decb                          ; one less byte to read
+	jmp 10b
+
+99
+	stx vmonaddr                  ; store updated address
+
+	ldx #CRLF
+	jsr acia_send_string
+
+	rts
+
 ;;------------------------------------------------------------------
 ;; Delay subroutines
 ;;------------------------------------------------------------------
@@ -500,7 +530,7 @@ MONITOR_IDENT_MSG FCB "6809 ROM monitor, 2019-2020 by daveho hacks",CR,NL,0
 
 ;; Monitor command codes.
 ;; This must be NUL-terminated.
-MONITOR_COMMANDS FCB "?ea",0
+MONITOR_COMMANDS FCB "?ear",0
 
 ;; Handler routines for monitor commands.
 ;; Order should match MONITOR_COMMANDS.
@@ -508,6 +538,7 @@ MONITOR_DISPATCH_TABLE
 	FDB mon_ques_cmd
 	FDB mon_e_cmd
 	FDB mon_a_cmd
+	FDB mon_r_cmd
 
 ;;**********************************************************************
 ;; Interrupt vectors
