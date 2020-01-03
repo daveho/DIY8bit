@@ -225,27 +225,27 @@ mon_skip_ws
 ;; Print the hex representation of byte in A.
 ;; Clobbers B and X, modifies A.
 mon_print_hex
-	leas -3,S                ; reserve 3 bytes on user stack
+	leas -3,S                ; reserve 3 bytes on stack
 	tfr S, X                 ; put buffer address in X
 	jsr mon_fmt_hex          ; format byte as hex
 	tfr S, X                 ; restore buffer address to X
 	lda #0                   ; nul terminator
 	sta 2,S                  ; store nul terminator
 	jsr acia_send_string     ; print the string
-	leas 3,S                 ; restore user stack
+	leas 3,S                 ; restore stack
 	rts
 
 ;; Print the hex representation of the 16 bit value in D.
 ;; Modifies A and B (i.e., modifies D), clobbers X.
 mon_print_hex_d
-	leas -5,S                ; reserve 5 bytes on user stack
+	leas -5,S                ; reserve 5 bytes on stack
 	tfr S, X                 ; put buffer address in X
 	jsr mon_fmt_hex_d        ; format value as hex
 	tfr S, X                 ; restore buffer address to X
 	lda #0                   ; nul terminator
 	sta 4,S                  ; store the nul terminator
 	jsr acia_send_string     ; print the string
-	leas 5,S                 ; restore user stack
+	leas 5,S                 ; restore stack
 	rts
 
 ;; Format the hex representation of byte in A, storing
@@ -308,7 +308,7 @@ mon_hex_convert
 ;; is specified by X, putting the result in A.
 ;; Clobbers B and Y.  Increments X by 2.
 mon_parse_hex
-	; One byte is reserved on user stack for a local variable
+	; One byte is reserved on stack for a local variable
 	; (the high nybble of the parsed hex value)
 
 	leas -1,S                ; reserve 1 byte for local variable
