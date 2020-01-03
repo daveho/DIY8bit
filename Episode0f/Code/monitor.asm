@@ -29,7 +29,7 @@ ACIA_INIT EQU (ACIA_CTRL_CLKDIV_16 | ACIA_CTRL_SEL_8N1 | ACIA_CTRL_XMIT_RTS_LOW_
 ;; (actual buffer is 1 larger to allow room for the nul terminator.)
 ;; This size is chosen to allow ihex records with 32 data bytes to
 ;; be read (these will be 75 bytes).
-MONITOR_BUFSIZE equ 99
+MONTIOR_MAXCMDLEN equ 99
 
 ;;**********************************************************************
 ;; Variables (RAM area)
@@ -47,7 +47,7 @@ MONITOR_BUFSIZE equ 99
 vunused RZB 16
 
 ;; Command buffer used by the monitor
-vmonbuf RZB (MONITOR_BUFSIZE+1)
+vmonbuf RZB (MONTIOR_MAXCMDLEN+1)
 
 ;; Stores the length of the command read into the command
 ;; buffer most recently (not including nul terminator)
@@ -55,8 +55,6 @@ vmoncmdlen RZB 1
 
 ;; Current address used in the monitor
 vmonaddr RZB 2
-;
-;vrcount RZB 1
 
 ;;**********************************************************************
 ;; Code
@@ -92,9 +90,6 @@ entry
 	; Set initial monitor address to 0
 	ldd #0
 	std vmonaddr
-;
-;	lda #0
-;	sta vrcount
 
 main_loop
 	; Print current address as part of prompt
@@ -105,8 +100,6 @@ main_loop
 
 	jsr mon_read_command          ; read user command
 	jsr mon_exec_command          ; attempt to execute the command
-;	ldx #vmonbuf
-;	jsr acia_send_string
 
 	jmp main_loop                 ; repeat main loop
 
@@ -129,7 +122,7 @@ mon_read_command
 	cmpa #CR                         ; was it a CR? (we ignore these)
 	beq 2F
 
-	cmpx #(vmonbuf+MONITOR_BUFSIZE)  ; buf size exceeded?
+	cmpx #(vmonbuf+MONTIOR_MAXCMDLEN) ; buf size exceeded?
 	beq 2F
 
 	sta ,X+                          ; store the character in the buffer
@@ -311,6 +304,40 @@ mon_hex_convert
 	tfr B, A                 ; B is the correct value, transfer to A
 	rts                      ; successful return
 
+;; Parse the 2 digit hex value whose address
+;; is specified by X, putting the result in A.
+;; Clobbers B and Y.  Increments X by 2.
+mon_parse_hex
+	; One byte is reserved on user stack for a local variable
+	; (the high nybble of the parsed hex value)
+
+	leas -1,S                ; reserve 1 byte for local variable
+
+	lda ,X+                  ; get first hex digit (high nybble)
+	jsr mon_hex_convert      ; convert it
+	lsla                     ; left shift the value into position
+	lsla
+	lsla
+	lsla
+	sta ,S                   ; preserve high nybble
+	lda ,X+                  ; get second hex digit (low nybble)
+	jsr mon_hex_convert      ; convert it
+	ora ,S                   ; combine high and low nybbles
+
+	leas 1,S                 ; deallocate space reserved for local variable
+
+	rts
+
+;; Parse the 4 digit hex value whose address is specified by X,
+;; putting the result in D.  Increments X by 4.  Clobbers Y.
+mon_parse_hex_d
+	jsr mon_parse_hex        ; convert first two (most significant) hex digits
+	pshs A                   ; preserve MSB
+	jsr mon_parse_hex        ; convert second two (least significant) hex digits
+	tfr A, B                 ; put LSB in B (which is the LSB of D)
+	puls A                   ; restore MSB (in A, which is the MSB of D)
+	rts                      ; done!
+
 ;;------------------------------------------------------------------
 ;; Monitor command routines
 ;;------------------------------------------------------------------
@@ -325,6 +352,14 @@ mon_ques_cmd
 ;; following the command character
 mon_e_cmd
 	jsr acia_send_string
+	ldx #CRLF
+	jsr acia_send_string
+	rts
+
+;; Command handler for 'a' (set address) command.
+mon_a_cmd
+	jsr mon_parse_hex_d
+	std vmonaddr
 	rts
 
 ;;------------------------------------------------------------------
@@ -436,10 +471,6 @@ acia_recv
 	ldb PORT_ACIA_STATUS
 	andb #ACIA_STATUS_RDRF
 	beq 1B
-;
-;	inc vrcount
-;	lda vrcount
-;	sta PORT_I82C55A_A
 
 	; Read the data byte
 	lda PORT_ACIA_RECV
@@ -455,6 +486,9 @@ ALL_YOUR_BASE FCB "All your base are belong to us",CR,NL,0
 
 HEX_DIGITS FCB "0123456789ABCDEF"
 
+;; CRLF string
+CRLF FCB CR,NL,0
+
 ;; ROM monitor prompt
 MONITOR_PROMPT FCB "> ",0
 
@@ -462,17 +496,18 @@ MONITOR_PROMPT FCB "> ",0
 MONITOR_ERR_MSG FCB "?",CR,NL,0
 
 ;; Monitor identification message (printed when '?' command is entered)
-MONITOR_IDENT_MSG FCB "6809 ROM monitor, (c) 2019-2020 by daveho hacks",CR,NL,0
+MONITOR_IDENT_MSG FCB "6809 ROM monitor, 2019-2020 by daveho hacks",CR,NL,0
 
 ;; Monitor command codes.
 ;; This must be NUL-terminated.
-MONITOR_COMMANDS FCB "?e",0
+MONITOR_COMMANDS FCB "?ea",0
 
 ;; Handler routines for monitor commands.
 ;; Order should match MONITOR_COMMANDS.
 MONITOR_DISPATCH_TABLE
 	FDB mon_ques_cmd
 	FDB mon_e_cmd
+	FDB mon_a_cmd
 
 ;;**********************************************************************
 ;; Interrupt vectors
