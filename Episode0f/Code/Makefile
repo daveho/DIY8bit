@@ -17,7 +17,7 @@ monitor.bin : monitor.asm $(INCLUDES)
 	rm -f monitor_temp.bin
 
 program : monitor.bin
-	eeprog -f monitor.bin -p /dev/ttyUSB0 -D -v -N
+	minipro -p AT28C256 -w monitor.bin
 
 clean :
 	rm -f *.bin *.lst
