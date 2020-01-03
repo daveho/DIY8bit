@@ -348,11 +348,6 @@ mon_parse_hex_d
 ;; at the specified address.
 ;; Returns the record type in A.
 mon_parse_ihex
-;	leax vmonaddr
-;	jsr acia_send_string
-;	leax CRLF
-;	jsr acia_send_string
-
 	; Reserve room for 4 bytes of local variables
 	; Variables are:
 	;    0,S    data len
@@ -367,7 +362,7 @@ mon_parse_ihex
 	blo 66f
 
 	; Load address of command buffer into X
-	leax vmonbuf
+	ldx #vmonbuf
 
 	; Verify that ihex record starts with a colon
 	lda ,X+
@@ -394,7 +389,25 @@ mon_parse_ihex
 	cmpa #IHEX_DATA
 	bne 66f                       ; record types other than data aren't supported
 
-	; TODO: read data and load it into memory
+	; Determine how many characters are needed in the command buffer
+	; in order to parse the correct amount of data
+	lda 0,S                       ; retrieve the data length
+	lsla                          ; multiply by 2 (2 hex digits per data byte)
+	adda #9                       ; colon, data len, address, and rec type
+;	pshs A, B, X
+;	jsr mon_print_hex
+;	puls A, B, X
+;	ldb vmoncmdlen                ; load command length into B
+;	pshs A, B, X
+;	tfr B, A
+;	jsr mon_print_hex
+;	puls A, B, X
+	cmpa vmoncmdlen               ; compare min required to command length
+	bhi 66f                       ; error if min required > command length
+
+	; Load data into memory!
+	; TODO
+	lda #IHEX_DATA
 	jmp 99f
 
 66
@@ -512,12 +525,12 @@ mon_u_cmd
 	jmp 1B
 
 66
-	leax INVALID_RECORD
+	ldx #INVALID_RECORD
 	jsr acia_send_string
 	jmp 99f
 
 80
-	leax UPLOAD_COMPLETE
+	ldx #UPLOAD_COMPLETE
 	jsr acia_send_string
 
 99
@@ -541,7 +554,7 @@ delay
 delay_inner
 	ldx #0
 1
-	leax 1, x
+	leax 1,X
 	cmpx #$fff
 	blo 1B
 	rts
