@@ -340,6 +340,14 @@ mon_parse_hex_d
 
 ;;------------------------------------------------------------------
 ;; Monitor command routines
+;;
+;; For all monitor command handler routines, the X register
+;; is set to point to the first character of the argument
+;; to the command.  For example, if the command was
+;;
+;;    w cafe
+;;
+;; then X will be pointing to the 'c' character.
 ;;------------------------------------------------------------------
 
 ;; Question command: prints an identification string
@@ -390,6 +398,32 @@ mon_r_cmd
 	ldx #CRLF
 	jsr acia_send_string
 
+	rts
+
+;; Command handler for 'w' (write) command.
+;; Parses hex byte values from the command string and
+;; writes them to memory at current monitor address.
+;; Current monitor address is incremented by number of
+;; byte values succesfully parsed.
+mon_w_cmd
+	ldy vmonaddr                  ; load monitor address into Y
+
+10
+	; check whether either of the next two bytes is the NUL terminator
+	lda ,X                        ; check first byte
+	beq 99f                       ; if NUL, we're done
+	lda 1,X                       ; check second byte
+	beq 99f                       ; if NUL, we're done
+
+	; next two bytes aren't NUL, so convert to hex
+	pshs Y                        ; save Y
+	jsr mon_parse_hex             ; convert two hex digits to int
+	puls Y                        ; restore Y
+	sta ,Y+                       ; save byte value and increment Y
+	jmp 10b
+
+99
+	sty vmonaddr                  ; save updated Y back to monitor addr
 	rts
 
 ;;------------------------------------------------------------------
@@ -530,7 +564,7 @@ MONITOR_IDENT_MSG FCB "6809 ROM monitor, 2019-2020 by daveho hacks",CR,NL,0
 
 ;; Monitor command codes.
 ;; This must be NUL-terminated.
-MONITOR_COMMANDS FCB "?ear",0
+MONITOR_COMMANDS FCB "?earw",0
 
 ;; Handler routines for monitor commands.
 ;; Order should match MONITOR_COMMANDS.
@@ -539,6 +573,7 @@ MONITOR_DISPATCH_TABLE
 	FDB mon_e_cmd
 	FDB mon_a_cmd
 	FDB mon_r_cmd
+	FDB mon_w_cmd
 
 ;;**********************************************************************
 ;; Interrupt vectors
