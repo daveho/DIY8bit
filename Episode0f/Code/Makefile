@@ -19,5 +19,8 @@ monitor.bin : monitor.asm $(INCLUDES)
 program : monitor.bin
 	minipro -p AT28C256 -w monitor.bin
 
+testprog.ihx : testprog.asm
+	asm6809 -H testprog.asm -o $@
+
 clean :
 	rm -f *.bin *.lst

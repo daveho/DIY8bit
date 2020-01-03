@@ -31,6 +31,11 @@ ACIA_INIT EQU (ACIA_CTRL_CLKDIV_16 | ACIA_CTRL_SEL_8N1 | ACIA_CTRL_XMIT_RTS_LOW_
 ;; be read (these will be 75 bytes).
 MONTIOR_MAXCMDLEN equ 99
 
+;; Intel hex record types.
+IHEX_DATA EQU 0
+IHEX_EOF EQU 1
+IHEX_ERROR EQU 99
+
 ;;**********************************************************************
 ;; Variables (RAM area)
 ;;
@@ -338,6 +343,34 @@ mon_parse_hex_d
 	puls A                   ; restore MSB (in A, which is the MSB of D)
 	rts                      ; done!
 
+;; Parse the ihex record in the command buffer.
+;; If it is a data record, load the data into memory
+;; at the specified address.
+;; Returns the record type in A.
+mon_parse_ihex
+;	leax vmonaddr
+;	jsr acia_send_string
+;	leax CRLF
+;	jsr acia_send_string
+
+	leax vmonbuf
+
+	; Verify that ihex record starts with a colon
+	lda ,X+
+	cmpa #COLON
+	bne 66f
+
+	; TODO: actually do something
+
+	lda #IHEX_EOF
+	jmp 99f
+
+66
+	lda #IHEX_ERROR
+
+99
+	rts
+
 ;;------------------------------------------------------------------
 ;; Monitor command routines
 ;;
@@ -424,6 +457,36 @@ mon_w_cmd
 
 99
 	sty vmonaddr                  ; save updated Y back to monitor addr
+	rts
+
+;; Command handler for 'u' (upload ihex) command.
+mon_u_cmd
+1
+	; Just keep parsing ihex records until an EOF
+	; record or an invalid record is encountered
+	jsr mon_read_command
+	jsr mon_parse_ihex
+
+	; Record was invalid?
+	cmpa #IHEX_ERROR
+	beq 66f
+
+	; Reached the EOF record?
+	cmpa #IHEX_EOF
+	beq 80f
+
+	jmp 1B
+
+66
+	leax INVALID_RECORD
+	jsr acia_send_string
+	jmp 99f
+
+80
+	leax UPLOAD_COMPLETE
+	jsr acia_send_string
+
+99
 	rts
 
 ;;------------------------------------------------------------------
@@ -564,7 +627,7 @@ MONITOR_IDENT_MSG FCB "6809 ROM monitor, 2019-2020 by daveho hacks",CR,NL,0
 
 ;; Monitor command codes.
 ;; This must be NUL-terminated.
-MONITOR_COMMANDS FCB "?earw",0
+MONITOR_COMMANDS FCB "?earwu",0
 
 ;; Handler routines for monitor commands.
 ;; Order should match MONITOR_COMMANDS.
@@ -574,6 +637,11 @@ MONITOR_DISPATCH_TABLE
 	FDB mon_a_cmd
 	FDB mon_r_cmd
 	FDB mon_w_cmd
+	FDB mon_u_cmd
+
+INVALID_RECORD FCB "Invalid record",CR,NL,0
+
+UPLOAD_COMPLETE FCB "Upload complete",CR,NL,0
 
 ;;**********************************************************************
 ;; Interrupt vectors
