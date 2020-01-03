@@ -540,6 +540,12 @@ mon_u_cmd
 99
 	rts
 
+;; Command handler for 'x' (eXecute) command.
+;; It just starts executing code at the current monitor address.
+mon_x_cmd
+	ldy vmonaddr
+	jmp ,Y
+
 ;;------------------------------------------------------------------
 ;; Delay subroutines
 ;;------------------------------------------------------------------
@@ -678,7 +684,7 @@ MONITOR_IDENT_MSG FCB "6809 ROM monitor, 2019-2020 by daveho hacks",CR,NL,0
 
 ;; Monitor command codes.
 ;; This must be NUL-terminated.
-MONITOR_COMMANDS FCB "?earwu",0
+MONITOR_COMMANDS FCB "?earwux",0
 
 ;; Handler routines for monitor commands.
 ;; Order should match MONITOR_COMMANDS.
@@ -689,6 +695,7 @@ MONITOR_DISPATCH_TABLE
 	FDB mon_r_cmd
 	FDB mon_w_cmd
 	FDB mon_u_cmd
+	FDB mon_x_cmd
 
 INVALID_RECORD FCB "Invalid record",CR,NL,0
 
