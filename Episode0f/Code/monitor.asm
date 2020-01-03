@@ -353,6 +353,20 @@ mon_parse_ihex
 ;	leax CRLF
 ;	jsr acia_send_string
 
+	; Reserve room for 4 bytes of local variables
+	; Variables are:
+	;    0,S    data len
+	;    1,S    record type
+	;    2,S    address (two bytes)
+	leas -4,S
+
+	; Verify that the command buffer has enough data to be a valid
+	; Intel hex record.  There must be at least 11 bytes.
+	lda vmoncmdlen
+	cmpa #11
+	blo 66f
+
+	; Load address of command buffer into X
 	leax vmonbuf
 
 	; Verify that ihex record starts with a colon
@@ -360,15 +374,35 @@ mon_parse_ihex
 	cmpa #COLON
 	bne 66f
 
-	; TODO: actually do something
+	; Read byte count
+	jsr mon_parse_hex
+	sta 0,S
 
-	lda #IHEX_EOF
+	; Read address
+	jsr mon_parse_hex_d
+	std 2,S
+
+	; Read record type
+	jsr mon_parse_hex
+	sta 1,S
+
+	; Record type is EOF?
+	cmpa #IHEX_EOF
+	beq 99f
+
+	; Record type is data?
+	cmpa #IHEX_DATA
+	bne 66f                       ; record types other than data aren't supported
+
+	; TODO: read data and load it into memory
 	jmp 99f
 
 66
 	lda #IHEX_ERROR
 
 99
+	leas 4,S                      ; restore stack pointer
+
 	rts
 
 ;;------------------------------------------------------------------
