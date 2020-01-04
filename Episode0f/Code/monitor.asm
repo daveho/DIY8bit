@@ -546,6 +546,13 @@ mon_x_cmd
 	ldy vmonaddr
 	jmp ,Y
 
+;; Command handler for 's' (Subroutine) command.
+;; It calls a subroutine at the current monitor address.
+mon_s_cmd
+	ldy vmonaddr
+	jsr ,Y
+	rts
+
 ;;------------------------------------------------------------------
 ;; Delay subroutines
 ;;------------------------------------------------------------------
@@ -684,7 +691,7 @@ MONITOR_IDENT_MSG FCB "6809 ROM monitor, 2019-2020 by daveho hacks",CR,NL,0
 
 ;; Monitor command codes.
 ;; This must be NUL-terminated.
-MONITOR_COMMANDS FCB "?earwux",0
+MONITOR_COMMANDS FCB "?earwuxs",0
 
 ;; Handler routines for monitor commands.
 ;; Order should match MONITOR_COMMANDS.
@@ -696,6 +703,7 @@ MONITOR_DISPATCH_TABLE
 	FDB mon_w_cmd
 	FDB mon_u_cmd
 	FDB mon_x_cmd
+	FDB mon_s_cmd
 
 INVALID_RECORD FCB "Invalid record",CR,NL,0
 
