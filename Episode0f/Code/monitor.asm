@@ -510,8 +510,11 @@ mon_w_cmd
 	sty vmonaddr                  ; save updated Y back to monitor addr
 	rts
 
-;; Command handler for 'u' (upload ihex) command.
-mon_u_cmd
+;; Command handler for 'd' (Download Intel hex) command.
+;; Intel hex records are read until either an EOF record is
+;; read, or an invalid record is read.  Only DATA and EOF
+;; records are supported.
+mon_d_cmd
 1
 	; Just keep parsing ihex records until an EOF
 	; record or an invalid record is encountered
@@ -691,7 +694,7 @@ MONITOR_IDENT_MSG FCB "6809 ROM monitor, 2019-2020 by daveho hacks",CR,NL,0
 
 ;; Monitor command codes.
 ;; This must be NUL-terminated.
-MONITOR_COMMANDS FCB "?earwuxs",0
+MONITOR_COMMANDS FCB "?earwdxs",0
 
 ;; Handler routines for monitor commands.
 ;; Order should match MONITOR_COMMANDS.
@@ -701,7 +704,7 @@ MONITOR_DISPATCH_TABLE
 	FDB mon_a_cmd
 	FDB mon_r_cmd
 	FDB mon_w_cmd
-	FDB mon_u_cmd
+	FDB mon_d_cmd
 	FDB mon_x_cmd
 	FDB mon_s_cmd
 
