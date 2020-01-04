@@ -23,4 +23,4 @@ testprog.ihx : testprog.asm
 	asm6809 -H testprog.asm -o $@
 
 clean :
-	rm -f *.bin *.lst
+	rm -f *.bin *.lst *.ihx
