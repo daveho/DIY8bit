@@ -7,7 +7,7 @@
 ;; global variable used for counter
 count EQU $2000
 
-;; assembly so that entry point is at $1000 (in RAM)
+;; entry point is at $1000 (in RAM)
 	ORG $1000
 entry
 	; initialize count to 0
