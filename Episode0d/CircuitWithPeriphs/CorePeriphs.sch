@@ -735,6 +735,7 @@ Wire Wire Line
 	7300 5500 4400 5500
 Wire Wire Line
 	7300 2650 8000 2650
+Connection ~ 4400 5500
 Wire Bus Line
 	1950 5700 10100 5700
 Wire Bus Line
@@ -743,5 +744,6 @@ Wire Bus Line
 	10200 1950 10200 5600
 Wire Bus Line
 	1850 2900 1850 6650
-Connection ~ 4400 5500
+Text Notes 8200 3450 0    50   ~ 0
+THIS SCHEMATIC IS WRONG!\nSee the schematic in Episode0f\nfor correct way to interface\n6850 ACIA and FT232RL breakout
 $EndSCHEMATC
