@@ -1,3 +1,9 @@
+;; Test program to verify that the ROM monitor can download
+;; code/data in Intel hex format into memory
+
+;; It just outputs increasing count values to port A of
+;; the 82c55a, which is mapped at address $8000
+
 ;; global variable used for counter
 count EQU $2000
 
