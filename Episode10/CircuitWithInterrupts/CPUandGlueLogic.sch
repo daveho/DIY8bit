@@ -279,20 +279,7 @@ F 3 "" H 5200 3750 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	1800 3750 1500 3750
-Wire Wire Line
-	1500 3750 1500 3650
-$Comp
-L power:VCC #PWR0105
-U 1 1 5CFA91DE
-P 1500 3250
-F 0 "#PWR0105" H 1500 3100 50  0001 C CNN
-F 1 "VCC" H 1517 3423 50  0000 C CNN
-F 2 "" H 1500 3250 50  0001 C CNN
-F 3 "" H 1500 3250 50  0001 C CNN
-	1    1500 3250
-	1    0    0    -1  
-$EndComp
+	1800 3750 1700 3750
 Wire Wire Line
 	3300 3650 4350 3650
 Connection ~ 4350 3650
@@ -304,15 +291,8 @@ Wire Wire Line
 	4150 3550 3300 3550
 Connection ~ 4350 3150
 Wire Wire Line
-	1800 3650 1500 3650
-Connection ~ 1500 3650
-Wire Wire Line
-	1500 3650 1500 3550
-Wire Wire Line
-	1800 3550 1500 3550
-Connection ~ 1500 3550
-Wire Wire Line
-	1500 3550 1500 3250
+	1800 3550 1700 3550
+Connection ~ 1700 3550
 Text Notes 4000 2800 0    50   ~ 0
 Crystal frequency should be between 2 and 4 MHz.\nI used 3.6864 MHz.
 Text Notes 3800 1250 0    50   ~ 0
@@ -1874,14 +1854,60 @@ Text Label 5350 7150 0    50   ~ 0
 R~W
 Text HLabel 6850 7150 2    50   Output ~ 0
 R~W
+Wire Wire Line
+	1700 3550 1700 3750
+Wire Wire Line
+	1800 3650 1600 3650
+Wire Wire Line
+	1600 3650 1600 3300
+Wire Wire Line
+	1600 3300 1350 3300
+Text HLabel 1200 3300 0    50   Input ~ 0
+~IRQ
+$Comp
+L device:R R101
+U 1 1 5E301027
+P 1350 3050
+F 0 "R101" H 1420 3096 50  0000 L CNN
+F 1 "4k7" H 1420 3005 50  0000 L CNN
+F 2 "" V 1280 3050 50  0001 C CNN
+F 3 "" H 1350 3050 50  0001 C CNN
+	1    1350 3050
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1350 3200 1350 3300
+Connection ~ 1350 3300
+Wire Wire Line
+	1350 3300 1200 3300
+Wire Wire Line
+	1350 2900 1350 2850
+$Comp
+L power:VCC #PWR?
+U 1 1 5E36696F
+P 1350 2800
+F 0 "#PWR?" H 1350 2650 50  0001 C CNN
+F 1 "VCC" H 1367 2973 50  0000 C CNN
+F 2 "" H 1350 2800 50  0001 C CNN
+F 3 "" H 1350 2800 50  0001 C CNN
+	1    1350 2800
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1700 2850 1350 2850
+Wire Wire Line
+	1700 2850 1700 3550
+Connection ~ 1350 2850
+Wire Wire Line
+	1350 2850 1350 2800
 Wire Bus Line
-	1000 5700 3650 5700
-Wire Bus Line
-	3750 5250 3750 5600
-Wire Bus Line
-	1350 4250 1350 5600
+	2450 6150 2450 9200
 Wire Bus Line
 	4500 4450 4500 7250
 Wire Bus Line
-	2450 6150 2450 9200
+	1350 4250 1350 5600
+Wire Bus Line
+	3750 5250 3750 5600
+Wire Bus Line
+	1000 5700 3650 5700
 $EndSCHEMATC

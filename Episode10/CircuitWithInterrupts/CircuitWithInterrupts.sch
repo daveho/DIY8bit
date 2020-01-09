@@ -68,6 +68,7 @@ F45 "~IODEV14~" O R 3200 6500 50
 F46 "~IODEV15~" O R 3200 6600 50 
 F47 "~ROMEN~" O R 3200 4950 50 
 F48 "R~W" O R 3200 2300 50 
+F49 "~IRQ" I L 2200 1800 50 
 $EndSheet
 $Sheet
 S 4900 1700 950  2200
@@ -329,18 +330,27 @@ F4 "~RMEM" I L 6700 2150 50
 F5 "~WMEM" I L 6700 2250 50 
 F6 "A0" I L 6700 2750 50 
 F7 "A1" I L 6700 2850 50 
-F8 "D0" B R 7700 2550 50 
-F9 "D1" B R 7700 2650 50 
-F10 "D2" B R 7700 2750 50 
-F11 "D3" B R 7700 2850 50 
-F12 "D4" B R 7700 2950 50 
-F13 "D5" B R 7700 3050 50 
-F14 "D6" B R 7700 3150 50 
-F15 "D7" B R 7700 3250 50 
+F8 "D0" B R 7700 1800 50 
+F9 "D1" B R 7700 1900 50 
+F10 "D2" B R 7700 2000 50 
+F11 "D3" B R 7700 2100 50 
+F12 "D4" B R 7700 2200 50 
+F13 "D5" B R 7700 2300 50 
+F14 "D6" B R 7700 2400 50 
+F15 "D7" B R 7700 2500 50 
 F16 "~82C54_CS" I L 6700 2500 50 
 F17 "E" I L 6700 1900 50 
 F18 "R~W" I L 6700 2000 50 
 F19 "~6850_CS" I L 6700 2600 50 
+F20 "TIRQ" O R 7700 2650 50 
+F21 "PC0" O R 7700 2800 50 
+F22 "PC1" O R 7700 2900 50 
+F23 "PC2" O R 7700 3000 50 
+F24 "PC3" O R 7700 3100 50 
+F25 "PC4" O R 7700 3200 50 
+F26 "PC5" O R 7700 3300 50 
+F27 "PC6" O R 7700 3400 50 
+F28 "PC7" O R 7700 3500 50 
 $EndSheet
 Wire Wire Line
 	3200 5100 3600 5100
@@ -367,36 +377,36 @@ A0
 Text Label 6550 2850 0    50   ~ 0
 A1
 Wire Wire Line
-	7700 2550 7900 2550
+	7700 1800 7900 1800
 Wire Wire Line
-	7700 2650 7900 2650
+	7700 1900 7900 1900
 Wire Wire Line
-	7700 2750 7900 2750
+	7700 2000 7900 2000
 Wire Wire Line
-	7700 2850 7900 2850
+	7700 2100 7900 2100
 Wire Wire Line
-	7700 2950 7900 2950
+	7700 2200 7900 2200
 Wire Wire Line
-	7700 3050 7900 3050
+	7700 2300 7900 2300
 Wire Wire Line
-	7700 3150 7900 3150
+	7700 2400 7900 2400
 Wire Wire Line
-	7700 3250 7900 3250
-Text Label 7750 2550 0    50   ~ 0
+	7700 2500 7900 2500
+Text Label 7750 1800 0    50   ~ 0
 D0
-Text Label 7750 2650 0    50   ~ 0
+Text Label 7750 1900 0    50   ~ 0
 D1
-Text Label 7750 2750 0    50   ~ 0
+Text Label 7750 2000 0    50   ~ 0
 D2
-Text Label 7750 2850 0    50   ~ 0
+Text Label 7750 2100 0    50   ~ 0
 D3
-Text Label 7750 2950 0    50   ~ 0
+Text Label 7750 2200 0    50   ~ 0
 D4
-Text Label 7750 3050 0    50   ~ 0
+Text Label 7750 2300 0    50   ~ 0
 D5
-Text Label 7750 3150 0    50   ~ 0
+Text Label 7750 2400 0    50   ~ 0
 D6
-Text Label 7750 3250 0    50   ~ 0
+Text Label 7750 2500 0    50   ~ 0
 D7
 Wire Wire Line
 	6400 2150 6700 2150
@@ -447,7 +457,7 @@ Wire Notes Line
 Wire Notes Line
 	4000 1250 1750 1250
 Text Notes 1850 1400 0    50   ~ 0
-core module
+Module 1: core (CPU and glue logic)
 Wire Notes Line
 	4300 1250 4300 4350
 Wire Notes Line
@@ -457,11 +467,122 @@ Wire Notes Line
 Wire Notes Line
 	8200 1250 4300 1250
 Text Notes 4400 1400 0    50   ~ 0
-memory and core peripherals module
+Module 2: memory and core peripherals
 $Sheet
-S 4850 4650 1000 2100
+S 4800 5350 1000 1500
 U 5E12A5CF
 F0 "Interrupts" 50
 F1 "Interrupts.sch" 50
+F2 "~IRQ1" I L 4800 5850 50 
+F3 "~IRQ2" I L 4800 5950 50 
+F4 "~IRQ4" I L 4800 6150 50 
+F5 "~IRQ5" I L 4800 6250 50 
+F6 "~IRQ7" I L 4800 6450 50 
+F7 "~IRQ3" I L 4800 6050 50 
+F8 "~IRQ6" I L 4800 6350 50 
+F9 "~IRQ" O R 5800 5450 50 
+F10 "~RMEM" I L 4800 5450 50 
+F11 "~IRQCTRL_CS" I L 4800 5700 50 
+F12 "~IRQ3_CLR" I L 4800 6600 50 
+F13 "~IRQ6_CLR" I L 4800 6700 50 
+F14 "D0" B R 5800 5700 50 
+F15 "D1" B R 5800 5800 50 
+F16 "D2" B R 5800 5900 50 
+F17 "D3" B R 5800 6000 50 
+F18 "D4" B R 5800 6100 50 
+F19 "D5" B R 5800 6200 50 
+F20 "D6" B R 5800 6300 50 
+F21 "D7" B R 5800 6400 50 
+F22 "~WMEM" I L 4800 5550 50 
 $EndSheet
+Wire Notes Line
+	4300 4700 6250 4700
+Wire Notes Line
+	6250 4700 6250 7100
+Wire Notes Line
+	6250 7100 4300 7100
+Wire Notes Line
+	4300 7100 4300 4700
+Text Notes 4450 4900 0    50   ~ 0
+Module 3: interrupt controller
+Wire Wire Line
+	5800 5700 6000 5700
+Wire Wire Line
+	5800 5800 6000 5800
+Wire Wire Line
+	5800 5900 6000 5900
+Wire Wire Line
+	5800 6000 6000 6000
+Wire Wire Line
+	5800 6100 6000 6100
+Wire Wire Line
+	5800 6200 6000 6200
+Wire Wire Line
+	5800 6300 6000 6300
+Wire Wire Line
+	5800 6400 6000 6400
+Text Label 5850 5700 0    50   ~ 0
+D0
+Text Label 5850 5800 0    50   ~ 0
+D1
+Text Label 5850 5900 0    50   ~ 0
+D2
+Text Label 5850 6000 0    50   ~ 0
+D3
+Text Label 5850 6100 0    50   ~ 0
+D4
+Text Label 5850 6200 0    50   ~ 0
+D5
+Text Label 5850 6300 0    50   ~ 0
+D6
+Text Label 5850 6400 0    50   ~ 0
+D7
+Wire Wire Line
+	4500 5450 4800 5450
+Wire Wire Line
+	4500 5550 4800 5550
+Text Label 4550 5450 0    50   ~ 0
+~RMEM~
+Text Label 4550 5550 0    50   ~ 0
+~WMEM~
+Wire Wire Line
+	3200 5400 3600 5400
+Text Label 3250 5400 0    50   ~ 0
+~IODEV3
+Wire Wire Line
+	4400 5700 4800 5700
+Text Label 4450 5700 0    50   ~ 0
+~IODEV3
+Wire Wire Line
+	2200 1800 1850 1800
+Text Label 1950 1800 0    50   ~ 0
+~IRQ
+Wire Wire Line
+	6150 5450 5800 5450
+Text Label 5900 5450 0    50   ~ 0
+~IRQ
+Wire Wire Line
+	7700 2650 8050 2650
+Text Label 7750 2650 0    50   ~ 0
+TIRQ
+Wire Wire Line
+	4450 6050 4800 6050
+Text Label 4500 6050 0    50   ~ 0
+TIRQ
+Wire Wire Line
+	7700 2800 8100 2800
+Wire Wire Line
+	7700 2900 8100 2900
+Text Label 7750 2800 0    50   ~ 0
+~IRQ3_CLR
+Text Label 7750 2900 0    50   ~ 0
+~IRQ6_CLR
+Wire Wire Line
+	4350 6600 4800 6600
+Wire Wire Line
+	4350 6700 4800 6700
+Text Label 4400 6600 0    50   ~ 0
+~IRQ3_CLR
+Text Label 4400 6700 0    50   ~ 0
+~IRQ6_CLR
 $EndSCHEMATC

@@ -420,7 +420,7 @@ Connection ~ 6600 2700
 Wire Wire Line
 	6600 2700 6600 2200
 Wire Wire Line
-	6350 2900 7000 2900
+	6350 2900 6700 2900
 Wire Wire Line
 	6350 3400 7000 3400
 $Comp
@@ -752,6 +752,10 @@ Wire Wire Line
 Connection ~ 7900 1900
 Wire Wire Line
 	7900 1900 7900 1950
+Text HLabel 6700 2900 2    50   Output ~ 0
+TIRQ
+Wire Wire Line
+	3650 3400 3900 3400
 Wire Bus Line
 	1950 5700 10300 5700
 Wire Bus Line
@@ -760,4 +764,34 @@ Wire Bus Line
 	10400 1950 10400 5600
 Wire Bus Line
 	1850 2900 1850 6650
+Wire Wire Line
+	3650 3500 3900 3500
+Wire Wire Line
+	3650 3600 3900 3600
+Wire Wire Line
+	3650 3700 3900 3700
+Wire Wire Line
+	3650 3800 3900 3800
+Wire Wire Line
+	3650 3900 3900 3900
+Wire Wire Line
+	3650 4000 3900 4000
+Wire Wire Line
+	3650 4100 3900 4100
+Text HLabel 3900 3400 2    50   Output ~ 0
+PC0
+Text HLabel 3900 3500 2    50   Output ~ 0
+PC1
+Text HLabel 3900 3600 2    50   Output ~ 0
+PC2
+Text HLabel 3900 3700 2    50   Output ~ 0
+PC3
+Text HLabel 3900 3800 2    50   Output ~ 0
+PC4
+Text HLabel 3900 3900 2    50   Output ~ 0
+PC5
+Text HLabel 3900 4000 2    50   Output ~ 0
+PC6
+Text HLabel 3900 4100 2    50   Output ~ 0
+PC7
 $EndSCHEMATC
