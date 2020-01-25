@@ -1,10 +1,9 @@
 EESchema Schematic File Version 4
-LIBS:CircuitWithInterrupts-cache
-EELAYER 26 0
+EELAYER 30 0
 EELAYER END
 $Descr User 14173 10953
 encoding utf-8
-Sheet 1 5
+Sheet 1 6
 Title ""
 Date ""
 Rev ""
@@ -585,4 +584,10 @@ Text Label 4400 6600 0    50   ~ 0
 ~IRQ3_CLR
 Text Label 4400 6700 0    50   ~ 0
 ~IRQ6_CLR
+$Sheet
+S 6550 5400 1100 1450
+U 5E2CF983
+F0 "Keyboard" 50
+F1 "Keyboard.sch" 50
+$EndSheet
 $EndSCHEMATC
