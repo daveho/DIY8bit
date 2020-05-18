@@ -100,14 +100,14 @@ entry
 	;; Initialize the ACIA
 	jsr acia_init
 
-	;; Initialize the interrupt controller
+	;; Initialize the interrupt controller and IRQ handling
 	jsr irqctrl_init
 
 	;; Enable interrupts via CPU ~IRQ interrupt.
 	;; irqctrl_init masks all of the hardware IRQ inputs, so
 	;; an IRQ will need to be explicitly unmasked before
 	;; it can be handled.
-	andcc #ENABLE_IRQ
+	;;andcc #ENABLE_IRQ
 
 	;; Welcome message
 	ldx #ALL_YOUR_BASE
@@ -594,6 +594,11 @@ mon_m_cmd
 99
 	rts
 
+;; Enable normal (~IRQ) interrupts.
+mon_q_cmd
+	andcc #ENABLE_IRQ
+	rts
+
 ;;------------------------------------------------------------------
 ;; Delay subroutines
 ;;------------------------------------------------------------------
@@ -715,6 +720,13 @@ irqctrl_init
 	sta PORT_IRQCTRL ; store initial mask value in mask register
 	sta vmaskreg     ; store initial mask value in vmaskreg variable
 
+	;; Set the flip-flops handling the edge-triggered interrupts
+	;; (IRQ3 and IRQ6) to a high (non-asserted) output.
+	lda #$00
+	sta PORT_I82C55A_C
+	lda #$03
+	sta PORT_I82C55A_C
+
 	;; Fill in all entries in virqtab with noop_irq_handler
 	lda #8           ; table has 8 entries
 	ldx #virqtab     ; X points to next entry to fill in
@@ -742,6 +754,11 @@ irq_dispatch
 	ldx #virqtab     ; get IRQ handler table base address
 	ldy A,X          ; load IRQ handler address
 	jsr ,Y           ; dispatch to handler
+	;; Reset flip flops used for edge detection
+	lda #$00         ; assert SET inputs
+	sta PORT_I82C55A_C
+	lda #$03         ; deassert SET inputs
+	sta PORT_I82C55A_C
 99
 	rti              ; return to main program
 
@@ -772,7 +789,7 @@ MONITOR_IDENT_MSG FCB "6809 ROM monitor, 2019-2020 by daveho hacks",CR,NL,0
 
 ;; Monitor command codes.
 ;; This must be NUL-terminated.
-MONITOR_COMMANDS FCB "?earwdxsm",0
+MONITOR_COMMANDS FCB "?earwdxsmq",0
 
 ;; Handler routines for monitor commands.
 ;; Order should match MONITOR_COMMANDS.
@@ -786,6 +803,7 @@ MONITOR_DISPATCH_TABLE
 	FDB mon_x_cmd
 	FDB mon_s_cmd
 	FDB mon_m_cmd
+	FDB mon_q_cmd
 
 INVALID_RECORD FCB "Invalid record",CR,NL,0
 
