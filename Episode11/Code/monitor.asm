@@ -577,6 +577,23 @@ mon_s_cmd
 	jsr ,Y
 	rts
 
+;; Command handler for 'm' (Mask) command.
+;; It sets the interrupt controller mask register to a
+;; specified byte value.
+mon_m_cmd
+	;; Make sure neither of the first to argument bytes are NUL.
+	lda ,X                        ; check first byte
+	beq 99f                       ; if NUL, we're done
+	lda 1,X                       ; check second byte
+	beq 99f                       ; if NUL, we're done
+
+	jsr mon_parse_hex             ; parse hex value
+	sta vmaskreg                  ; store mask value to vmaskreg variable
+	sta PORT_IRQCTRL              ; store mask value to mask register
+
+99
+	rts
+
 ;;------------------------------------------------------------------
 ;; Delay subroutines
 ;;------------------------------------------------------------------
@@ -755,7 +772,7 @@ MONITOR_IDENT_MSG FCB "6809 ROM monitor, 2019-2020 by daveho hacks",CR,NL,0
 
 ;; Monitor command codes.
 ;; This must be NUL-terminated.
-MONITOR_COMMANDS FCB "?earwdxs",0
+MONITOR_COMMANDS FCB "?earwdxsm",0
 
 ;; Handler routines for monitor commands.
 ;; Order should match MONITOR_COMMANDS.
@@ -768,6 +785,7 @@ MONITOR_DISPATCH_TABLE
 	FDB mon_d_cmd
 	FDB mon_x_cmd
 	FDB mon_s_cmd
+	FDB mon_m_cmd
 
 INVALID_RECORD FCB "Invalid record",CR,NL,0
 
