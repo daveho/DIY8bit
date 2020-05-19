@@ -22,5 +22,8 @@ program : monitor.bin
 testprog.ihx : testprog.asm
 	asm6809 -H testprog.asm -o $@
 
+inttest.ihx : inttest.asm
+	asm6809 -H inttest.asm -o $@
+
 clean :
 	rm -f *.bin *.lst *.ihx
