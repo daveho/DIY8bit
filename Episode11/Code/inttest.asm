@@ -1,7 +1,7 @@
 ;; Test program for interrupt handling.
 
 ;; Address of reset_irq3_ff in the monitor program
-reset_irq3_ff EQU $92C0
+reset_irq3_ff EQU $92CC
 
 ;; Address of virqtab in the monitor program
 virqtab EQU $0010
