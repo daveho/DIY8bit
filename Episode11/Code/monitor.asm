@@ -40,6 +40,16 @@ IHEX_ERROR EQU 99
 ;; regular (IRQ) interrupts.
 ENABLE_IRQ EQU 0b11101111
 
+;; Special values which can be written to the i82c55a control port
+;; in order to set and clear bits 0 and 1, which drive the -SET
+;; inputs used for detecting edge-triggered interrupts.
+;; (When a byte where the high bit is 0 is written to the control port,
+;; it sets or resets a single bit in port C. See 82C55A datasheet.)
+IRQ3_FF_SET_ASSERT    EQU 0b00000000
+IRQ3_FF_SET_DEASSERT  EQU 0b00000001
+IRQ6_FF_SET_ASSERT    EQU 0b00000010
+IRQ6_FF_SET_DEASSERT  EQU 0b00000011
+
 ;;**********************************************************************
 ;; Variables (RAM area)
 ;;
@@ -56,6 +66,9 @@ ENABLE_IRQ EQU 0b11101111
 vunused RZB 16
 
 ;; IRQ handler table (8 two-byte code addresses)
+;; The first entry (index 0) is not used.
+;; The other entries (indices 1-7) are the addresses of
+;; the handler functions for IRQs 1-7.
 virqtab RZB 16
 
 ;; Command buffer used by the monitor
@@ -714,6 +727,10 @@ acia_recv
 
 	rts
 
+;;**********************************************************************
+;; Interrupt handling
+;;**********************************************************************
+
 ;; Initialize the interrupt controller.
 irqctrl_init
 	lda #$FF         ; all IRQs are masked initially
@@ -722,27 +739,23 @@ irqctrl_init
 
 	;; Set the flip-flops handling the edge-triggered interrupts
 	;; (IRQ3 and IRQ6) to a high (non-asserted) output.
-	lda #$00
-	sta PORT_I82C55A_C
-	lda #$03
-	sta PORT_I82C55A_C
+	jsr reset_irq3_ff
+	jsr reset_irq6_ff
 
-	;; Fill in all entries in virqtab with noop_irq_handler
-	lda #8           ; table has 8 entries
-	ldx #virqtab     ; X points to next entry to fill in
-	ldy #noop_irq_handler
+	;; Fill in all entries in virqtab by copying entries
+	;; from DEFAULT_IRQ_HANDLER_TABLE
+	lda #16          ; table has 8 entries (16 bytes total)
+	ldx #virqtab     ; X is the destination address
+	ldy #DEFAULT_IRQ_HANDLER_TABLE ; Y is the source address
 1
 	deca             ; decrease count
 	beq 99f          ; if count reached 0, done
-	sty ,X++         ; store noop_irq_handler address, incr. X by 2
+	ldb ,Y+          ; retrieve byte
+	stb ,X+          ; store byte
 	jmp 1B           ; continue loop
 
 99
 	rts
-
-;;**********************************************************************
-;; Interrupt handling
-;;**********************************************************************
 
 ;; Main interrupt handler, called automatically in response to
 ;; CPU's ~IRQ input being asserted.  Determines highest-priority
@@ -754,16 +767,29 @@ irq_dispatch
 	ldx #virqtab     ; get IRQ handler table base address
 	ldy A,X          ; load IRQ handler address
 	jsr ,Y           ; dispatch to handler
-	;; Reset flip flops used for edge detection
-	lda #$00         ; assert SET inputs
-	sta PORT_I82C55A_C
-	lda #$03         ; deassert SET inputs
-	sta PORT_I82C55A_C
 99
 	rti              ; return to main program
 
-;; Default IRQ handler (does nothing)
+;; Default IRQ handler for level-triggered interrupts (does nothing)
 noop_irq_handler
+	rts
+
+;; Reset IRQ3 flip flop.
+;; This should be called after handling IRQ3.
+reset_irq3_ff
+	lda #IRQ3_FF_SET_ASSERT
+	sta PORT_I82C55A_CTRL
+	lda #IRQ3_FF_SET_DEASSERT
+	sta PORT_I82C55A_CTRL
+	rts
+
+;; Reset IRQ6 flip flop.
+;; This should be called after handling IRQ6.
+reset_irq6_ff
+	lda #IRQ6_FF_SET_ASSERT
+	sta PORT_I82C55A_CTRL
+	lda #IRQ6_FF_SET_DEASSERT
+	sta PORT_I82C55A_CTRL
 	rts
 
 ;;**********************************************************************
@@ -804,6 +830,19 @@ MONITOR_DISPATCH_TABLE
 	FDB mon_s_cmd
 	FDB mon_m_cmd
 	FDB mon_q_cmd
+
+;; Default interrupt handler routines.
+;; This table will be copied into virqtab (in RAM) to allow
+;; new interrupt handler routines to be installed.
+DEFAULT_IRQ_HANDLER_TABLE
+	FDB noop_irq_handler          ; not used
+	FDB noop_irq_handler          ; IRQ1
+	FDB noop_irq_handler          ; IRQ2
+	FDB reset_irq3_ff             ; IRQ3 (edge triggered, must reset FF)
+	FDB noop_irq_handler          ; IRQ4
+	FDB noop_irq_handler          ; IRQ5
+	FDB reset_irq6_ff             ; IRQ6 (edge triggered, must reset FF)
+	FDB noop_irq_handler          ; IRQ7
 
 INVALID_RECORD FCB "Invalid record",CR,NL,0
 
