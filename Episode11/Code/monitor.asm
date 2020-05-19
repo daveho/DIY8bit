@@ -90,9 +90,6 @@ vmonaddr RZB 2
 ;; the actual mask register.
 vmaskreg RZB 1
 
-;; Used for interrupt test
-vcount RZB 1
-
 ;;**********************************************************************
 ;; Code
 ;;
@@ -122,12 +119,6 @@ entry
 
 	;; Initialize the interrupt controller and IRQ handling
 	jsr irqctrl_init
-
-	;; Enable interrupts via CPU ~IRQ interrupt.
-	;; irqctrl_init masks all of the hardware IRQ inputs, so
-	;; an IRQ will need to be explicitly unmasked before
-	;; it can be handled.
-	;;andcc #ENABLE_IRQ
 
 	;; Welcome message
 	ldx #ALL_YOUR_BASE
@@ -634,13 +625,6 @@ mon_q_cmd
 99
 	rts
 
-;; Install test IRQ3 routine
-mon_z_cmd
-	ldx #virqtab
-	ldy #irq3_test
-	sty 6,X
-	rts
-
 ;;------------------------------------------------------------------
 ;; Delay subroutines
 ;;------------------------------------------------------------------
@@ -822,15 +806,6 @@ reset_irq6_ff
 	sta PORT_I82C55A_CTRL
 	rts
 
-;; Test routine for timer interrupt
-irq3_test
-	lda vcount
-	sta PORT_I82C55A_A
-	inca
-	sta vcount
-	jsr reset_irq3_ff
-	rts
-
 ;;**********************************************************************
 ;; Constant data
 ;;**********************************************************************
@@ -854,7 +829,7 @@ MONITOR_IDENT_MSG FCB "6809 ROM monitor, 2019-2020 by daveho hacks",CR,NL,0
 
 ;; Monitor command codes.
 ;; This must be NUL-terminated.
-MONITOR_COMMANDS FCB "?earwdxsmqz",0
+MONITOR_COMMANDS FCB "?earwdxsmq",0
 
 ;; Handler routines for monitor commands.
 ;; Order should match MONITOR_COMMANDS.
@@ -869,7 +844,6 @@ MONITOR_DISPATCH_TABLE
 	FDB mon_s_cmd
 	FDB mon_m_cmd
 	FDB mon_q_cmd
-	FDB mon_z_cmd
 
 ;; Default interrupt handler routines.
 ;; This table will be copied into virqtab (in RAM) to allow
