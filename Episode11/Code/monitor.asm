@@ -40,6 +40,10 @@ IHEX_ERROR EQU 99
 ;; regular (IRQ) interrupts.
 ENABLE_IRQ EQU 0b11101111
 
+;; Setting bit 4 of the condition code register disables
+;; regular (IRQ) interrupts.
+DISABLE_IRQ EQU 0b00010000
+
 ;; Special values which can be written to the i82c55a control port
 ;; in order to set and clear bits 0 and 1, which drive the -SET
 ;; inputs used for detecting edge-triggered interrupts.
@@ -610,9 +614,24 @@ mon_m_cmd
 99
 	rts
 
-;; Enable normal (~IRQ) interrupts.
+;; Toggle bit 4 in the condition code register to enable or
+;; disable handling of normal (-IRQ) interrupts.
 mon_q_cmd
+	tfr CC, A                     ; copy condition codes to A
+	anda #0b00010000              ; check whether bit 4 is set
+	beq 66F
+
+	;; Bit 4 is currently set, meaning that -IRQ is disabled.
+	;; Enable it by clearing bit 4.
 	andcc #ENABLE_IRQ
+	jmp 99F
+
+66
+	;; Bit 4 is currently clear, meaning that -IRQ is enabled.
+	;; Disable it by setting bit 4.
+	orcc #DISABLE_IRQ
+
+99
 	rts
 
 ;; Install test IRQ3 routine
@@ -772,6 +791,8 @@ irqctrl_init
 irq_dispatch
 	lda PORT_IRQCTRL ; read irq priority
 	beq 99F          ; if irq priority=0, there is no interrupt
+	cmpa #$07        ; sanity check irq priority is in valid range
+	bhi 99F          ; if not, done
 	lsla             ; multiply irq priority by 2 (addresses are 2 bytes)
 	ldx #virqtab     ; get IRQ handler table base address
 	ldy A,X          ; load IRQ handler address
