@@ -2,7 +2,7 @@
 
 Link to video: Coming eventually
 
-This episode completes support for interrupts in the 6809 system.  In particular, it presents the detailed design for the interrupt controller, testing and validation of a prototype implementation, and support interrupt support in the monitor program.
+This episode completes support for interrupts in the 6809 system.  In particular, it presents the detailed design for the interrupt controller, testing and validation of a prototype implementation, and interrupt support in the monitor program.
 
 The [CircuitWithInterrupts](CircuitWithInterrupts) directory has updated schematics.  Note that there are some fixes since the previous episode!
 
