@@ -1,6 +1,6 @@
 # DIY 8-bit computer, Episode 11
 
-Link to video: Coming eventually
+Link to video: <https://youtu.be/7TfOUma8LMk>
 
 This episode completes support for interrupts in the 6809 system.  In particular, it presents the detailed design for the interrupt controller, testing and validation of a prototype implementation, and interrupt support in the monitor program.
 
