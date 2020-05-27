@@ -1,3 +1,6 @@
+// Example program to output text to a SparkFun serial LCD
+// using an 8051 variant such as the 89c51
+
 #include <mcs51/at89x51.h>
 #include <stdint.h>
 
@@ -8,8 +11,7 @@
 void UART_Init(void) { 
     SCON = 0x50;  // Asynchronous mode, 8-bit data and 1-stop bit
     TMOD = 0x20;  //Timer1 in Mode2.
-    //TH1 = 256 - (11059200UL)/(long)(32*12*baudrate); // Load timer value for baudrate generation
-    TH1 = 0xFD;
+    TH1 = 0xFD;   // Correct value for 11.0592 MHz crystal
     TR1 = 1;      //Turn ON the timer for Baud rate generation
 }
 
@@ -35,8 +37,12 @@ void delay(uint16_t count) {
     }
 }
 
+__code const char *msg1 = "ALL YOUR BASE";
+__code const char *msg2 = "ARE BELONG TO US";
+
 void testOutput(void) {
     // Move cursor to beginning of first line
+#if 0
     UART_TxChar(SER_CMD);
     UART_TxChar(128+0);
     UART_TxChar('H');
@@ -44,10 +50,16 @@ void testOutput(void) {
     UART_TxChar('l');
     UART_TxChar('l');
     UART_TxChar('o');
-}
+#endif
 
-__code const char *msg1 = "ALL YOUR BASE";
-__code const char *msg2 = "ARE BELONG TO US";
+    UART_TxChar(SER_CMD);
+    UART_TxChar(128+0);
+    writeString(msg1);
+
+    UART_TxChar(SER_CMD);
+    UART_TxChar(128+64);
+    writeString(msg2);
+}
 
 int main() {
     UART_Init();
