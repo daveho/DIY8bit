@@ -82,72 +82,40 @@ NoConn ~ 1300 1550
 Wire Wire Line
 	1100 1650 1300 1650
 NoConn ~ 1300 1650
-Text Label 1700 1750 0    50   ~ 0
-COL0
-Text Label 1700 1950 0    50   ~ 0
-COL1
-Text Label 1700 2350 0    50   ~ 0
-COL2
-Text Label 1700 2250 0    50   ~ 0
-COL3
-Text Label 1700 2450 0    50   ~ 0
-COL4
-Text Label 1700 1250 0    50   ~ 0
-COL5
-Text Label 1700 2750 0    50   ~ 0
-COL6
-Text Label 1700 3050 0    50   ~ 0
-COL7
 Wire Wire Line
 	1100 3150 1300 3150
 NoConn ~ 1300 3150
-Text Label 3400 5000 0    50   ~ 0
-COL0
-Text Label 3400 5100 0    50   ~ 0
-COL1
-Text Label 3400 5200 0    50   ~ 0
-COL2
-Text Label 3400 5300 0    50   ~ 0
-COL3
-Text Label 3400 5400 0    50   ~ 0
-COL4
-Text Label 3400 5500 0    50   ~ 0
-COL5
-Text Label 3400 5600 0    50   ~ 0
-COL6
-Text Label 3400 5700 0    50   ~ 0
-COL7
-Text Label 1700 2950 0    50   ~ 0
-ROW0
-Text Label 1700 2650 0    50   ~ 0
-ROW1
-Text Label 1700 2550 0    50   ~ 0
-ROW2
-Text Label 1700 1450 0    50   ~ 0
-ROW3
-Text Label 1700 1850 0    50   ~ 0
-ROW4
-Text Label 1700 2050 0    50   ~ 0
-ROW5
-Text Label 1700 2150 0    50   ~ 0
-ROW6
-Text Label 1700 2850 0    50   ~ 0
-ROW7
 Text Label 3400 4100 0    50   ~ 0
-ROW0
+COL0
 Text Label 3400 4200 0    50   ~ 0
-ROW1
+COL1
 Text Label 3400 4300 0    50   ~ 0
-ROW2
+COL2
 Text Label 3400 4400 0    50   ~ 0
-ROW3
+COL3
 Text Label 3400 4500 0    50   ~ 0
-ROW4
+COL4
 Text Label 3400 4600 0    50   ~ 0
-ROW5
+COL5
 Text Label 3400 4700 0    50   ~ 0
-ROW6
+COL6
 Text Label 3400 4800 0    50   ~ 0
+COL7
+Text Label 3400 5000 0    50   ~ 0
+ROW0
+Text Label 3400 5100 0    50   ~ 0
+ROW1
+Text Label 3400 5200 0    50   ~ 0
+ROW2
+Text Label 3400 5300 0    50   ~ 0
+ROW3
+Text Label 3400 5400 0    50   ~ 0
+ROW4
+Text Label 3400 5500 0    50   ~ 0
+ROW5
+Text Label 3400 5600 0    50   ~ 0
+ROW6
+Text Label 3400 5700 0    50   ~ 0
 ROW7
 $Comp
 L device:R_Network08 RN501
@@ -160,22 +128,6 @@ F 3 "" H 2650 5300 50  0001 C CNN
 	1    2650 5300
 	0    -1   -1   0   
 $EndComp
-Wire Wire Line
-	1100 2950 1950 2950
-Wire Wire Line
-	1100 1450 1950 1450
-Wire Wire Line
-	1100 1850 1950 1850
-Wire Wire Line
-	1100 2050 1950 2050
-Wire Wire Line
-	1100 2150 1950 2150
-Wire Wire Line
-	1100 2550 1950 2550
-Wire Wire Line
-	1100 2650 1950 2650
-Wire Wire Line
-	1100 2850 1950 2850
 Wire Wire Line
 	2450 5700 2150 5700
 Wire Wire Line
@@ -297,33 +249,21 @@ F 3 "" H 8600 5850 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	2850 5000 3800 5000
+	3050 4100 3800 4100
 Wire Wire Line
-	1100 1750 1950 1750
+	3050 4200 3800 4200
 Wire Wire Line
-	2850 5100 3800 5100
+	3050 4300 3800 4300
 Wire Wire Line
-	1100 1950 1950 1950
+	3050 4400 3800 4400
 Wire Wire Line
-	2850 5200 3800 5200
+	3050 4500 3800 4500
 Wire Wire Line
-	2850 5300 3800 5300
+	3050 4600 3800 4600
 Wire Wire Line
-	1100 2450 1950 2450
+	3050 4700 3800 4700
 Wire Wire Line
-	2850 5400 3800 5400
-Wire Wire Line
-	1100 1250 1950 1250
-Wire Wire Line
-	2850 5500 3800 5500
-Wire Wire Line
-	1100 2750 1950 2750
-Wire Wire Line
-	2850 5600 3800 5600
-Wire Wire Line
-	2850 5700 3800 5700
-Wire Wire Line
-	1100 3050 1950 3050
+	3050 4800 3800 4800
 Text Notes 700  900  0    50   ~ 0
 C16 keyboard connector,\npin 2 is a key and should\nbe removed
 Wire Wire Line
@@ -621,10 +561,6 @@ F 3 "" H 3650 6650 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	1100 2250 1950 2250
-Wire Wire Line
-	1100 2350 1950 2350
-Wire Wire Line
 	2150 5700 2150 5900
 $Comp
 L power:GND #PWR?
@@ -638,25 +574,25 @@ F 3 "" H 2150 5900 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	3050 4200 3800 4200
+	2850 5100 3800 5100
 Wire Wire Line
-	3050 4300 3800 4300
+	2850 5200 3800 5200
 Wire Wire Line
-	3050 4400 3800 4400
+	2850 5300 3800 5300
 Wire Wire Line
-	3050 4500 3800 4500
+	2850 5400 3800 5400
 Wire Wire Line
-	3050 4700 3800 4700
+	2850 5600 3800 5600
 Wire Wire Line
-	3050 4800 3800 4800
+	2850 5700 3800 5700
 Wire Wire Line
-	3050 4100 3800 4100
+	2850 5000 3800 5000
 Wire Wire Line
-	3050 4600 3800 4600
-Text Notes 2300 4500 0    50   ~ 0
-Port 1 actively\ndrives the rows\nof the keyboard\nmatrix
-Text Notes 1350 5600 0    50   ~ 0
-Port 0 reads the columns\n(with pull down resistors\nkeeping the column inputs\nat ground unless a keyswitch\nhas made a connection to a\nrow when the row scan is in\nprogress)
+	2850 5500 3800 5500
+Text Notes 2250 4500 0    50   ~ 0
+Port 1 actively\ndrives the columns\nof the keyboard\nmatrix
+Text Notes 1450 5550 0    50   ~ 0
+Port 0 reads the rows\n(with pull down resistors\nkeeping the row inputs\nat ground unless a\nkeyswitch has made a\nconnection to a column\nwhen the column scan\nis in progress)
 Text Label 6600 4300 0    50   ~ 0
 SCDAT0
 Text Label 6600 4400 0    50   ~ 0
@@ -992,10 +928,6 @@ Wire Wire Line
 	6800 2850 6800 3200
 Wire Wire Line
 	6650 3200 6800 3200
-Wire Bus Line
-	7150 1550 7150 4900
-Wire Bus Line
-	9800 1550 9800 6550
 Connection ~ 6800 3200
 Wire Wire Line
 	6800 3200 6800 3350
@@ -1010,4 +942,72 @@ F 3 "" H 6800 3350 50  0001 C CNN
 	1    6800 3350
 	1    0    0    -1  
 $EndComp
+Text Label 1650 2950 0    50   ~ 0
+COL0
+Text Label 1650 2650 0    50   ~ 0
+COL1
+Text Label 1650 2550 0    50   ~ 0
+COL2
+Text Label 1650 1450 0    50   ~ 0
+COL3
+Text Label 1650 1850 0    50   ~ 0
+COL4
+Text Label 1650 2150 0    50   ~ 0
+COL6
+Text Label 1650 2850 0    50   ~ 0
+COL7
+Text Label 1650 1750 0    50   ~ 0
+ROW0
+Text Label 1650 1950 0    50   ~ 0
+ROW1
+Text Label 1650 2350 0    50   ~ 0
+ROW2
+Text Label 1650 2250 0    50   ~ 0
+ROW3
+Text Label 1650 2450 0    50   ~ 0
+ROW4
+Text Label 1650 1250 0    50   ~ 0
+ROW5
+Text Label 1650 2750 0    50   ~ 0
+ROW6
+Text Label 1650 3050 0    50   ~ 0
+ROW7
+Wire Wire Line
+	1100 2950 1950 2950
+Wire Wire Line
+	1100 1450 1950 1450
+Wire Wire Line
+	1100 1850 1950 1850
+Wire Wire Line
+	1100 2050 1950 2050
+Wire Wire Line
+	1100 2150 1950 2150
+Wire Wire Line
+	1100 2550 1950 2550
+Wire Wire Line
+	1100 2650 1950 2650
+Wire Wire Line
+	1100 2850 1950 2850
+Wire Wire Line
+	1100 1750 1950 1750
+Wire Wire Line
+	1100 1950 1950 1950
+Wire Wire Line
+	1100 2450 1950 2450
+Wire Wire Line
+	1100 1250 1950 1250
+Wire Wire Line
+	1100 2750 1950 2750
+Wire Wire Line
+	1100 3050 1950 3050
+Wire Wire Line
+	1100 2250 1950 2250
+Wire Wire Line
+	1100 2350 1950 2350
+Text Label 1650 2050 0    50   ~ 0
+COL5
+Wire Bus Line
+	7150 1550 7150 4900
+Wire Bus Line
+	9800 1550 9800 6550
 $EndSCHEMATC
