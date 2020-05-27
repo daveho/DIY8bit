@@ -1,3 +1,7 @@
+// Blink LED example for 8051 variants
+// Code is from:
+//    https://www.instructables.com/id/Introduction-to-8051-Programming-With-AT89C2051-gu/
+
 #include <mcs51/at89x51.h>
 #include <stdint.h>
 
