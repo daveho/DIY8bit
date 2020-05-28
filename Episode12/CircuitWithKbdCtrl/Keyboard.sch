@@ -117,19 +117,8 @@ Text Label 3400 5600 0    50   ~ 0
 ROW6
 Text Label 3400 5700 0    50   ~ 0
 ROW7
-$Comp
-L device:R_Network08 RN501
-U 1 1 5E35B9F3
-P 2650 5300
-F 0 "RN501" V 3167 5300 50  0000 C CNN
-F 1 "22k" V 3076 5300 50  0000 C CNN
-F 2 "Resistors_THT:R_Array_SIP9" V 3125 5300 50  0001 C CNN
-F 3 "" H 2650 5300 50  0001 C CNN
-	1    2650 5300
-	0    -1   -1   0   
-$EndComp
 Wire Wire Line
-	2450 5700 2300 5700
+	2450 5800 2300 5800
 Wire Wire Line
 	5050 1400 4800 1400
 Wire Wire Line
@@ -575,9 +564,9 @@ Wire Wire Line
 Wire Wire Line
 	2850 5500 3800 5500
 Text Notes 1800 4550 0    50   ~ 0
-Port 1 actively drives the\ncolumns of the keyboard\nmatrix: outputs are normally\nat GND, but a column output\nis driven to VCC when a scan\nof that column is in progress
+Port 1 actively drives the\ncolumns of the keyboard\nmatrix: outputs are normally\nat VCC, but a column output\nis driven to GND when a scan\nof that column is in progress
 Text Notes 1200 5600 0    50   ~ 0
-Port 0 reads the rows\n(with pull down resistors\nkeeping the row inputs\nat GND unless a\nkeyswitch has made a\nconnection to a column\nwhen the column scan\nis in progress)
+Port 0 reads the rows\n(with pull up resistors\nkeeping the row inputs\nat VCC unless a\nkeyswitch has made a\nconnection to a column\nwhen the column scan\nis in progress)
 Text Label 6600 4300 0    50   ~ 0
 SCDAT0
 Text Label 6600 4400 0    50   ~ 0
@@ -991,21 +980,37 @@ Wire Wire Line
 	1100 2350 1950 2350
 Text Label 1650 2050 0    50   ~ 0
 COL5
+$Comp
+L device:R_Network09 RN501
+U 1 1 5ED1E896
+P 2650 5400
+F 0 "RN501" V 3267 5400 50  0000 C CNN
+F 1 "4k7" V 3176 5400 50  0000 C CNN
+F 2 "Resistors_THT:R_Array_SIP10" V 3225 5400 50  0001 C CNN
+F 3 "" H 2650 5400 50  0001 C CNN
+	1    2650 5400
+	0    -1   -1   0   
+$EndComp
 Wire Wire Line
-	2300 5700 2300 5850
+	2300 5800 2300 5600
+$Comp
+L power:VCC #PWR?
+U 1 1 5ED640C7
+P 2300 5600
+F 0 "#PWR?" H 2300 5450 50  0001 C CNN
+F 1 "VCC" H 2317 5773 50  0000 C CNN
+F 2 "" H 2300 5600 50  0001 C CNN
+F 3 "" H 2300 5600 50  0001 C CNN
+	1    2300 5600
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2850 5800 3050 5800
+NoConn ~ 3050 5800
 Wire Bus Line
 	7150 1550 7150 4900
 Wire Bus Line
 	9800 1550 9800 6550
-$Comp
-L power:GND #PWR?
-U 1 1 5ED1C2BF
-P 2300 5850
-F 0 "#PWR?" H 2300 5600 50  0001 C CNN
-F 1 "GND" H 2305 5677 50  0000 C CNN
-F 2 "" H 2300 5850 50  0001 C CNN
-F 3 "" H 2300 5850 50  0001 C CNN
-	1    2300 5850
-	1    0    0    -1  
-$EndComp
+Text Notes 2100 6300 0    50   ~ 0
+Note that RN501 could also be\na 9 pin (8 resistor) network.\nThe exact value isn't critical:\nanything between 2k7 and 47k\nshould work fine.
 $EndSCHEMATC

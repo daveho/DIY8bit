@@ -19,6 +19,27 @@
 #include <mcs51/at89x51.h>
 #include <stdint.h>
 
+// Define this if row inputs have external pull-up resistors
+// and column scans send the active column to GND.  This means
+// that column input bits are 0 if a key is pressed, and 1
+// if a key is not pressed.
+#define PULL_UP
+
+#ifdef PULL_UP
+#  define INIT_COL_OUTPUT       0xFF
+#  define INIT_COL_SCAN         0xFE
+#  define NEXT_COLUMN(colout)   ((colout << 1) | 1)
+#  define IS_PRESS(now)         (now == 0)
+#else
+#  error "Don't use this"
+/*
+#  define INIT_COL_OUTPUT       0
+#  define INIT_COL_SCAN         1
+#  define NEXT_COLUMN(colout)   (colout << 1)
+#  define IS_PRESS(now)         (now != 0)
+*/
+#endif
+
 #define DEBUG
 
 #ifdef DEBUG
@@ -93,24 +114,23 @@ void check_rows(int col) {
         uint8_t then = prev & bit;
         uint8_t now = curr & bit;
         if (now != then) {
-            // reading 1 means press, reading 0 means release
-            send_scancode(col, j, now != 0);
+            send_scancode(col, j, IS_PRESS(now));
         }
     }
 
-    // record updated column values for this col
+    // record updated column values for this column
     press[col] = curr;
 }
 
 void kbd_scan(void) {
     uint8_t i, colout;
 
-    // Initially, we set a high voltage on column 0
-    colout = 1;
+    // Set initial column scan value
+    colout = INIT_COL_SCAN;
 
     // for each column...
     for (i = 0; i < 8; i++) {
-        // set high voltage on current column
+        // output column scan value
         P1 = colout;
         delay(50);
 
@@ -118,7 +138,7 @@ void kbd_scan(void) {
         check_rows(i);
 
         // current column output turns off, next column output turns on
-        colout <<= 1;
+        colout = NEXT_COLUMN(colout);
     }
 
     // set column outputs back to high
@@ -134,8 +154,11 @@ int main() {
     // Writing all 1s to port 0 allows us to use it for input
     P0 = 0xFF;
 
+    // Set initial column outputs
+    P1 = INIT_COL_OUTPUT;
+
     for (i = 0; i < 8; i++) {
-        press[i] = 0;
+        press[i] = INIT_COL_OUTPUT;
     }
 
     for (;;) {
