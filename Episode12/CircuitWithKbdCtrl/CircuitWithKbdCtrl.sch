@@ -585,9 +585,83 @@ Text Label 4400 6600 0    50   ~ 0
 Text Label 4400 6700 0    50   ~ 0
 ~IRQ6_CLR
 $Sheet
-S 6550 5400 1100 1450
+S 6800 5400 950  1450
 U 5E2CF983
 F0 "Keyboard" 50
 F1 "Keyboard.sch" 50
+F2 "A0" I L 6800 5950 50 
+F3 "~RMEM" I L 6800 5650 50 
+F4 "~KB_CS" I L 6800 5800 50 
+F5 "D0" B R 7750 5650 50 
+F6 "D1" B R 7750 5750 50 
+F7 "D2" B R 7750 5850 50 
+F8 "D3" B R 7750 5950 50 
+F9 "D4" B R 7750 6050 50 
+F10 "D5" B R 7750 6150 50 
+F11 "D6" B R 7750 6250 50 
+F12 "D7" B R 7750 6350 50 
+F13 "RST" I L 6800 5500 50 
 $EndSheet
+Wire Wire Line
+	6450 5500 6800 5500
+Text Label 6550 5500 0    50   ~ 0
+RST
+Wire Notes Line
+	6400 4700 8150 4700
+Wire Notes Line
+	8150 4700 8150 7100
+Wire Notes Line
+	8150 7100 6400 7100
+Wire Notes Line
+	6400 7100 6400 4700
+Text Notes 6550 4900 0    50   ~ 0
+Module 4: keyboard controller
+Wire Wire Line
+	7750 5650 7950 5650
+Wire Wire Line
+	7750 5750 7950 5750
+Wire Wire Line
+	7750 5850 7950 5850
+Wire Wire Line
+	7750 5950 7950 5950
+Wire Wire Line
+	7750 6050 7950 6050
+Wire Wire Line
+	7750 6150 7950 6150
+Wire Wire Line
+	7750 6250 7950 6250
+Wire Wire Line
+	7750 6350 7950 6350
+Text Label 7800 5650 0    50   ~ 0
+D0
+Text Label 7800 5750 0    50   ~ 0
+D1
+Text Label 7800 5850 0    50   ~ 0
+D2
+Text Label 7800 5950 0    50   ~ 0
+D3
+Text Label 7800 6050 0    50   ~ 0
+D4
+Text Label 7800 6150 0    50   ~ 0
+D5
+Text Label 7800 6250 0    50   ~ 0
+D6
+Text Label 7800 6350 0    50   ~ 0
+D7
+Wire Wire Line
+	6450 5650 6800 5650
+Text Label 6550 5650 0    50   ~ 0
+~RMEM~
+Wire Wire Line
+	3200 5500 3600 5500
+Text Label 3250 5500 0    50   ~ 0
+~IODEV4
+Wire Wire Line
+	6450 5800 6800 5800
+Text Label 6500 5800 0    50   ~ 0
+~IODEV4
+Wire Wire Line
+	6600 5950 6800 5950
+Text Label 6650 5950 0    50   ~ 0
+A0
 $EndSCHEMATC
