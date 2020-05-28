@@ -93,8 +93,8 @@ void check_rows(int col) {
         uint8_t then = prev & bit;
         uint8_t now = curr & bit;
         if (now != then) {
-            // reading 0 means press, reading 1 means release
-            send_scancode(col, j, now == 0);
+            // reading 1 means press, reading 0 means release
+            send_scancode(col, j, now != 0);
         }
     }
 
@@ -105,12 +105,12 @@ void check_rows(int col) {
 void kbd_scan(void) {
     uint8_t i, colout;
 
-    // Initially, we set a low voltage on column 0
-    colout = 0xFE;
+    // Initially, we set a high voltage on column 0
+    colout = 1;
 
     // for each column...
     for (i = 0; i < 8; i++) {
-        // set low voltage on current column
+        // set high voltage on current column
         P1 = colout;
         delay(50);
 
@@ -118,7 +118,7 @@ void kbd_scan(void) {
         check_rows(i);
 
         // current column output turns off, next column output turns on
-        colout = (colout << 1) & 1;
+        colout <<= 1;
     }
 
     // set column outputs back to high

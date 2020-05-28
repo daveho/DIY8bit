@@ -575,9 +575,9 @@ Wire Wire Line
 Wire Wire Line
 	2850 5500 3800 5500
 Text Notes 1800 4550 0    50   ~ 0
-Port 1 actively drives the\ncolumns of the keyboard\nmatrix: outputs are normally\nat VCC, but a column output\nis driven to GND when a scan\nof that column is in progress
+Port 1 actively drives the\ncolumns of the keyboard\nmatrix: outputs are normally\nat GND, but a column output\nis driven to VCC when a scan\nof that column is in progress
 Text Notes 1200 5600 0    50   ~ 0
-Port 0 reads the rows\n(with pull up resistors\nkeeping the row inputs\nat VCC unless a\nkeyswitch has made a\nconnection to a column\nwhen the column scan\nis in progress)
+Port 0 reads the rows\n(with pull down resistors\nkeeping the row inputs\nat GND unless a\nkeyswitch has made a\nconnection to a column\nwhen the column scan\nis in progress)
 Text Label 6600 4300 0    50   ~ 0
 SCDAT0
 Text Label 6600 4400 0    50   ~ 0
@@ -992,20 +992,20 @@ Wire Wire Line
 Text Label 1650 2050 0    50   ~ 0
 COL5
 Wire Wire Line
-	2300 5700 2300 5550
-$Comp
-L power:VCC #PWR?
-U 1 1 5ED20CD9
-P 2300 5550
-F 0 "#PWR?" H 2300 5400 50  0001 C CNN
-F 1 "VCC" H 2317 5723 50  0000 C CNN
-F 2 "" H 2300 5550 50  0001 C CNN
-F 3 "" H 2300 5550 50  0001 C CNN
-	1    2300 5550
-	1    0    0    -1  
-$EndComp
+	2300 5700 2300 5850
 Wire Bus Line
 	7150 1550 7150 4900
 Wire Bus Line
 	9800 1550 9800 6550
+$Comp
+L power:GND #PWR?
+U 1 1 5ED1C2BF
+P 2300 5850
+F 0 "#PWR?" H 2300 5600 50  0001 C CNN
+F 1 "GND" H 2305 5677 50  0000 C CNN
+F 2 "" H 2300 5850 50  0001 C CNN
+F 3 "" H 2300 5850 50  0001 C CNN
+	1    2300 5850
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC
