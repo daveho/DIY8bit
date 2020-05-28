@@ -4,10 +4,10 @@ EELAYER END
 $Descr USLetter 11000 8500
 encoding utf-8
 Sheet 6 6
-Title ""
+Title "keyboard controller"
 Date ""
 Rev ""
-Comp ""
+Comp "daveho hacks"
 Comment1 ""
 Comment2 ""
 Comment3 ""
@@ -129,7 +129,7 @@ F 3 "" H 2650 5300 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 Wire Wire Line
-	2450 5700 2150 5700
+	2450 5700 2300 5700
 Wire Wire Line
 	5050 1400 4800 1400
 Wire Wire Line
@@ -409,8 +409,6 @@ Entry Wire Line
 	9800 6450 9900 6550
 Entry Wire Line
 	9800 6550 9900 6650
-Text Notes 6400 6950 0    50   ~ 0
-keyboard controller
 Wire Wire Line
 	9300 2350 9700 2350
 Wire Wire Line
@@ -561,19 +559,6 @@ F 3 "" H 3650 6650 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	2150 5700 2150 5900
-$Comp
-L power:GND #PWR?
-U 1 1 5EDCA2EA
-P 2150 5900
-F 0 "#PWR?" H 2150 5650 50  0001 C CNN
-F 1 "GND" H 2155 5727 50  0000 C CNN
-F 2 "" H 2150 5900 50  0001 C CNN
-F 3 "" H 2150 5900 50  0001 C CNN
-	1    2150 5900
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
 	2850 5100 3800 5100
 Wire Wire Line
 	2850 5200 3800 5200
@@ -589,10 +574,10 @@ Wire Wire Line
 	2850 5000 3800 5000
 Wire Wire Line
 	2850 5500 3800 5500
-Text Notes 2250 4500 0    50   ~ 0
-Port 1 actively\ndrives the columns\nof the keyboard\nmatrix
-Text Notes 1450 5550 0    50   ~ 0
-Port 0 reads the rows\n(with pull down resistors\nkeeping the row inputs\nat ground unless a\nkeyswitch has made a\nconnection to a column\nwhen the column scan\nis in progress)
+Text Notes 1800 4550 0    50   ~ 0
+Port 1 actively drives the\ncolumns of the keyboard\nmatrix: outputs are normally\nat VCC, but a column output\nis driven to GND when a scan\nof that column is in progress
+Text Notes 1200 5600 0    50   ~ 0
+Port 0 reads the rows\n(with pull up resistors\nkeeping the row inputs\nat VCC unless a\nkeyswitch has made a\nconnection to a column\nwhen the column scan\nis in progress)
 Text Label 6600 4300 0    50   ~ 0
 SCDAT0
 Text Label 6600 4400 0    50   ~ 0
@@ -905,7 +890,7 @@ L device:C C505
 U 1 1 5F056A2F
 P 6500 2850
 F 0 "C505" V 6400 2700 50  0000 C CNN
-F 1 "22pF" V 6400 3000 50  0000 C CNN
+F 1 "30pF" V 6400 3000 50  0000 C CNN
 F 2 "" H 6538 2700 50  0001 C CNN
 F 3 "" H 6500 2850 50  0001 C CNN
 	1    6500 2850
@@ -916,7 +901,7 @@ L device:C C506
 U 1 1 5F064C1E
 P 6500 3200
 F 0 "C506" V 6400 3050 50  0000 C CNN
-F 1 "22pF" V 6400 3350 50  0000 C CNN
+F 1 "30pF" V 6400 3350 50  0000 C CNN
 F 2 "" H 6538 3050 50  0001 C CNN
 F 3 "" H 6500 3200 50  0001 C CNN
 	1    6500 3200
@@ -1006,6 +991,19 @@ Wire Wire Line
 	1100 2350 1950 2350
 Text Label 1650 2050 0    50   ~ 0
 COL5
+Wire Wire Line
+	2300 5700 2300 5550
+$Comp
+L power:VCC #PWR?
+U 1 1 5ED20CD9
+P 2300 5550
+F 0 "#PWR?" H 2300 5400 50  0001 C CNN
+F 1 "VCC" H 2317 5723 50  0000 C CNN
+F 2 "" H 2300 5550 50  0001 C CNN
+F 3 "" H 2300 5550 50  0001 C CNN
+	1    2300 5550
+	1    0    0    -1  
+$EndComp
 Wire Bus Line
 	7150 1550 7150 4900
 Wire Bus Line
