@@ -19,41 +19,20 @@
 #include <mcs51/at89x51.h>
 #include <stdint.h>
 
-// Define this if row inputs have external pull-up resistors
-// and column scans send the active column to GND.  This means
-// that column input bits are 0 if a key is pressed, and 1
-// if a key is not pressed.
-#define PULL_UP
-
-#ifdef PULL_UP
-#  define INIT_COL_OUTPUT       0xFF
-#  define INIT_COL_SCAN         0xFE
-#  define NEXT_COLUMN(colout)   ((colout << 1) | 1)
-#  define IS_PRESS(now)         (now == 0)
-#else
-#  error "Don't use this"
-/*
-#  define INIT_COL_OUTPUT       0
-#  define INIT_COL_SCAN         1
-#  define NEXT_COLUMN(colout)   (colout << 1)
-#  define IS_PRESS(now)         (now != 0)
-*/
-#endif
-
 #define DEBUG
 
 #ifdef DEBUG
 void UART_Init(void) { 
     SCON = 0x50;  // Asynchronous mode, 8-bit data and 1-stop bit
-    TMOD = 0x20;  //Timer1 in Mode2.
+    TMOD = 0x20;  // Timer1 in Mode2.
     TH1 = 0xFD;   // Correct value for 11.0592 MHz crystal
-    TR1 = 1;      //Turn ON the timer for Baud rate generation
+    TR1 = 1;      // Turn ON the timer for Baud rate generation
 }
 
 void UART_TxChar(uint8_t ch) {
     SBUF = ch;      // Load the data to be transmitted
     while(TI==0);   // Wait till the data is trasmitted
-    TI = 0;         //Clear the Tx flag for next cycle.
+    TI = 0;         // Clear the Tx flag for next cycle.
 }
 
 // Command character
@@ -101,24 +80,26 @@ void send_scancode(uint8_t col, uint8_t row, uint8_t press) {
 }
 
 void check_rows(int col) {
-    uint8_t prev, curr, j, bit;
+    uint8_t prev, curr, row, bit;
 
-    // get previous column input values for this col
+    // get previous row input values for this column
     prev = press[col];
 
-    // read current values on the column inputs (P0)
+    // read current values on the row inputs (P0)
     curr = P0;
 
-    for (j = 0, bit = 1; j < 8; j++, bit <<= 1) {
-        // see if the column value changed
+    // Check each row
+    for (row = 0, bit = 1; row < 8; row++, bit <<= 1) {
+        // see if the row value changed since the last scan
         uint8_t then = prev & bit;
         uint8_t now = curr & bit;
         if (now != then) {
-            send_scancode(col, j, IS_PRESS(now));
+            uint8_t is_press = (now == 0);
+            send_scancode(col, row, is_press);
         }
     }
 
-    // record updated column values for this column
+    // record updated row values for this column
     press[col] = curr;
 }
 
@@ -126,7 +107,7 @@ void kbd_scan(void) {
     uint8_t i, colout;
 
     // Set initial column scan value
-    colout = INIT_COL_SCAN;
+    colout = 0xFE;
 
     // for each column...
     for (i = 0; i < 8; i++) {
@@ -137,8 +118,8 @@ void kbd_scan(void) {
         // check row inputs for this column
         check_rows(i);
 
-        // current column output turns off, next column output turns on
-        colout = NEXT_COLUMN(colout);
+        // change P1 outputs to scan the next column
+        colout = (colout << 1) | 1;
     }
 
     // set column outputs back to high
@@ -155,10 +136,10 @@ int main() {
     P0 = 0xFF;
 
     // Set initial column outputs
-    P1 = INIT_COL_OUTPUT;
+    P1 = 0xFF;
 
     for (i = 0; i < 8; i++) {
-        press[i] = INIT_COL_OUTPUT;
+        press[i] = 0xFF;
     }
 
     for (;;) {
