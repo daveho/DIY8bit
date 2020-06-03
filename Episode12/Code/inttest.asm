@@ -1,7 +1,6 @@
 ;; Test program for interrupt handling.
 
-;; Address of reset_irq3_ff in the monitor program
-reset_irq3_ff EQU $92CC
+	INCLUDE "offtab.asm"
 
 ;; Address of virqtab in the monitor program
 virqtab EQU $0010
@@ -47,7 +46,8 @@ irq3_handler
 	sta PORTA                     ; output count to port A of 82C55A
 	inca                          ; increment count
 	sta countvar                  ; store incremented count
-	jsr reset_irq3_ff             ; reset edge detection flip-flop
+	ldx OFFTAB_RESET_IRQ3_FF      ; get address of reset_irq3_ff
+	jsr ,X                        ; call reset_irq3_ff
 	rts
 
 ;; vim:ft=asm6809:

@@ -863,6 +863,24 @@ INVALID_RECORD FCB "Invalid record",CR,NL,0
 UPLOAD_COMPLETE FCB "Upload complete",CR,NL,0
 
 ;;**********************************************************************
+;; System address table
+;;
+;; Programs loaded into RAM can use this table to locate addresses
+;; of monitor functions and data.  There is no significance to the
+;; order of the entries.  New entries should be added to the end.
+;;
+;; The include file "offtab.asm" contains symbolic names for the
+;; addresses of each entry, and is the preferred way to (indirectly)
+;; refer to monitor routines from other programs.
+;;**********************************************************************
+
+	ORG $FE00
+	FDB reset_irq3_ff
+	FDB reset_irq6_ff
+	FDB mon_print_hex
+	FDB mon_print_hex_d
+
+;;**********************************************************************
 ;; Interrupt vectors
 ;;**********************************************************************
 
