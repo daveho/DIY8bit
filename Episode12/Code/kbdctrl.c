@@ -67,6 +67,19 @@ void writeHex(uint8_t val) {
 uint8_t press[8];
 
 void send_scancode(uint8_t col, uint8_t row, uint8_t press) {
+    // Format scancode
+    uint8_t scancode = (col << 3) | row;
+    if (press) {
+        scancode |= (1 << 6);
+    }
+
+    // Write scancode to port 2 (which outputs to the FIFO data inputs)
+    P2 = scancode;
+
+    // Send a low pulse on P3.6 to write the scancode to the FIFO
+    P3_6 = 0;
+    P3_6 = 1;
+
 #ifdef DEBUG
     UART_TxChar(SER_CMD);
     UART_TxChar(128+0);
@@ -113,7 +126,7 @@ void kbd_scan(void) {
     for (i = 0; i < 8; i++) {
         // output column scan value
         P1 = colout;
-        delay(50);
+        delay(10); // make sure row inputs have time to change
 
         // check row inputs for this column
         check_rows(i);
@@ -130,7 +143,9 @@ int main() {
     uint8_t i;
 
     delay(10000);
+#ifdef DEBUG
     UART_Init();
+#endif
 
     // Writing all 1s to port 0 allows us to use it for input
     P0 = 0xFF;
@@ -138,12 +153,21 @@ int main() {
     // Set initial column outputs
     P1 = 0xFF;
 
+    // Make sure P3.6 (which controls the FIFO -WR input) is high
+    P3_6 = 1;
+
+    // Reset the FIFO (P3.7 is connected to the FIFO's -RS input)
+    P3_7 = 0;
+    delay(10);
+    P3_7 = 1;
+
+    // Assume that all keys are released initially
     for (i = 0; i < 8; i++) {
         press[i] = 0xFF;
     }
 
     for (;;) {
         kbd_scan();
-        delay(1000);
+        delay(500);
     }
 }
