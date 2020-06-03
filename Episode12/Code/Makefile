@@ -31,5 +31,8 @@ testprog.ihx : testprog.asm offtab.asm
 inttest.ihx : inttest.asm offtab.asm
 	asm6809 -H inttest.asm -o $@
 
+kbdtest.ihx : kbdtest.asm offtab.asm
+	asm6809 -H kbdtest.asm -o $@
+
 clean:
 	rm -rf *.ihx *.lk *.lst *.map *.mem *.rel *.rst *.sym *.asm
