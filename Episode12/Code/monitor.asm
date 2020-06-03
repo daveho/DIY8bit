@@ -879,6 +879,10 @@ UPLOAD_COMPLETE FCB "Upload complete",CR,NL,0
 	FDB reset_irq6_ff
 	FDB mon_print_hex
 	FDB mon_print_hex_d
+	FDB acia_send
+	FDB acia_send_string
+	FDB acia_recv
+	FDB delay
 
 ;;**********************************************************************
 ;; Interrupt vectors
