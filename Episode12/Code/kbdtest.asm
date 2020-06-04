@@ -12,15 +12,6 @@ NL EQU $0A
 	ORG $1000
 
 entry
-;	ldy OFFTAB_DELAY
-;	jsr ,Y
-;	ldy OFFTAB_DELAY
-;	jsr ,Y
-;	ldy OFFTAB_DELAY
-;	jsr ,Y
-;	ldy OFFTAB_DELAY
-;	jsr ,Y
-
 	lda PORT_KBCTRL_STATUS
 	anda #$01
 	cmpa #$00
