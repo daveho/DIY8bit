@@ -1,6 +1,6 @@
 # DIY 8-bit computer, Episode 12
 
-Link to video: coming soon
+Link to video: <https://youtu.be/yMzNDNwyb3E>
 
 In this video, we design and test a keyboard controller which interfaces a Commodore 16 keyboard with the 6809 system.
 
