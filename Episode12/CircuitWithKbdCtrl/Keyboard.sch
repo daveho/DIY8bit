@@ -45,7 +45,7 @@ L 74xx:74LS138 U503
 U 1 1 5E2E7734
 P 5550 1600
 F 0 "U503" H 5550 2381 50  0000 C CNN
-F 1 "74LS138" H 5550 2290 50  0000 C CNN
+F 1 "74HCT138" H 5550 2290 50  0000 C CNN
 F 2 "" H 5550 1600 50  0001 C CNN
 F 3 "" H 5550 1600 50  0001 C CNN
 	1    5550 1600
@@ -1007,10 +1007,10 @@ $EndComp
 Wire Wire Line
 	2850 5800 3050 5800
 NoConn ~ 3050 5800
+Text Notes 2100 6300 0    50   ~ 0
+Note that RN501 could also be\na 9 pin (8 resistor) network.\nThe exact value isn't critical:\nanything between 2k7 and 47k\nshould work fine.
 Wire Bus Line
 	7150 1550 7150 4900
 Wire Bus Line
 	9800 1550 9800 6550
-Text Notes 2100 6300 0    50   ~ 0
-Note that RN501 could also be\na 9 pin (8 resistor) network.\nThe exact value isn't critical:\nanything between 2k7 and 47k\nshould work fine.
 $EndSCHEMATC
