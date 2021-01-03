@@ -35,4 +35,4 @@ kbdtest.ihx : kbdtest.asm offtab.asm
 	asm6809 -H kbdtest.asm -o $@
 
 clean:
-	rm -rf *.ihx *.lk *.lst *.map *.mem *.rel *.rst *.sym *.asm
+	rm -rf *.ihx *.lk *.lst *.map *.mem *.rel *.rst *.sym
