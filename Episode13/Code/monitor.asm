@@ -740,6 +740,22 @@ acia_recv
 
 	rts
 
+;; Poll for a byte received by the ACIA.
+;; If the B register is set to 0, it means that no byte is
+;; available.  If the B register is set to a nonzero value, it means that
+;; a byte was read successfully, and the A register contains
+;; the byte value.
+acia_poll
+	ldb PORT_ACIA_STATUS
+	andb #ACIA_STATUS_RDRF
+	beq 99F
+
+	; RDRF was set, so read the byte
+	lda PORT_ACIA_RECV
+
+99
+	rts
+
 ;;**********************************************************************
 ;; Interrupt handling
 ;;**********************************************************************
@@ -804,6 +820,14 @@ reset_irq6_ff
 	sta PORT_I82C55A_CTRL
 	lda #IRQ6_FF_SET_DEASSERT
 	sta PORT_I82C55A_CTRL
+	rts
+
+;;**********************************************************************
+;; Keyboard routines
+;;**********************************************************************
+
+;; TODO
+kbd_poll
 	rts
 
 ;;**********************************************************************
