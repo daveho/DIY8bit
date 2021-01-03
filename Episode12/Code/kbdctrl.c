@@ -81,8 +81,8 @@ void send_scancode(uint8_t col, uint8_t row, uint8_t press) {
     P3_6 = 1;
 
 #ifdef DEBUG
-    UART_TxChar(SER_CMD);
-    UART_TxChar(128+0);
+    UART_TxChar((uint8_t) SER_CMD);
+    UART_TxChar((uint8_t) (128+0));
     writeString(scanmsg);
     writeHex(col);
     UART_TxChar(',');
