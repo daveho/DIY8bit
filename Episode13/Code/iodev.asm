@@ -5,6 +5,7 @@
 	INCLUDE "i82c55a.asm"
 	INCLUDE "i82c54.asm"
 	INCLUDE "acia.asm"
+	INCLUDE "kbd.asm"
 
 ;; Addresses of hardware device registers
 

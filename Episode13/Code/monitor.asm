@@ -826,8 +826,26 @@ reset_irq6_ff
 ;; Keyboard routines
 ;;**********************************************************************
 
-;; TODO
+;; Return an ASCII value read from the keyboard.
+;; If no key is available, the B register is set to 0.
+;; If a key is available, the B register is set to 1, and
+;; the A register will contain the character code.
 kbd_poll
+	ldb #$00                      ; assume no keypress available
+	lda PORT_KBCTRL_STATUS        ; read status
+	anda #KBD_STATUS_FIFO_NOT_EMPTY ; check not empty flag
+	cmpa #$00                     ; FIFO is empty?
+	beq 99f                       ; if empty, done
+
+	lda PORT_KBCTRL_DATA          ; read scan code
+	tfr A, B                      ; copy scan code to B
+	andb #KBD_SCAN_PRESS          ; check whether press
+	cmpb #$00                     ; is not press?
+	beq kbd_poll                  ; if not press, try to get next scan code
+
+	;; TODO: process key press
+
+99
 	rts
 
 ;;**********************************************************************
@@ -849,7 +867,7 @@ MONITOR_PROMPT FCB "> ",0
 MONITOR_ERR_MSG FCB "?",CR,NL,0
 
 ;; Monitor identification message (printed when '?' command is entered)
-MONITOR_IDENT_MSG FCB "6809 ROM monitor, 2019-2020 by daveho hacks",CR,NL,0
+MONITOR_IDENT_MSG FCB "6809 ROM monitor, 2019-2021 by daveho hacks",CR,NL,0
 
 ;; Monitor command codes.
 ;; This must be NUL-terminated.
