@@ -732,7 +732,7 @@ acia_send_string
 2
 	rts
 
-;; Wait to receive a character, returning
+;; Wait to receive a character from the ACIA, returning
 ;; the result in A.  Note: clobbers B.
 acia_recv
 	; Busy wait until RDRF is set
@@ -746,18 +746,18 @@ acia_recv
 
 	rts
 
-;; Poll for a byte received by the ACIA.
-;; If the B register is set to 0, it means that no byte is
-;; available.  If the B register is set to a nonzero value, it means that
-;; a byte was read successfully, and the A register contains
-;; the byte value.
+;; Poll to receive a character from the ACIA.
+;; If a character is not available, B is set to 0.
+;; If a character is available, B is set to 1, and A
+;; will contain the character read.
 acia_poll
-	ldb PORT_ACIA_STATUS
-	andb #ACIA_STATUS_RDRF
-	beq 99F
+	ldb PORT_ACIA_STATUS     ; check ACIA status
+	andb #ACIA_STATUS_RDRF   ; byte is ready?
+	beq 99f                  ; if not, we're done (B is 0)
 
-	; RDRF was set, so read the byte
-	lda PORT_ACIA_RECV
+	; character is available, read it and set B to 1
+	lda PORT_ACIA_RECV       ; read the character
+	ldb #1                   ; set B to 1
 
 99
 	rts
