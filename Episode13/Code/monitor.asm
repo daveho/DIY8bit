@@ -861,7 +861,28 @@ kbd_poll
 	cmpb #$00                     ; is not press?
 	beq kbd_poll                  ; if not press, try to get next scan code
 
-	;; TODO: process key press
+	pshs X                        ; preserve value of X register
+
+	; Unset the press bit
+	anda #~KBD_SCAN_PRESS         ; unset the "pressed" bit
+
+	ldb vmodkey                   ; check key modifiers
+	andb #KBD_SHIFT_MOD           ; is shift pressed?
+	bne 70f                       ; jump to "shift pressed" case if appropriate
+
+	; Shift is not pressed, use keycode_not_shifted table
+	ldx #keycode_not_shifted
+	jmp 80f
+
+70
+	; Shift is pressed, use keycode_shifted table
+	ldx #keycode_shifted
+
+80
+	lda A,X                       ; translate scan code to character code
+	ldb #1                        ; character code is available
+
+	puls X                        ; restore value of X register
 
 99
 	rts
@@ -962,6 +983,15 @@ DEFAULT_IRQ_HANDLER_TABLE
 INVALID_RECORD FCB "Invalid record",CR,NL,0
 
 UPLOAD_COMPLETE FCB "Upload complete",CR,NL,0
+
+;;**********************************************************************
+;; Scancode to ASCII code translation table: defines
+;; keycode_not_shifted and keycode_shifted tables, which map
+;; scancodes (without bit 6, the "pressed" bit) to ASCII
+;; codes.
+;;**********************************************************************
+
+	INCLUDE "kbd_translate.asm"
 
 ;;**********************************************************************
 ;; System address table

@@ -2,7 +2,7 @@
 
 # Updated ROM monitor with better keyboard support
 
-INCLUDES = iodev.asm i82c55a.asm i82c54.asm acia.asm
+INCLUDES = iodev.asm i82c55a.asm i82c54.asm acia.asm kbd_translate.asm
 
 %.bin : %.asm
 	asm6809 -l $*.lst -B $< -o $*.bin
@@ -26,6 +26,9 @@ inttest.ihx : inttest.asm offtab.asm
 
 kbdtest.ihx : kbdtest.asm offtab.asm
 	asm6809 -H kbdtest.asm -o $@
+
+kbd_translate.asm : translate.txt build_kbd_table.rb
+	./build_kbd_table.rb < translate.txt > $@
 
 clean:
 	rm -rf *.ihx *.bin *.lst
