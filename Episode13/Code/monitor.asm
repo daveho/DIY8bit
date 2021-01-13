@@ -150,6 +150,20 @@ main_loop
 ;; Monitor routines
 ;;------------------------------------------------------------------
 
+;; Routine to read a single character from either the ACIA or the keyboard.
+;; Returns character read in A. Clobbers B.
+mon_recv
+	jsr acia_poll                 ; poll the ACIA
+	cmpb #0                       ; check whether B=0
+	bne 99f                       ; if B != 0, character was read, we're done
+	jsr kbd_poll                  ; poll the keyboard
+	cmpb #0                       ; check whether B=0
+	bne 99f                       ; if B != 0, character was read, we're done
+	jmp mon_recv                  ; no character was available, continue loop
+
+99
+	rts
+
 ;; Read a line of text into the monitor command buffer.
 ;; Clobbers A, B, and X.
 mon_read_command
