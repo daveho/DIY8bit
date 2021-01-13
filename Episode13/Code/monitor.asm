@@ -884,7 +884,7 @@ kbd_check_mod_keys
 	cmpb #KBD_SCAN_CTRL_PRESS     ; is control press?
 	bne 3f                        ; if not, next case
 	ldb vmodkey                   ; get current key mod state
-	orb #KBD_CTRL_MOD             ; set shift mod bit
+	orb #KBD_CTRL_MOD             ; set control mod bit
 	stb vmodkey                   ; store in vmodkey
 	jmp 99f                       ; done
 
@@ -900,7 +900,7 @@ kbd_check_mod_keys
 	cmpb #KBD_SCAN_CTRL_RELEASE   ; is shift release?
 	bne 99f                       ; if not, done
 	ldb vmodkey                   ; get current key mode state
-	andb #~KBD_CTRL_MOD           ; clear shift mod bit
+	andb #~KBD_CTRL_MOD           ; clear control mod bit
 	stb vmodkey                   ; store in vmodkey
 
 99
