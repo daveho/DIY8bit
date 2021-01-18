@@ -171,7 +171,7 @@ mon_read_command
 	ldx #vmonbuf
 
 1
-	jsr acia_recv                    ; read a character
+	jsr mon_recv                     ; read a character
 	jsr acia_send                    ; echo the character
 	cmpa #NL                         ; was it a newline?
 	beq 3F                           ; if so, we're done

@@ -1,12 +1,23 @@
 #! /usr/bin/env ruby
 
+SPECIAL = {
+  'SPACE' => 32,      # space key
+  'RETURN' => 10,     # return key, generates newline
+  # TODO: encodings for other special keys
+}
+
 def translate(item)
   if item.length == 1
     return item.ord
   else
-    # this is a special key that doesn't have a direct encoding
-    # in ASCII, so for now, just return '?'
-    return '?'.ord
+    if SPECIAL.has_key?(item)
+      # translate special key code
+      return SPECIAL[item]
+    else
+      # this is a special key that doesn't have a direct encoding
+      # in ASCII, so for now, just return '?'
+      return '?'.ord
+    end
   end
 end
 
