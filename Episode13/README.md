@@ -1,6 +1,6 @@
 # DIY 8-bit computer, Episode 13
 
-Link to video: coming soon
+Link to video: <https://youtu.be/eOvYyG3CDwY>
 
 In this video, we tie up a few loose ends related to the keyboard, specifically
 
