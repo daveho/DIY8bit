@@ -2258,6 +2258,34 @@ Text Label 7500 6950 0    50   ~ 0
 PC6
 Text Label 7500 7050 0    50   ~ 0
 PC7
+Text Label 7500 7150 0    50   ~ 0
+PC8
+$Comp
+L device:CP C112
+U 1 1 61CF6F76
+P 5850 5150
+F 0 "C112" H 5968 5196 50  0000 L CNN
+F 1 "10μF" H 5968 5105 50  0000 L CNN
+F 2 "" H 5888 5000 50  0001 C CNN
+F 3 "" H 5850 5150 50  0001 C CNN
+	1    5850 5150
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5850 5000 5850 4850
+$Comp
+L power:VCC #PWR?
+U 1 1 61D33C29
+P 5850 4850
+F 0 "#PWR?" H 5850 4700 50  0001 C CNN
+F 1 "VCC" H 5867 5023 50  0000 C CNN
+F 2 "" H 5850 4850 50  0001 C CNN
+F 3 "" H 5850 4850 50  0001 C CNN
+	1    5850 4850
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5850 5300 5850 5500
 Wire Bus Line
 	1000 5700 3650 5700
 Wire Bus Line
@@ -2268,4 +2296,17 @@ Wire Bus Line
 	4500 4450 4500 7250
 Wire Bus Line
 	2450 6150 2450 9200
+$Comp
+L power:GND #PWR?
+U 1 1 61D6EF92
+P 5850 5500
+F 0 "#PWR?" H 5850 5250 50  0001 C CNN
+F 1 "GND" H 5855 5327 50  0000 C CNN
+F 2 "" H 5850 5500 50  0001 C CNN
+F 3 "" H 5850 5500 50  0001 C CNN
+	1    5850 5500
+	1    0    0    -1  
+$EndComp
+Text Notes 6050 4900 0    50   ~ 0
+Bulk decoupling for board,\nplace near power pins of\n2x40 connector to backplane
 $EndSCHEMATC
