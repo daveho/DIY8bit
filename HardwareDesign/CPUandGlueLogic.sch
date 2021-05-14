@@ -2309,4 +2309,6 @@ F 3 "" H 5850 5500 50  0001 C CNN
 $EndComp
 Text Notes 6050 4900 0    50   ~ 0
 Bulk decoupling for board,\nplace near power pins of\n2x40 connector to backplane
+Text Notes 7850 10250 0    50   ~ 0
+backplane connector
 $EndSCHEMATC
