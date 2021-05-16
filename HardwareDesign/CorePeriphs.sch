@@ -599,8 +599,6 @@ Wire Wire Line
 Wire Wire Line
 	7350 2050 7350 3950
 Wire Wire Line
-	9500 1650 9700 1650
-Wire Wire Line
 	7450 4150 7450 4300
 $Comp
 L power:GND #PWR?
@@ -719,8 +717,6 @@ Wire Wire Line
 	9500 2450 10300 2450
 Wire Wire Line
 	9500 2550 10300 2550
-Wire Wire Line
-	9700 1650 9700 1750
 $Comp
 L power:GND #PWR?
 U 1 1 5E14BF6A
@@ -734,12 +730,8 @@ F 3 "" H 9700 3150 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	9500 1750 9700 1750
-Connection ~ 9700 1750
 Wire Wire Line
 	9700 1750 9700 3150
-Wire Wire Line
-	8700 4050 8500 4050
-NoConn ~ 8500 4050
 Wire Wire Line
 	7900 1850 7900 1900
 Wire Wire Line
@@ -1092,7 +1084,7 @@ Wire Wire Line
 Wire Wire Line
 	2150 6500 1650 6500
 Text Label 1750 6400 0    50   ~ 0
-Ext_RxD
+Ext_TxD
 Text Label 1750 6500 0    50   ~ 0
 Ext_RTS
 Text Notes 5050 7050 0    50   ~ 0
@@ -1126,8 +1118,6 @@ Text Label 4900 7400 0    50   ~ 0
 Ext_CTS
 Text Label 4900 7500 0    50   ~ 0
 Ext_RTS
-Text Label 4900 7600 0    50   ~ 0
-GND
 $Comp
 L power:GND #PWR?
 U 1 1 60FFD171
@@ -1141,11 +1131,6 @@ F 3 "" H 5300 7750 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	5300 7750 5300 7600
-Connection ~ 5300 7600
-Wire Wire Line
-	5300 7600 4850 7600
-Text Notes 2200 5550 0    50   ~ 0
-TODO: this section is not correct currently
 $Comp
 L Connector_Generic:Conn_01x09 J305
 U 1 1 610254DD
@@ -1198,6 +1183,66 @@ F 3 "" H 7250 6450 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	7250 6350 7250 6450
+Wire Wire Line
+	9500 1650 9600 1650
+Wire Wire Line
+	9600 1650 9600 3550
+Wire Wire Line
+	7650 3550 7650 4050
+Text Label 7700 4050 0    50   ~ 0
+-CTS
+$Comp
+L device:R R305
+U 1 1 61113D93
+P 9600 3800
+F 0 "R305" H 9670 3846 50  0000 L CNN
+F 1 "10k" H 9670 3755 50  0000 L CNN
+F 2 "" V 9530 3800 50  0001 C CNN
+F 3 "" H 9600 3800 50  0001 C CNN
+	1    9600 3800
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9600 3650 9600 3550
+Connection ~ 9600 3550
+Wire Wire Line
+	9600 3950 9600 4050
+$Comp
+L power:GND #PWR?
+U 1 1 61136F82
+P 9600 4050
+F 0 "#PWR?" H 9600 3800 50  0001 C CNN
+F 1 "GND" H 9605 3877 50  0000 C CNN
+F 2 "" H 9600 4050 50  0001 C CNN
+F 3 "" H 9600 4050 50  0001 C CNN
+	1    9600 4050
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7650 3550 9600 3550
+$Comp
+L device:R R304
+U 1 1 6114E6B2
+P 8350 4050
+F 0 "R304" V 8300 3800 50  0000 C CNN
+F 1 "2k7" V 8300 4250 50  0000 C CNN
+F 2 "" V 8280 4050 50  0001 C CNN
+F 3 "" H 8350 4050 50  0001 C CNN
+	1    8350 4050
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	8500 4050 8700 4050
+Wire Wire Line
+	8200 4050 7650 4050
+Wire Wire Line
+	4050 6600 3550 6600
+Wire Wire Line
+	4050 6700 3550 6700
+Wire Wire Line
+	4050 6400 3550 6400
+Wire Wire Line
+	4050 6500 3550 6500
 Wire Bus Line
 	1950 5200 10300 5200
 Wire Bus Line
@@ -1206,4 +1251,12 @@ Wire Bus Line
 	4750 2200 4750 5100
 Wire Bus Line
 	1850 2900 1850 6150
+Text Label 3850 6400 0    50   ~ 0
+RxD
+Text Label 3800 6500 0    50   ~ 0
+-CTS
+Text Label 3700 6600 0    50   ~ 0
+Ext_RxD
+Text Label 3700 6700 0    50   ~ 0
+Ext_CTS
 $EndSCHEMATC
