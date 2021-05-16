@@ -2259,7 +2259,7 @@ PC6
 Text Label 7500 7050 0    50   ~ 0
 PC7
 Text Label 7500 7150 0    50   ~ 0
-PC8
+TIRQ
 $Comp
 L device:CP C112
 U 1 1 61CF6F76
@@ -2286,16 +2286,6 @@ F 3 "" H 5850 4850 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	5850 5300 5850 5500
-Wire Bus Line
-	1000 5700 3650 5700
-Wire Bus Line
-	3750 5250 3750 5600
-Wire Bus Line
-	1350 4250 1350 5600
-Wire Bus Line
-	4500 4450 4500 7250
-Wire Bus Line
-	2450 6150 2450 9200
 $Comp
 L power:GND #PWR?
 U 1 1 61D6EF92
@@ -2311,4 +2301,14 @@ Text Notes 6050 4900 0    50   ~ 0
 Bulk decoupling for board,\nplace near power pins of\n2x40 connector to backplane
 Text Notes 7850 10250 0    50   ~ 0
 backplane connector
+Wire Bus Line
+	1000 5700 3650 5700
+Wire Bus Line
+	3750 5250 3750 5600
+Wire Bus Line
+	1350 4250 1350 5600
+Wire Bus Line
+	4500 4450 4500 7250
+Wire Bus Line
+	2450 6150 2450 9200
 $EndSCHEMATC
