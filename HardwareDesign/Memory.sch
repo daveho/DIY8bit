@@ -810,10 +810,6 @@ Wire Wire Line
 	9050 5500 9600 5500
 Wire Wire Line
 	9050 5600 9600 5600
-Text Notes 8000 1450 0    50   ~ 0
-back row
-Text Notes 9300 1450 0    50   ~ 0
-front row
 Text Label 9400 1800 0    50   ~ 0
 D0
 Text Label 9400 1900 0    50   ~ 0
@@ -951,6 +947,21 @@ Text Notes 8450 5800 0    50   ~ 0
 backplane connector
 Wire Wire Line
 	7750 5950 7750 5850
+$Comp
+L power:VCC #PWR?
+U 1 1 60AC3A0A
+P 7750 5850
+F 0 "#PWR?" H 7750 5700 50  0001 C CNN
+F 1 "VCC" H 7767 6023 50  0000 C CNN
+F 2 "" H 7750 5850 50  0001 C CNN
+F 3 "" H 7750 5850 50  0001 C CNN
+	1    7750 5850
+	1    0    0    -1  
+$EndComp
+Text Notes 7850 1500 0    50   ~ 0
+back row (backplane)\nbottom row (board)
+Text Notes 9000 1500 0    50   ~ 0
+front row (backplane)\ntop row (board)
 Wire Bus Line
 	3400 2950 6450 2950
 Wire Bus Line
@@ -967,15 +978,4 @@ Wire Bus Line
 	4700 3250 4700 5300
 Wire Bus Line
 	1500 1300 1500 3050
-$Comp
-L power:VCC #PWR?
-U 1 1 60AC3A0A
-P 7750 5850
-F 0 "#PWR?" H 7750 5700 50  0001 C CNN
-F 1 "VCC" H 7767 6023 50  0000 C CNN
-F 2 "" H 7750 5850 50  0001 C CNN
-F 3 "" H 7750 5850 50  0001 C CNN
-	1    7750 5850
-	1    0    0    -1  
-$EndComp
 $EndSCHEMATC

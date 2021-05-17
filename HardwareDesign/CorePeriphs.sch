@@ -1243,14 +1243,6 @@ Wire Wire Line
 	4050 6400 3550 6400
 Wire Wire Line
 	4050 6500 3550 6500
-Wire Bus Line
-	1950 5200 10300 5200
-Wire Bus Line
-	10400 1950 10400 5100
-Wire Bus Line
-	4750 2200 4750 5100
-Wire Bus Line
-	1850 2900 1850 6150
 Text Label 3850 6400 0    50   ~ 0
 RxD
 Text Label 3800 6500 0    50   ~ 0
@@ -1259,4 +1251,12 @@ Text Label 3700 6600 0    50   ~ 0
 Ext_RxD
 Text Label 3700 6700 0    50   ~ 0
 Ext_CTS
+Wire Bus Line
+	1950 5200 10300 5200
+Wire Bus Line
+	10400 1950 10400 5100
+Wire Bus Line
+	4750 2200 4750 5100
+Wire Bus Line
+	1850 2900 1850 6150
 $EndSCHEMATC

@@ -763,8 +763,6 @@ Wire Wire Line
 	2050 5950 1400 5950
 Wire Wire Line
 	2050 6050 1400 6050
-Text Label 1900 5350 0    50   ~ 0
-D0
 Text Label 1900 5450 0    50   ~ 0
 D1
 Text Label 1900 5550 0    50   ~ 0
