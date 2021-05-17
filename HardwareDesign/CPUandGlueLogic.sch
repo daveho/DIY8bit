@@ -439,7 +439,7 @@ Wire Wire Line
 Wire Wire Line
 	9900 2650 10600 2650
 Text Label 10000 2650 0    50   ~ 0
-Unbuf_~ROMEN~
+~ROMEN~
 $Comp
 L 74xx:74LS138 U108
 U 1 1 5CFA9261
