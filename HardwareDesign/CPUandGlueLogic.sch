@@ -695,21 +695,21 @@ Wire Wire Line
 Wire Wire Line
 	9050 4600 9500 4600
 Text Label 9250 3900 0    50   ~ 0
-~IOR0
+~IOR0~
 Text Label 9250 4000 0    50   ~ 0
-~IOR1
+~IOR1~
 Text Label 9250 4100 0    50   ~ 0
-~IOR2
+~IOR2~
 Text Label 9250 4200 0    50   ~ 0
-~IOR3
+~IOR3~
 Text Label 9250 4300 0    50   ~ 0
-~IOR4
+~IOR4~
 Text Label 9250 4400 0    50   ~ 0
-~IOR5
+~IOR5~
 Text Label 9250 4500 0    50   ~ 0
-~IOR6
+~IOR6~
 Text Label 9250 4600 0    50   ~ 0
-~IOR7
+~IOR7~
 Wire Wire Line
 	12350 3300 12900 3300
 Wire Wire Line
@@ -1739,10 +1739,10 @@ F 4 "1-1825027-2" H 1450 1400 50  0001 L BNN "Comment"
 	1    0    0    -1  
 $EndComp
 $Comp
-L Connector_Generic:Conn_02x40_Counter_Clockwise J100
+L Connector_Generic:Conn_02x40_Counter_Clockwise J101
 U 1 1 60A6FC79
 P 8400 8100
-F 0 "J100" H 8450 10217 50  0000 C CNN
+F 0 "J101" H 8450 10217 50  0000 C CNN
 F 1 "Conn_02x40_Counter_Clockwise" H 8450 10126 50  0000 C CNN
 F 2 "" H 8400 8100 50  0001 C CNN
 F 3 "~" H 8400 8100 50  0001 C CNN
@@ -2053,10 +2053,10 @@ Bulk decoupling for board,\nplace near power pins of\n2x40 connector to backplan
 Text Notes 8100 10300 0    50   ~ 0
 backplane connector
 $Comp
-L Connector_Generic:Conn_01x02 J101
+L Connector_Generic:Conn_01x02 J100
 U 1 1 60A78691
 P 1150 700
-F 0 "J101" V 1114 512 50  0000 R CNN
+F 0 "J100" V 1114 512 50  0000 R CNN
 F 1 "Conn_01x02" V 1023 512 50  0000 R CNN
 F 2 "" H 1150 700 50  0001 C CNN
 F 3 "~" H 1150 700 50  0001 C CNN
@@ -2386,6 +2386,22 @@ Wire Wire Line
 	6700 4000 8050 4000
 Wire Wire Line
 	6700 4100 8050 4100
+Text Label 7750 7800 0    50   ~ 0
+~IOR1~
+Text Label 7750 7900 0    50   ~ 0
+~IOR2~
+Text Label 7750 8000 0    50   ~ 0
+~IOR3~
+Text Label 7750 8100 0    50   ~ 0
+~IOR4~
+Text Label 7750 8200 0    50   ~ 0
+~IOR5~
+Text Label 7750 8300 0    50   ~ 0
+~IOR6~
+Text Label 7750 8400 0    50   ~ 0
+~IOR7~
+Text Label 7750 7300 0    50   ~ 0
+~KIRQ~
 Wire Bus Line
 	1050 5750 4250 5750
 Wire Bus Line

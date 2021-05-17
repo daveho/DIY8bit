@@ -962,6 +962,20 @@ Text Notes 7850 1500 0    50   ~ 0
 back row (backplane)\nbottom row (board)
 Text Notes 9000 1500 0    50   ~ 0
 front row (backplane)\ntop row (board)
+Text Label 8100 3300 0    50   ~ 0
+~IOR1~
+Text Label 8100 3400 0    50   ~ 0
+~IOR2~
+Text Label 8100 3500 0    50   ~ 0
+~IOR3~
+Text Label 8100 3600 0    50   ~ 0
+~IOR4~
+Text Label 8100 3700 0    50   ~ 0
+~IOR5~
+Text Label 8100 3800 0    50   ~ 0
+~IOR6~
+Text Label 8100 3900 0    50   ~ 0
+~IOR7~
 Wire Bus Line
 	3400 2950 6450 2950
 Wire Bus Line

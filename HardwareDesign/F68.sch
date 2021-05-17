@@ -601,6 +601,7 @@ F10 "D5" B R 7750 6150 50
 F11 "D6" B R 7750 6250 50 
 F12 "D7" B R 7750 6350 50 
 F13 "RST" I L 6800 5500 50 
+F14 "~KIRQ~" O R 7750 6550 50 
 $EndSheet
 Wire Wire Line
 	6450 5500 6800 5500
@@ -664,4 +665,12 @@ Wire Wire Line
 	6600 5950 6800 5950
 Text Label 6650 5950 0    50   ~ 0
 A0
+Wire Wire Line
+	7750 6550 8100 6550
+Text Label 7800 6550 0    50   ~ 0
+~KIRQ~
+Wire Wire Line
+	4450 6450 4800 6450
+Text Label 4500 6450 0    50   ~ 0
+~KIRQ~
 $EndSCHEMATC

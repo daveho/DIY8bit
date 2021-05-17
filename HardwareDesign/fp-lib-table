@@ -1,0 +1,4 @@
+(fp_lib_table
+  (lib (name P80C32SBPN)(type Legacy)(uri ${KIPRJMOD}/P80C32SBPN.mod)(options "")(descr ""))
+  (lib (name SW_1-1825027-2)(type Legacy)(uri ${KIPRJMOD}/SW_1-1825027-2.mod)(options "")(descr ""))
+)
