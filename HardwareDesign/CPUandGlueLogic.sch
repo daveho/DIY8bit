@@ -378,18 +378,12 @@ Text Label 3700 5300 0    50   ~ 0
 Unbuf_A14
 Text Label 3700 5200 0    50   ~ 0
 Unbuf_A15
-Wire Wire Line
-	7250 2550 6950 2550
-Wire Wire Line
-	7250 2650 6950 2650
-Wire Wire Line
-	7250 2750 6950 2750
-Text Label 7000 2550 0    50   ~ 0
-A14
-Text Label 7000 2650 0    50   ~ 0
-A13
-Text Label 7000 2750 0    50   ~ 0
-A12
+Text Label 6750 2550 0    50   ~ 0
+Unbuf_A14
+Text Label 6750 2650 0    50   ~ 0
+Unbuf_A13
+Text Label 6750 2750 0    50   ~ 0
+Unbuf_A12
 $Comp
 L 74xx:74LS27 U107
 U 1 1 5CFA923D
@@ -436,10 +430,8 @@ F 3 "" H 9600 2650 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	9300 2750 9000 2750
-Wire Wire Line
-	6950 2250 7950 2250
-Text Label 7000 2250 0    50   ~ 0
-A15
+Text Label 6750 2250 0    50   ~ 0
+Unbuf_A15
 Wire Wire Line
 	9300 2550 9100 2550
 Wire Wire Line
@@ -459,23 +451,14 @@ F 3 "" H 8550 4200 50  0001 C CNN
 	1    8550 4200
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	8050 3900 6950 3900
-Wire Wire Line
-	8050 4000 6950 4000
-Wire Wire Line
-	8050 4100 6950 4100
-Text Label 7000 3900 0    50   ~ 0
-A9
-Text Label 7000 4000 0    50   ~ 0
-A10
-Text Label 7000 4100 0    50   ~ 0
-A11
+Text Label 6750 3900 0    50   ~ 0
+Unbuf_A9
+Text Label 6750 4000 0    50   ~ 0
+Unbuf_A10
+Text Label 6750 4100 0    50   ~ 0
+Unbuf_A11
 Wire Wire Line
 	8050 4400 7950 4400
-Wire Wire Line
-	7950 4400 7950 2250
-Connection ~ 7950 2250
 Wire Wire Line
 	7950 2250 9100 2250
 Wire Wire Line
@@ -566,8 +549,8 @@ F 3 "" H 11200 3750 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	11350 4000 11100 4000
-Text Label 10300 4000 0    50   ~ 0
-A8
+Text Label 10000 4000 0    50   ~ 0
+Unbuf_A8
 Wire Wire Line
 	11850 4300 11850 4400
 $Comp
@@ -641,7 +624,7 @@ Wire Wire Line
 	11100 5700 11100 4000
 Connection ~ 11100 4000
 Wire Wire Line
-	11100 4000 10250 4000
+	11100 4000 9950 4000
 Wire Wire Line
 	11350 5900 11200 5900
 Wire Wire Line
@@ -670,33 +653,33 @@ Wire Wire Line
 	11350 3400 10750 3400
 Wire Wire Line
 	11350 3500 10850 3500
-Text Label 10300 3300 0    50   ~ 0
-A5
-Text Label 10300 3400 0    50   ~ 0
-A6
-Text Label 10300 3500 0    50   ~ 0
-A7
+Text Label 10000 3300 0    50   ~ 0
+Unbuf_A5
+Text Label 10000 3400 0    50   ~ 0
+Unbuf_A6
+Text Label 10000 3500 0    50   ~ 0
+Unbuf_A7
 Wire Wire Line
 	11350 5200 10650 5200
 Wire Wire Line
 	10650 5200 10650 3300
 Connection ~ 10650 3300
 Wire Wire Line
-	10650 3300 10250 3300
+	10650 3300 9950 3300
 Wire Wire Line
 	11350 5300 10750 5300
 Wire Wire Line
 	10750 5300 10750 3400
 Connection ~ 10750 3400
 Wire Wire Line
-	10750 3400 10250 3400
+	10750 3400 9950 3400
 Wire Wire Line
 	11350 5400 10850 5400
 Wire Wire Line
 	10850 5400 10850 3500
 Connection ~ 10850 3500
 Wire Wire Line
-	10850 3500 10250 3500
+	10850 3500 9950 3500
 Wire Wire Line
 	9050 4000 9500 4000
 Wire Wire Line
@@ -2386,6 +2369,23 @@ Text Label 8950 8400 0    50   ~ 0
 Buf_A6
 Text Label 8950 8500 0    50   ~ 0
 Buf_A7
+Wire Wire Line
+	7950 4400 7950 2250
+Wire Wire Line
+	6700 2250 7950 2250
+Connection ~ 7950 2250
+Wire Wire Line
+	6700 2550 7250 2550
+Wire Wire Line
+	6700 2650 7250 2650
+Wire Wire Line
+	6700 2750 7250 2750
+Wire Wire Line
+	6700 3900 8050 3900
+Wire Wire Line
+	6700 4000 8050 4000
+Wire Wire Line
+	6700 4100 8050 4100
 Wire Bus Line
 	1050 5750 4250 5750
 Wire Bus Line
