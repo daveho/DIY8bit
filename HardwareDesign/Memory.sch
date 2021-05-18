@@ -995,6 +995,8 @@ $Comp
 L power:VCC #PWR?
 U 1 1 60CC0A73
 P 7500 1200
+AR Path="/5CFA6AAA/60CC0A73" Ref="#PWR?"  Part="1" 
+AR Path="/5D49B078/60CC0A73" Ref="#PWR?"  Part="1" 
 F 0 "#PWR?" H 7500 1050 50  0001 C CNN
 F 1 "VCC" H 7517 1373 50  0000 C CNN
 F 2 "" H 7500 1200 50  0001 C CNN
@@ -1008,6 +1010,8 @@ $Comp
 L power:GND #PWR?
 U 1 1 60CC0A7A
 P 7500 1850
+AR Path="/5CFA6AAA/60CC0A7A" Ref="#PWR?"  Part="1" 
+AR Path="/5D49B078/60CC0A7A" Ref="#PWR?"  Part="1" 
 F 0 "#PWR?" H 7500 1600 50  0001 C CNN
 F 1 "GND" H 7505 1677 50  0000 C CNN
 F 2 "" H 7500 1850 50  0001 C CNN
@@ -1033,4 +1037,10 @@ Wire Bus Line
 	4700 3250 4700 5300
 Wire Bus Line
 	1500 1300 1500 3050
+Text Label 8600 3400 0    50   ~ 0
+TCOUNT2
+Text HLabel 8500 3400 0    50   Input ~ 0
+TCOUNT2
+Text Notes 7450 3300 0    50   ~ 0
+TCOUNT2 shown here\nto allow second\ntimer/counter output\nto connect to backplane
 $EndSCHEMATC
