@@ -2402,6 +2402,20 @@ Text Label 7750 8400 0    50   ~ 0
 ~IOR7~
 Text Label 7750 7300 0    50   ~ 0
 ~KIRQ~
+Text HLabel 9500 4000 2    50   Output ~ 0
+~IOR1~
+Text HLabel 9500 4100 2    50   Output ~ 0
+~IOR2~
+Text HLabel 9500 4200 2    50   Output ~ 0
+~IOR3~
+Text HLabel 9500 4300 2    50   Output ~ 0
+~IOR4~
+Text HLabel 9500 4400 2    50   Output ~ 0
+~IOR5~
+Text HLabel 9500 4500 2    50   Output ~ 0
+~IOR6~
+Text HLabel 9500 4600 2    50   Output ~ 0
+~IOR7~
 Wire Bus Line
 	1050 5750 4250 5750
 Wire Bus Line

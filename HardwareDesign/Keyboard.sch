@@ -1381,12 +1381,53 @@ Wire Wire Line
 	10550 1250 11350 1250
 Text Label 10850 1250 0    50   ~ 0
 ~KIRQ~
-Wire Bus Line
-	8250 1950 8250 5300
-Wire Bus Line
-	10900 1950 10900 6950
 Text HLabel 11350 1250 2    50   Output ~ 0
 ~KIRQ~
 Text Notes 10300 900  0    50   ~ 0
 Jumper to enable keyboard\nIRQ (when FIFO is not empty)
+$Comp
+L device:CP C?
+U 1 1 60CF49C0
+P 3200 1400
+AR Path="/5CFA6AAA/60CF49C0" Ref="C?"  Part="1" 
+AR Path="/5E2CF983/60CF49C0" Ref="C507"  Part="1" 
+F 0 "C507" H 3318 1446 50  0000 L CNN
+F 1 "10μF" H 3318 1355 50  0000 L CNN
+F 2 "" H 3238 1250 50  0001 C CNN
+F 3 "" H 3200 1400 50  0001 C CNN
+	1    3200 1400
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3200 1250 3200 1100
+$Comp
+L power:VCC #PWR?
+U 1 1 60CF49C7
+P 3200 1100
+F 0 "#PWR?" H 3200 950 50  0001 C CNN
+F 1 "VCC" H 3217 1273 50  0000 C CNN
+F 2 "" H 3200 1100 50  0001 C CNN
+F 3 "" H 3200 1100 50  0001 C CNN
+	1    3200 1100
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3200 1550 3200 1750
+$Comp
+L power:GND #PWR?
+U 1 1 60CF49CE
+P 3200 1750
+F 0 "#PWR?" H 3200 1500 50  0001 C CNN
+F 1 "GND" H 3205 1577 50  0000 C CNN
+F 2 "" H 3200 1750 50  0001 C CNN
+F 3 "" H 3200 1750 50  0001 C CNN
+	1    3200 1750
+	1    0    0    -1  
+$EndComp
+Text Notes 3400 1150 0    50   ~ 0
+Bulk decoupling for board,\nplace near power pins of\n2x40 connector to backplane
+Wire Bus Line
+	8250 1950 8250 5300
+Wire Bus Line
+	10900 1950 10900 6950
 $EndSCHEMATC
