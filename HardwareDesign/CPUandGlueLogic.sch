@@ -1449,114 +1449,114 @@ Text HLabel 12900 5800 2    50   Output ~ 0
 Text HLabel 12900 5900 2    50   Output ~ 0
 ~IODEV15~
 Wire Wire Line
-	6050 7750 6050 7950
+	6900 6600 6900 6800
 Wire Wire Line
-	5100 7950 5100 7750
+	5950 6800 5950 6600
 Wire Wire Line
-	5600 7950 5600 7750
+	6450 6800 6450 6600
 Wire Wire Line
-	6050 8400 6050 8250
+	6900 7250 6900 7100
 Wire Wire Line
-	5100 8250 5100 8400
+	5950 7100 5950 7250
 Wire Wire Line
-	5600 8250 5600 8400
+	6450 7100 6450 7250
 $Comp
 L device:C C101
 U 1 1 5D2D3472
-P 5100 8100
-F 0 "C101" H 5215 8146 50  0000 L CNN
-F 1 "0.1 uF" H 5215 8055 50  0000 L CNN
-F 2 "" H 5138 7950 50  0001 C CNN
-F 3 "" H 5100 8100 50  0001 C CNN
-	1    5100 8100
+P 5950 6950
+F 0 "C101" H 6065 6996 50  0000 L CNN
+F 1 "0.1 uF" H 6065 6905 50  0000 L CNN
+F 2 "" H 5988 6800 50  0001 C CNN
+F 3 "" H 5950 6950 50  0001 C CNN
+	1    5950 6950
 	1    0    0    -1  
 $EndComp
 $Comp
 L device:C C102
 U 1 1 5D2D3478
-P 5600 8100
-F 0 "C102" H 5715 8146 50  0000 L CNN
-F 1 "0.1 uF" H 5715 8055 50  0000 L CNN
-F 2 "" H 5638 7950 50  0001 C CNN
-F 3 "" H 5600 8100 50  0001 C CNN
-	1    5600 8100
+P 6450 6950
+F 0 "C102" H 6565 6996 50  0000 L CNN
+F 1 "0.1 uF" H 6565 6905 50  0000 L CNN
+F 2 "" H 6488 6800 50  0001 C CNN
+F 3 "" H 6450 6950 50  0001 C CNN
+	1    6450 6950
 	1    0    0    -1  
 $EndComp
 $Comp
 L device:C C103
 U 1 1 5D2D347E
-P 6050 8100
-F 0 "C103" H 6165 8146 50  0000 L CNN
-F 1 "0.1 uF" H 6165 8055 50  0000 L CNN
-F 2 "" H 6088 7950 50  0001 C CNN
-F 3 "" H 6050 8100 50  0001 C CNN
-	1    6050 8100
+P 6900 6950
+F 0 "C103" H 7015 6996 50  0000 L CNN
+F 1 "0.1 uF" H 7015 6905 50  0000 L CNN
+F 2 "" H 6938 6800 50  0001 C CNN
+F 3 "" H 6900 6950 50  0001 C CNN
+	1    6900 6950
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	6500 7750 6500 7950
+	7350 6600 7350 6800
 Wire Wire Line
-	6500 8400 6500 8250
+	7350 7250 7350 7100
 $Comp
 L device:C C104
 U 1 1 5D2F1BAB
-P 6500 8100
-F 0 "C104" H 6615 8146 50  0000 L CNN
-F 1 "0.1 uF" H 6615 8055 50  0000 L CNN
-F 2 "" H 6538 7950 50  0001 C CNN
-F 3 "" H 6500 8100 50  0001 C CNN
-	1    6500 8100
+P 7350 6950
+F 0 "C104" H 7465 6996 50  0000 L CNN
+F 1 "0.1 uF" H 7465 6905 50  0000 L CNN
+F 2 "" H 7388 6800 50  0001 C CNN
+F 3 "" H 7350 6950 50  0001 C CNN
+	1    7350 6950
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	5100 7750 5600 7750
-Connection ~ 5600 7750
+	5950 6600 6450 6600
+Connection ~ 6450 6600
 Wire Wire Line
-	5600 7750 5800 7750
-Connection ~ 6050 7750
+	6450 6600 6650 6600
+Connection ~ 6900 6600
 Wire Wire Line
-	6050 7750 6500 7750
+	6900 6600 7350 6600
 Wire Wire Line
-	5100 8400 5600 8400
-Connection ~ 5600 8400
+	5950 7250 6450 7250
+Connection ~ 6450 7250
 Wire Wire Line
-	5600 8400 5800 8400
-Connection ~ 6050 8400
+	6450 7250 6650 7250
+Connection ~ 6900 7250
 Wire Wire Line
-	6050 8400 6500 8400
+	6900 7250 7350 7250
 Wire Wire Line
-	5800 7750 5800 7600
-Connection ~ 5800 7750
+	6650 6600 6650 6450
+Connection ~ 6650 6600
 Wire Wire Line
-	5800 7750 6050 7750
+	6650 6600 6900 6600
 Wire Wire Line
-	5800 8400 5800 8550
-Connection ~ 5800 8400
+	6650 7250 6650 7400
+Connection ~ 6650 7250
 Wire Wire Line
-	5800 8400 6050 8400
+	6650 7250 6900 7250
 $Comp
 L power:VCC #PWR0129
 U 1 1 5D38FA6E
-P 5800 7600
-F 0 "#PWR0129" H 5800 7450 50  0001 C CNN
-F 1 "VCC" H 5817 7773 50  0000 C CNN
-F 2 "" H 5800 7600 50  0001 C CNN
-F 3 "" H 5800 7600 50  0001 C CNN
-	1    5800 7600
+P 6650 6450
+F 0 "#PWR0129" H 6650 6300 50  0001 C CNN
+F 1 "VCC" H 6667 6623 50  0000 C CNN
+F 2 "" H 6650 6450 50  0001 C CNN
+F 3 "" H 6650 6450 50  0001 C CNN
+	1    6650 6450
 	1    0    0    -1  
 $EndComp
 $Comp
 L power:GND #PWR0130
 U 1 1 5D38FF6D
-P 5800 8550
-F 0 "#PWR0130" H 5800 8300 50  0001 C CNN
-F 1 "GND" H 5805 8377 50  0000 C CNN
-F 2 "" H 5800 8550 50  0001 C CNN
-F 3 "" H 5800 8550 50  0001 C CNN
-	1    5800 8550
+P 6650 7400
+F 0 "#PWR0130" H 6650 7150 50  0001 C CNN
+F 1 "GND" H 6655 7227 50  0000 C CNN
+F 2 "" H 6650 7400 50  0001 C CNN
+F 3 "" H 6650 7400 50  0001 C CNN
+	1    6650 7400
 	1    0    0    -1  
 $EndComp
-Text Notes 5950 7600 0    50   ~ 0
+Text Notes 6800 6450 0    50   ~ 0
 Place C101-C104\nnear the power pins\nof U101-U104
 Wire Wire Line
 	4850 1100 3750 1100
@@ -1686,320 +1686,10 @@ F 4 "1-1825027-2" H 1100 1400 50  0001 L BNN "Comment"
 	1    1100 1400
 	1    0    0    -1  
 $EndComp
-$Comp
-L Connector_Generic:Conn_02x40_Counter_Clockwise J101
-U 1 1 60A6FC79
-P 8100 8100
-F 0 "J101" H 8150 10217 50  0000 C CNN
-F 1 "Conn_02x40_Counter_Clockwise" H 8150 10126 50  0000 C CNN
-F 2 "" H 8100 8100 50  0001 C CNN
-F 3 "~" H 8100 8100 50  0001 C CNN
-	1    8100 8100
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	7350 6200 7900 6200
-Wire Wire Line
-	7350 6300 7900 6300
-Wire Wire Line
-	7350 6400 7900 6400
-Wire Wire Line
-	7350 6500 7900 6500
-Wire Wire Line
-	7350 6600 7900 6600
-Wire Wire Line
-	7350 6700 7900 6700
-Wire Wire Line
-	7350 6800 7900 6800
-Wire Wire Line
-	7350 6900 7900 6900
-Wire Wire Line
-	7350 7000 7900 7000
-Wire Wire Line
-	7350 7100 7900 7100
-Wire Wire Line
-	7350 7200 7900 7200
-Wire Wire Line
-	7350 7300 7900 7300
-Wire Wire Line
-	7350 7400 7900 7400
-Wire Wire Line
-	7350 7500 7900 7500
-Wire Wire Line
-	7350 7600 7900 7600
-Wire Wire Line
-	7350 7700 7900 7700
-Wire Wire Line
-	7350 7800 7900 7800
-Wire Wire Line
-	7350 7900 7900 7900
-Wire Wire Line
-	7350 8000 7900 8000
-Wire Wire Line
-	7350 8100 7900 8100
-Wire Wire Line
-	7350 8200 7900 8200
-Wire Wire Line
-	7350 8300 7900 8300
-Wire Wire Line
-	7350 8400 7900 8400
-Wire Wire Line
-	7350 8500 7900 8500
-Wire Wire Line
-	7350 8600 7900 8600
-Wire Wire Line
-	7350 8700 7900 8700
-Wire Wire Line
-	7350 8800 7900 8800
-Wire Wire Line
-	7350 8900 7900 8900
-Wire Wire Line
-	7350 9000 7900 9000
-Wire Wire Line
-	7350 9100 7900 9100
-Wire Wire Line
-	7350 9200 7900 9200
-Wire Wire Line
-	7350 9300 7900 9300
-Wire Wire Line
-	7350 9400 7900 9400
-Wire Wire Line
-	7350 9500 7900 9500
-Wire Wire Line
-	7350 9600 7900 9600
-Wire Wire Line
-	7350 9700 7900 9700
-Wire Wire Line
-	7350 9800 7900 9800
-Wire Wire Line
-	7350 9900 7900 9900
-Wire Wire Line
-	7350 10000 7900 10000
-Wire Wire Line
-	7350 10100 7900 10100
-Wire Wire Line
-	8400 6200 8950 6200
-Wire Wire Line
-	8400 6300 8950 6300
-Wire Wire Line
-	8400 6400 8950 6400
-Wire Wire Line
-	8400 6500 8950 6500
-Wire Wire Line
-	8400 6600 8950 6600
-Wire Wire Line
-	8400 6700 8950 6700
-Wire Wire Line
-	8400 6800 8950 6800
-Wire Wire Line
-	8400 6900 8950 6900
-Wire Wire Line
-	8400 7000 8950 7000
-Wire Wire Line
-	8400 7100 8950 7100
-Wire Wire Line
-	8400 7200 8950 7200
-Wire Wire Line
-	8400 7300 8950 7300
-Wire Wire Line
-	8400 7400 8950 7400
-Wire Wire Line
-	8400 7500 8950 7500
-Wire Wire Line
-	8400 7600 8950 7600
-Wire Wire Line
-	8400 7700 8950 7700
-Wire Wire Line
-	8400 7800 8950 7800
-Wire Wire Line
-	8400 7900 8950 7900
-Wire Wire Line
-	8400 8000 8950 8000
-Wire Wire Line
-	8400 8100 8950 8100
-Wire Wire Line
-	8400 8200 8950 8200
-Wire Wire Line
-	8400 8300 8950 8300
-Wire Wire Line
-	8400 8400 8950 8400
-Wire Wire Line
-	8400 8500 8950 8500
-Wire Wire Line
-	8400 8600 8950 8600
-Wire Wire Line
-	8400 8700 8950 8700
-Wire Wire Line
-	8400 8800 8950 8800
-Wire Wire Line
-	8400 8900 8950 8900
-Wire Wire Line
-	8400 9000 8950 9000
-Wire Wire Line
-	8400 9100 8950 9100
-Wire Wire Line
-	8400 9200 8950 9200
-Wire Wire Line
-	8400 9300 8950 9300
-Wire Wire Line
-	8400 9400 8950 9400
-Wire Wire Line
-	8400 9500 8950 9500
-Wire Wire Line
-	8400 9600 8950 9600
-Wire Wire Line
-	8400 9700 8950 9700
-Wire Wire Line
-	8400 9800 8950 9800
-Wire Wire Line
-	8400 9900 8950 9900
-Wire Wire Line
-	8400 10000 8950 10000
-Wire Wire Line
-	8400 10100 8950 10100
-Text Notes 7200 6000 0    50   ~ 0
-back row (backplane)\nbottom row (board)
-Text Notes 8350 6000 0    50   ~ 0
-front row (backplane)\ntop row (board)
-Text Label 8600 9400 0    50   ~ 0
-Buf_R~W~
-Text Label 8650 9500 0    50   ~ 0
-~ROMEN~
-Text Label 8700 9600 0    50   ~ 0
-Buf_E
-Text Label 8550 9700 0    50   ~ 0
-Buf_~RMEM~
-Text Label 8550 9800 0    50   ~ 0
-Buf_~WMEM~
-Text Label 8600 9900 0    50   ~ 0
-Buf_~RST~
-Text Label 8600 10000 0    50   ~ 0
-Buf_RST
-Wire Wire Line
-	8950 10100 8950 10200
-$Comp
-L power:GND #PWR?
-U 1 1 616F2D46
-P 8950 10200
-F 0 "#PWR?" H 8950 9950 50  0001 C CNN
-F 1 "GND" H 8955 10027 50  0000 C CNN
-F 2 "" H 8950 10200 50  0001 C CNN
-F 3 "" H 8950 10200 50  0001 C CNN
-	1    8950 10200
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	7350 10100 7350 10450
 Wire Wire Line
 	7350 10450 7100 10450
-Wire Wire Line
-	7100 10450 7100 10350
-$Comp
-L power:VCC #PWR?
-U 1 1 61775E0F
-P 7100 10350
-F 0 "#PWR?" H 7100 10200 50  0001 C CNN
-F 1 "VCC" H 7117 10523 50  0000 C CNN
-F 2 "" H 7100 10350 50  0001 C CNN
-F 3 "" H 7100 10350 50  0001 C CNN
-	1    7100 10350
-	1    0    0    -1  
-$EndComp
-Text Label 7450 8500 0    50   ~ 0
-~IODEV0
-Text Label 7450 8600 0    50   ~ 0
-~IODEV1
-Text Label 7450 8700 0    50   ~ 0
-~IODEV2
-Text Label 7450 8800 0    50   ~ 0
-~IODEV3
-Text Label 7450 8900 0    50   ~ 0
-~IODEV4
-Text Label 7450 9000 0    50   ~ 0
-~IODEV5
-Text Label 7450 9100 0    50   ~ 0
-~IODEV6
-Text Label 7450 9200 0    50   ~ 0
-~IODEV7
-Text Label 7450 9300 0    50   ~ 0
-~IODEV8
-Text Label 7450 9400 0    50   ~ 0
-~IODEV9
-Text Label 7450 9500 0    50   ~ 0
-~IODEV10
-Text Label 7450 9600 0    50   ~ 0
-~IODEV11
-Text Label 7450 9700 0    50   ~ 0
-~IODEV12
-Text Label 7450 9800 0    50   ~ 0
-~IODEV13
-Text Label 7450 9900 0    50   ~ 0
-~IODEV14
-Text Label 7450 10000 0    50   ~ 0
-~IODEV15
 Text Label 1200 2750 0    50   ~ 0
 ~IRQ
-Text Label 7450 6300 0    50   ~ 0
-~IRQ
-Text Label 7450 6400 0    50   ~ 0
-PC0
-Text Label 7450 6500 0    50   ~ 0
-PC1
-Text Label 7450 6600 0    50   ~ 0
-PC2
-Text Label 7450 6700 0    50   ~ 0
-PC3
-Text Label 7450 6800 0    50   ~ 0
-PC4
-Text Label 7450 6900 0    50   ~ 0
-PC5
-Text Label 7450 7000 0    50   ~ 0
-PC6
-Text Label 7450 7100 0    50   ~ 0
-PC7
-Text Label 7450 7200 0    50   ~ 0
-TIRQ
-$Comp
-L device:CP C112
-U 1 1 61CF6F76
-P 6100 5200
-F 0 "C112" H 6218 5246 50  0000 L CNN
-F 1 "10μF" H 6218 5155 50  0000 L CNN
-F 2 "" H 6138 5050 50  0001 C CNN
-F 3 "" H 6100 5200 50  0001 C CNN
-	1    6100 5200
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	6100 5050 6100 4900
-$Comp
-L power:VCC #PWR?
-U 1 1 61D33C29
-P 6100 4900
-F 0 "#PWR?" H 6100 4750 50  0001 C CNN
-F 1 "VCC" H 6117 5073 50  0000 C CNN
-F 2 "" H 6100 4900 50  0001 C CNN
-F 3 "" H 6100 4900 50  0001 C CNN
-	1    6100 4900
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	6100 5350 6100 5550
-$Comp
-L power:GND #PWR?
-U 1 1 61D6EF92
-P 6100 5550
-F 0 "#PWR?" H 6100 5300 50  0001 C CNN
-F 1 "GND" H 6105 5377 50  0000 C CNN
-F 2 "" H 6100 5550 50  0001 C CNN
-F 3 "" H 6100 5550 50  0001 C CNN
-	1    6100 5550
-	1    0    0    -1  
-$EndComp
-Text Notes 6300 4950 0    50   ~ 0
-Bulk decoupling for board,\nplace near power pins of\n2x40 connector to backplane
-Text Notes 7800 10300 0    50   ~ 0
-backplane connector
 $Comp
 L Connector_Generic:Conn_01x02 J100
 U 1 1 60A78691
@@ -2266,52 +1956,6 @@ Text Label 3500 7300 0    50   ~ 0
 Buf_D6
 Text Label 3500 7400 0    50   ~ 0
 Buf_D7
-Text Label 8600 6300 0    50   ~ 0
-Buf_D0
-Text Label 8600 6400 0    50   ~ 0
-Buf_D1
-Text Label 8600 6500 0    50   ~ 0
-Buf_D2
-Text Label 8600 6600 0    50   ~ 0
-Buf_D3
-Text Label 8600 6700 0    50   ~ 0
-Buf_D4
-Text Label 8600 6800 0    50   ~ 0
-Buf_D5
-Text Label 8600 6900 0    50   ~ 0
-Buf_D6
-Text Label 8600 7000 0    50   ~ 0
-Buf_D7
-Text Label 8600 7100 0    50   ~ 0
-Buf_A8
-Text Label 8600 7200 0    50   ~ 0
-Buf_A9
-Text Label 8600 7300 0    50   ~ 0
-Buf_A10
-Text Label 8600 7400 0    50   ~ 0
-Buf_A11
-Text Label 8600 7500 0    50   ~ 0
-Buf_A12
-Text Label 8600 7600 0    50   ~ 0
-Buf_A13
-Text Label 8600 7700 0    50   ~ 0
-Buf_A14
-Text Label 8650 7800 0    50   ~ 0
-Buf_A0
-Text Label 8650 7900 0    50   ~ 0
-Buf_A1
-Text Label 8650 8000 0    50   ~ 0
-Buf_A2
-Text Label 8650 8100 0    50   ~ 0
-Buf_A3
-Text Label 8650 8200 0    50   ~ 0
-Buf_A4
-Text Label 8650 8300 0    50   ~ 0
-Buf_A5
-Text Label 8650 8400 0    50   ~ 0
-Buf_A6
-Text Label 8650 8500 0    50   ~ 0
-Buf_A7
 Wire Wire Line
 	7950 4400 7950 2250
 Wire Wire Line
@@ -2329,22 +1973,6 @@ Wire Wire Line
 	6700 4000 8050 4000
 Wire Wire Line
 	6700 4100 8050 4100
-Text Label 7450 7800 0    50   ~ 0
-~IOR1~
-Text Label 7450 7900 0    50   ~ 0
-~IOR2~
-Text Label 7450 8000 0    50   ~ 0
-~IOR3~
-Text Label 7450 8100 0    50   ~ 0
-~IOR4~
-Text Label 7450 8200 0    50   ~ 0
-~IOR5~
-Text Label 7450 8300 0    50   ~ 0
-~IOR6~
-Text Label 7450 8400 0    50   ~ 0
-~IOR7~
-Text Label 7450 7300 0    50   ~ 0
-~KIRQ~
 Text HLabel 9500 4000 2    50   Output ~ 0
 ~IOR1~
 Text HLabel 9500 4100 2    50   Output ~ 0
