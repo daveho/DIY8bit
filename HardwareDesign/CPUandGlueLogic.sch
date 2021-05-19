@@ -2061,6 +2061,53 @@ Wire Wire Line
 	9050 4400 9500 4400
 Wire Wire Line
 	9050 4300 9500 4300
+$Comp
+L device:R_Network08 RN101
+U 1 1 6100A6F1
+P 7300 8800
+F 0 "RN101" V 6683 8800 50  0000 C CNN
+F 1 "4k7" V 6774 8800 50  0000 C CNN
+F 2 "Resistors_THT:R_Array_SIP9" V 7775 8800 50  0001 C CNN
+F 3 "" H 7300 8800 50  0001 C CNN
+	1    7300 8800
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	7100 8400 6650 8400
+Wire Wire Line
+	7100 8500 6650 8500
+Wire Wire Line
+	7100 8600 6650 8600
+Wire Wire Line
+	7100 8700 6650 8700
+Wire Wire Line
+	7100 8800 6650 8800
+Wire Wire Line
+	7100 8900 6650 8900
+Wire Wire Line
+	7100 9000 6650 9000
+Wire Wire Line
+	7100 9100 6650 9100
+Text Label 6800 8400 0    50   ~ 0
+Buf_D0
+Text Label 6800 8500 0    50   ~ 0
+Buf_D1
+Text Label 6800 8600 0    50   ~ 0
+Buf_D2
+Text Label 6800 8700 0    50   ~ 0
+Buf_D3
+Text Label 6800 8800 0    50   ~ 0
+Buf_D4
+Text Label 6800 8900 0    50   ~ 0
+Buf_D5
+Text Label 6800 9000 0    50   ~ 0
+Buf_D6
+Text Label 6800 9100 0    50   ~ 0
+Buf_D7
+Wire Wire Line
+	7500 8400 7750 8400
+Wire Wire Line
+	7750 8400 7750 8200
 Wire Bus Line
 	1050 5750 4250 5750
 Wire Bus Line
@@ -2071,4 +2118,17 @@ Wire Bus Line
 	5450 4500 5450 7300
 Wire Bus Line
 	2700 6200 2700 9250
+$Comp
+L power:VCC #PWR?
+U 1 1 610CD813
+P 7750 8200
+F 0 "#PWR?" H 7750 8050 50  0001 C CNN
+F 1 "VCC" H 7767 8373 50  0000 C CNN
+F 2 "" H 7750 8200 50  0001 C CNN
+F 3 "" H 7750 8200 50  0001 C CNN
+	1    7750 8200
+	1    0    0    -1  
+$EndComp
+Text Notes 6600 9450 0    50   ~ 0
+Ensure that data bus signals\nare always at a valid logic level
 $EndSCHEMATC
