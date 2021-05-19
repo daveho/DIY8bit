@@ -621,20 +621,6 @@ Wire Wire Line
 	7700 3650 8100 3650
 Text Label 7750 3650 0    50   ~ 0
 TCOUNT2
-$Comp
-L Connector_Generic:Conn_02x40_Counter_Clockwise J?
-U 1 1 6118356F
-P 9650 4300
-AR Path="/5CFA6AAA/6118356F" Ref="J?"  Part="1" 
-AR Path="/5D49B078/6118356F" Ref="J?"  Part="1" 
-AR Path="/6118356F" Ref="J001"  Part="1" 
-F 0 "J001" H 9700 6417 50  0000 C CNN
-F 1 "Conn_02x40_Counter_Clockwise" H 9700 6326 50  0000 C CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_2x40_P2.54mm_Vertical" H 9650 4300 50  0001 C CNN
-F 3 "~" H 9650 4300 50  0001 C CNN
-	1    9650 4300
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	8900 2400 9450 2400
 Wire Wire Line
@@ -1187,4 +1173,15 @@ Text Label 4500 6150 0    50   ~ 0
 IRQ6
 Text Label 4500 6250 0    50   ~ 0
 ~IRQ7~
+$Comp
+L Connector_Generic:Conn_02x40_Odd_Even J001
+U 1 1 610D736D
+P 9650 4300
+F 0 "J001" H 9700 6417 50  0000 C CNN
+F 1 "Conn_02x40_Odd_Even" H 9700 6326 50  0000 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_2x40_P2.54mm_Vertical" H 9650 4300 50  0001 C CNN
+F 3 "~" H 9650 4300 50  0001 C CNN
+	1    9650 4300
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC
