@@ -16,7 +16,7 @@ $EndDescr
 Text Notes 9600 9400 0    50   ~ 0
 F68: A DIY 6809 microcomputer system
 $Sheet
-S 2200 1700 1050 5800
+S 2200 1700 1050 5400
 U 5CFA6AAA
 F0 "CPUandGlueLogic" 50
 F1 "CPUandGlueLogic.sch" 50
@@ -71,10 +71,6 @@ F49 "~IRQ" I L 2200 1800 50
 F50 "~IOR1~" O R 3250 6750 50 
 F51 "~IOR2~" O R 3250 6850 50 
 F52 "~IOR3~" O R 3250 6950 50 
-F53 "~IOR4~" O R 3250 7050 50 
-F54 "~IOR5~" O R 3250 7150 50 
-F55 "~IOR6~" O R 3250 7250 50 
-F56 "~IOR7~" O R 3250 7350 50 
 $EndSheet
 $Sheet
 S 4900 1700 1000 2300
@@ -396,11 +392,11 @@ Wire Wire Line
 Text Label 6350 2600 0    50   ~ 0
 ~IODEV2
 Wire Notes Line
-	1750 1250 1750 7700
+	1750 1250 1750 7300
 Wire Notes Line
-	1750 7700 4000 7700
+	1750 7300 4000 7300
 Wire Notes Line
-	4000 7700 4000 1250
+	4000 7300 4000 1250
 Wire Notes Line
 	4000 1250 1750 1250
 Text Notes 1850 1400 0    50   ~ 0
@@ -425,22 +421,22 @@ F3 "~IRQ2" I L 4800 5750 50
 F4 "~IRQ4" I L 4800 5950 50 
 F5 "~IRQ5" I L 4800 6050 50 
 F6 "~IRQ7" I L 4800 6250 50 
-F7 "~IRQ3" I L 4800 5850 50 
-F8 "~IRQ6" I L 4800 6150 50 
-F9 "~IRQ" O R 5800 5250 50 
-F10 "~RMEM" I L 4800 5250 50 
-F11 "~IRQCTRL_CS" I L 4800 5500 50 
-F12 "~IRQ3_CLR" I L 4800 6400 50 
-F13 "~IRQ6_CLR" I L 4800 6500 50 
-F14 "D0" B R 5800 5500 50 
-F15 "D1" B R 5800 5600 50 
-F16 "D2" B R 5800 5700 50 
-F17 "D3" B R 5800 5800 50 
-F18 "D4" B R 5800 5900 50 
-F19 "D5" B R 5800 6000 50 
-F20 "D6" B R 5800 6100 50 
-F21 "D7" B R 5800 6200 50 
-F22 "~WMEM" I L 4800 5350 50 
+F7 "~IRQ" O R 5800 5250 50 
+F8 "~RMEM" I L 4800 5250 50 
+F9 "~IRQCTRL_CS" I L 4800 5500 50 
+F10 "~IRQ3_CLR" I L 4800 6400 50 
+F11 "~IRQ6_CLR" I L 4800 6500 50 
+F12 "D0" B R 5800 5500 50 
+F13 "D1" B R 5800 5600 50 
+F14 "D2" B R 5800 5700 50 
+F15 "D3" B R 5800 5800 50 
+F16 "D4" B R 5800 5900 50 
+F17 "D5" B R 5800 6000 50 
+F18 "D6" B R 5800 6100 50 
+F19 "D7" B R 5800 6200 50 
+F20 "~WMEM" I L 4800 5350 50 
+F21 "IRQ3" I L 4800 5850 50 
+F22 "IRQ6" I L 4800 6150 50 
 $EndSheet
 Wire Notes Line
 	4300 4500 6250 4500
@@ -511,11 +507,11 @@ Text Label 5900 5250 0    50   ~ 0
 Wire Wire Line
 	7700 2650 8050 2650
 Text Label 7750 2650 0    50   ~ 0
-TIRQ
+IRQ3
 Wire Wire Line
 	4450 5850 4800 5850
 Text Label 4500 5850 0    50   ~ 0
-TIRQ
+IRQ3
 Wire Wire Line
 	7700 2800 8100 2800
 Wire Wire Line
@@ -616,11 +612,11 @@ A0
 Wire Wire Line
 	7750 6350 8100 6350
 Text Label 7800 6350 0    50   ~ 0
-~KIRQ~
+~IRQ5~
 Wire Wire Line
 	4450 6050 4800 6050
 Text Label 4500 6050 0    50   ~ 0
-~KIRQ~
+~IRQ5~
 Wire Wire Line
 	7700 3650 8100 3650
 Text Label 7750 3650 0    50   ~ 0
@@ -672,19 +668,19 @@ Wire Wire Line
 Wire Wire Line
 	8900 3900 9450 3900
 Wire Wire Line
-	8900 4000 9450 4000
+	9950 4900 10500 4900
 Wire Wire Line
-	8900 4100 9450 4100
+	9950 5000 10500 5000
 Wire Wire Line
-	8900 4200 9450 4200
+	9950 5100 10500 5100
 Wire Wire Line
-	8900 4300 9450 4300
+	9950 5200 10500 5200
 Wire Wire Line
-	8900 4400 9450 4400
+	9950 5300 10500 5300
 Wire Wire Line
-	8900 4500 9450 4500
+	9950 5400 10500 5400
 Wire Wire Line
-	8900 4600 9450 4600
+	9950 5500 10500 5500
 Wire Wire Line
 	8900 4700 9450 4700
 Wire Wire Line
@@ -770,19 +766,19 @@ Wire Wire Line
 Wire Wire Line
 	9950 4800 10500 4800
 Wire Wire Line
-	9950 4900 10500 4900
+	8900 4000 9450 4000
 Wire Wire Line
-	9950 5000 10500 5000
+	8900 4100 9450 4100
 Wire Wire Line
-	9950 5100 10500 5100
+	8900 4200 9450 4200
 Wire Wire Line
-	9950 5200 10500 5200
+	8900 4300 9450 4300
 Wire Wire Line
-	9950 5300 10500 5300
+	8900 4400 9450 4400
 Wire Wire Line
-	9950 5400 10500 5400
+	8900 4500 9450 4500
 Wire Wire Line
-	9950 5500 10500 5500
+	8900 4600 9450 4600
 Wire Wire Line
 	9950 5600 10500 5600
 Wire Wire Line
@@ -932,7 +928,7 @@ PC6
 Text Label 9000 3300 0    50   ~ 0
 PC7
 Text Label 9000 3400 0    50   ~ 0
-TIRQ
+IRQ3
 Wire Wire Line
 	8650 6650 8650 6550
 $Comp
@@ -952,21 +948,13 @@ Text Notes 8750 2200 0    50   ~ 0
 back row (backplane)\nbottom row (board)
 Text Notes 9900 2200 0    50   ~ 0
 front row (backplane)\ntop row (board)
-Text Label 9000 4000 0    50   ~ 0
-~IOR1~
-Text Label 9000 4100 0    50   ~ 0
-~IOR2~
-Text Label 9000 4200 0    50   ~ 0
-~IOR3~
-Text Label 9000 4300 0    50   ~ 0
-~IOR4~
 Text Label 9000 4400 0    50   ~ 0
-~IOR5~
+~IOR1~
 Text Label 9000 4500 0    50   ~ 0
-~IOR6~
+~IOR2~
 Text Label 9000 4600 0    50   ~ 0
-~IOR7~
-Text Label 9000 3500 0    50   ~ 0
+~IOR3~
+Text Label 9000 4100 0    50   ~ 0
 TCOUNT2
 Text Notes 8900 1800 0    50   ~ 0
 Backplane connector: one per board PCB\n(appears here because all backplane signals\nexist on this sheet)
@@ -1084,14 +1072,6 @@ Wire Wire Line
 	3250 6850 3600 6850
 Wire Wire Line
 	3250 6950 3600 6950
-Wire Wire Line
-	3250 7050 3600 7050
-Wire Wire Line
-	3250 7150 3600 7150
-Wire Wire Line
-	3250 7250 3600 7250
-Wire Wire Line
-	3250 7350 3600 7350
 Text Label 3300 6750 0    50   ~ 0
 ~IOR1~
 Wire Wire Line
@@ -1122,16 +1102,6 @@ Text Label 3300 6850 0    50   ~ 0
 ~IOR2~
 Text Label 3300 6950 0    50   ~ 0
 ~IOR3~
-Text Label 3300 7050 0    50   ~ 0
-~IOR4~
-Text Label 3300 7150 0    50   ~ 0
-~IOR5~
-Text Label 3300 7250 0    50   ~ 0
-~IOR6~
-Text Label 3300 7350 0    50   ~ 0
-~IOR7~
-Text Label 9000 3600 0    50   ~ 0
-~KIRQ~
 Wire Notes Line
 	8550 1250 8550 7600
 Wire Notes Line
@@ -1185,4 +1155,36 @@ F 3 "" H 9300 7300 50  0001 C CNN
 $EndComp
 Text Notes 9500 7350 0    50   ~ 0
 Bulk decoupling for board,\nplace near power pins of\n2x40 connector to backplane
+Text Label 9000 3800 0    50   ~ 0
+~IRQ5~
+Text Label 9000 3500 0    50   ~ 0
+~IRQ1~
+Text Label 9000 3600 0    50   ~ 0
+~IRQ2~
+Text Label 9000 3700 0    50   ~ 0
+~IRQ4~
+Text Label 9000 3900 0    50   ~ 0
+IRQ6
+Text Label 9000 4000 0    50   ~ 0
+~IRQ7~
+Wire Wire Line
+	4450 5650 4800 5650
+Wire Wire Line
+	4450 5750 4800 5750
+Text Label 4500 5650 0    50   ~ 0
+~IRQ1~
+Text Label 4500 5750 0    50   ~ 0
+~IRQ2~
+Wire Wire Line
+	4450 5950 4800 5950
+Text Label 4500 5950 0    50   ~ 0
+~IRQ4~
+Wire Wire Line
+	4450 6150 4800 6150
+Wire Wire Line
+	4450 6250 4800 6250
+Text Label 4500 6150 0    50   ~ 0
+IRQ6
+Text Label 4500 6250 0    50   ~ 0
+~IRQ7~
 $EndSCHEMATC

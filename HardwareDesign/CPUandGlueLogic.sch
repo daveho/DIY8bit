@@ -634,14 +634,6 @@ Wire Wire Line
 	9050 4100 9500 4100
 Wire Wire Line
 	9050 4200 9500 4200
-Wire Wire Line
-	9050 4300 9500 4300
-Wire Wire Line
-	9050 4400 9500 4400
-Wire Wire Line
-	9050 4500 9500 4500
-Wire Wire Line
-	9050 4600 9500 4600
 Text Label 9250 3900 0    50   ~ 0
 ~IOR0~
 Text Label 9250 4000 0    50   ~ 0
@@ -1979,14 +1971,6 @@ Text HLabel 9500 4100 2    50   Output ~ 0
 ~IOR2~
 Text HLabel 9500 4200 2    50   Output ~ 0
 ~IOR3~
-Text HLabel 9500 4300 2    50   Output ~ 0
-~IOR4~
-Text HLabel 9500 4400 2    50   Output ~ 0
-~IOR5~
-Text HLabel 9500 4500 2    50   Output ~ 0
-~IOR6~
-Text HLabel 9500 4600 2    50   Output ~ 0
-~IOR7~
 $Comp
 L device:C C105
 U 1 1 60E5B950
@@ -2069,6 +2053,14 @@ Wire Wire Line
 	2100 1000 2100 850 
 Wire Wire Line
 	2250 1000 2100 1000
+Wire Wire Line
+	9050 4600 9500 4600
+Wire Wire Line
+	9050 4500 9500 4500
+Wire Wire Line
+	9050 4400 9500 4400
+Wire Wire Line
+	9050 4300 9500 4300
 Wire Bus Line
 	1050 5750 4250 5750
 Wire Bus Line

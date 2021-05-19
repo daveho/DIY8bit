@@ -226,11 +226,11 @@ Text HLabel 1100 1850 0    50   Input ~ 0
 Text HLabel 1100 2050 0    50   Input ~ 0
 ~IRQ7
 Text Notes 750  1300 0    50   ~ 0
-~IRQ3_IN~ and ~IRQ6_IN~ are\nedge-triggered (positive\nedge)\n\n~IRQ3_CLR~ and ~IRQ6_CLR~\ncan be temporarily\nasserted to clear ~IRQ3~/\n~IRQ6~ after they are\ntriggered
+IRQ3_IN and IRQ6_IN are\nedge-triggered (positive\nedge)\n\n~IRQ3_CLR~ and ~IRQ6_CLR~\ncan be temporarily\nasserted to clear ~IRQ3~/\n~IRQ6~ after they are\ntriggered
 Text HLabel 1100 1650 0    50   Input ~ 0
-~IRQ3
+IRQ3
 Text HLabel 1100 1950 0    50   Input ~ 0
-~IRQ6
+IRQ6
 $Comp
 L device:R R401
 U 1 1 5E134155
@@ -344,7 +344,7 @@ Text Label 1200 1750 0    50   ~ 0
 Text Label 1200 1850 0    50   ~ 0
 ~IRQ5_IN
 Text Label 1200 1950 0    50   ~ 0
-~IRQ6_IN
+IRQ6_IN
 Text Label 3750 2050 0    50   ~ 0
 ~IRQ7
 Wire Wire Line
@@ -584,13 +584,13 @@ Text Label 3750 1450 0    50   ~ 0
 Text Label 3750 1550 0    50   ~ 0
 ~IRQ2
 Text Label 3750 1650 0    50   ~ 0
-~IRQ3
+~IRQ3~
 Text Label 3750 1750 0    50   ~ 0
 ~IRQ4
 Text Label 3750 1850 0    50   ~ 0
 ~IRQ5
 Text Label 3750 1950 0    50   ~ 0
-~IRQ6
+~IRQ6~
 Text Label 1200 2050 0    50   ~ 0
 ~IRQ7_IN
 Text Notes 9350 1350 0    50   ~ 0
@@ -622,7 +622,7 @@ Wire Wire Line
 Wire Wire Line
 	2000 1650 1100 1650
 Text Label 1200 1650 0    50   ~ 0
-~IRQ3_IN
+IRQ3_IN
 Wire Wire Line
 	1650 4050 1650 1950
 Wire Wire Line
