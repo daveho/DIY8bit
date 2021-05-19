@@ -1,7 +1,7 @@
 (export (version D)
   (design
     (source /home/daveho/git/DIY8bit/HardwareDesign/F68.sch)
-    (date "Wed 19 May 2021 09:40:13 AM EDT")
+    (date "Wed 19 May 2021 09:43:38 AM EDT")
     (tool "Eeschema 5.1.10-88a1d61d58~88~ubuntu20.04.1")
     (sheet (number 1) (name /) (tstamps /)
       (title_block
@@ -281,7 +281,7 @@
       (tstamp 5CFA9144))
     (comp (ref RN101)
       (value 4k7)
-      (footprint Resistors_THT:R_Array_SIP9)
+      (footprint Resistor_THT:R_Array_SIP9)
       (libsource (lib device) (part R_Network08) (description ""))
       (sheetpath (names /CPUandGlueLogic/) (tstamps /5CFA6AAA/))
       (tstamp 6100A6F1))
