@@ -386,7 +386,7 @@ R~W~
 Wire Wire Line
 	6700 2000 6400 2000
 Text Label 6450 2000 0    50   ~ 0
-R~W
+R~W~
 Wire Wire Line
 	3200 5300 3600 5300
 Text Label 3300 5300 0    50   ~ 0
