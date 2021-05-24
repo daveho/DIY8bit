@@ -2,7 +2,7 @@
 
 // backplate mounted on the card cage rails
 backplate_d = 15;
-backplate_h = 4;
+backplate_h = 3;
 
 // width of one unit, reflects spacing of backplane connectors,
 // which are 0.75" apart
