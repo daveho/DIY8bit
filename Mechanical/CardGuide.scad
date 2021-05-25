@@ -12,7 +12,7 @@ clip_w = 0.75 * 25.4;
 pcb_thickness = 1.6;
 
 // total clearance between guide clips and PCBs
-pcb_clearance = 1.0;
+pcb_clearance = 0.6;
 
 // thickness of blade walls
 blade_thickness = 3;
@@ -134,6 +134,6 @@ module card_guide_with_screw_holes() {
     }
 }
 
-//clip_assembly();
+clip_assembly();
 
-card_guide_with_screw_holes();
+//card_guide_with_screw_holes();
