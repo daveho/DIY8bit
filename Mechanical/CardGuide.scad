@@ -153,8 +153,4 @@ module card_guide() {
 
 //clip_assembly();
 
-//card_guide_with_screw_holes();
-
 card_guide();
-
-//top_plate_with_screw_holes();
