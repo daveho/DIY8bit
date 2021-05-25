@@ -132,7 +132,7 @@ module top_plate_with_screw_holes() {
 }
 
 module card_guide() {
-    rotate([-90, 0, 0]) {
+    rotate([90, 0, 0]) {
         back_plate();
 
         translate([-clip_w*3, 0, 0]) { clip_assembly(); }
