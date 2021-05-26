@@ -1,9 +1,10 @@
-# Mechanical designs and files
+# DIY 8-bit computer, Episode 14
 
-This directory contains information about the enclosure for the 8-bit computer
-system.
+Link to video: <https://youtu.be/gVFuNtl8WqU>
 
-## Frame
+In this video, I present plans for an enclosure for the 8 bit computer system,
+and build a frame for the enclosure which includes a card cage to stabilze
+the backplane cards.
 
 The frame for the enclosure is built using 15x15mm aluminum extrusions, specifically
 [MakerBeam XL](https://www.makerbeam.com/makerbeamxl/).  [OpenBeam](https://www.makerbeam.com/openbeam/)
