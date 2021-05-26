@@ -24,7 +24,7 @@ Two 3D printed parts are used.
 Parts list for frame:
 
 Quantity | Description/link
--------- | ----------------
+:------: | ----------------
 6        | [150mm MakerBeam XL](https://www.amazon.com/MakerBeam-XL-anodized-150x15x15mm-103150/dp/B06XJ4FV75)
 2        | [200mm MakerBeam XL](https://www.amazon.com/MakerBeam-XL-Anodized-200x15x15mm-Pieces/dp/B06XHQH9WH)
 4        | [300mm MakerBeam XL](https://www.amazon.com/MakerBeam-300mm-beam-black-anodised/dp/B00G2DNU4M)
