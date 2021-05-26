@@ -7,7 +7,7 @@ system.
 
 The frame for the enclosure is built using 15x15mm aluminum extrusions, specifically
 [MakerBeam XL](https://www.makerbeam.com/makerbeamxl/).  [OpenBeam](https://www.makerbeam.com/openbeam/)
-is the same profile, but does not have threaded holes at the ends of the beam (which is needed
+is the same profile, but does not have threaded holes at the ends of the beam (which are needed
 to use the corner connectors.)
 
 Pictures of the frame:
