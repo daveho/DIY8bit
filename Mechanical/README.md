@@ -28,6 +28,7 @@ Quantity | Description/link
 6        | [150mm MakerBeam XL](https://www.amazon.com/MakerBeam-XL-anodized-150x15x15mm-103150/dp/B06XJ4FV75)
 2        | [200mm MakerBeam XL](https://www.amazon.com/MakerBeam-XL-Anodized-200x15x15mm-Pieces/dp/B06XHQH9WH)
 4        | [300mm MakerBeam XL](https://www.amazon.com/MakerBeam-300mm-beam-black-anodised/dp/B00G2DNU4M)
+4        | [MakerBeam corner cube](https://www.amazon.com/Makerbeam-XL-Corner-Black-15x15x15mm/dp/B06XJ3RYZ4)
 40       | [6mm M3 bolt](https://www.amazon.com/gp/product/B07CMRQ3TB)
 40       | [Square 5x5x2 mm M3 nut](https://www.amazon.com/gp/product/B089Q6C4CM)
 12       | [3D printed OpenBeam corner brace](lbracket.stl)
@@ -35,6 +36,9 @@ Quantity | Description/link
 
 Note that you can use the [MakerBeam XL T-Slot nuts](https://www.amazon.com/gp/product/B06XHQHD4H)
 rather than the square M3 nuts, but they are very expensive.
+
+Here is a 3D-printable corner cube, which might be worth considering because the
+MakerBeam XL metal ones are expensive: <https://www.thingiverse.com/thing:3189420>
 
 <!--
 3D printed parts:
