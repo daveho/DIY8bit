@@ -14,7 +14,8 @@ module icevga (output wire sq_out);
 
   wire pllclk;
   wire pll_is_locked;
-  pll the_pll(.clock_in(clk), .clock_out(pllclk), .locked(pll_is_locked));
+  pll the_pll(.clock_in(clk), .clock_out(pllclk),
+              .locked(pll_is_locked));
 
   reg [15:0] counter;
 
