@@ -18,6 +18,10 @@ nut_h = 1.5;
 // clearance hole width for an M2 screw
 screw_hole_w = 2.4;
 
+// approximate dimensions of M2 screw head (hex drive)
+screw_head_w = 4.5; // diameter with clearance
+screw_head_h = 2;
+
 pcb_w = 46;
 pcb_h = 1.8; // really 1.6, but allow a bit of play
 
@@ -25,7 +29,7 @@ edge_w = 6;
 
 bracket_w = 46 + edge_w*2;
 bracket_d = 8;
-bracket_h = 6; // this is the amount we want to elevate the breakout PCB
+bracket_h = 4.5; // this is the amount we want to elevate the breakout PCB
 
 module bracket() {
     translate([-bracket_w/2, 0, 0]) {
@@ -50,13 +54,13 @@ module bracket_with_screw_holes() {
         translate([bracket_w/2 - edge_w/2, bracket_d/2, -1]) {
             cylinder(r=screw_hole_w/2, h=bracket_h+pcb_h+2, $fn=60);
         }
-        // left M2 nut pocket
+        // recess for left M2 screw head
         translate([-bracket_w/2 + edge_w/2, bracket_d/2, -1]) {
-            cylinder(r=nut_pocket_w/2, h=nut_h+1, $fn=6);
+            cylinder(r=screw_head_w/2, h=screw_head_h+1, $fn=60);
         }
-        // right M2 nut pocket
+        // recess for right M2 screw head
         translate([bracket_w/2 - edge_w/2, bracket_d/2, -1]) {
-            cylinder(r=nut_pocket_w/2, h=nut_h+1, $fn=6);
+            cylinder(r=screw_head_w/2, h=screw_head_h+1, $fn=60);
         }
     }
 }
