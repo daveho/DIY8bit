@@ -31,6 +31,8 @@ bracket_w = 46 + edge_w*2;
 bracket_d = 8;
 bracket_h = 4.5; // this is the amount we want to elevate the breakout PCB
 
+top_plate_h = 2 + nut_h;
+
 module bracket() {
     translate([-bracket_w/2, 0, 0]) {
         cube([bracket_w, bracket_d, bracket_h]);
@@ -65,4 +67,40 @@ module bracket_with_screw_holes() {
     }
 }
 
-bracket_with_screw_holes();
+module top_plate() {
+    translate([-bracket_w/2, 0, 0]) {
+        cube([bracket_w, bracket_d, top_plate_h]);
+    }
+}
+
+module top_plate_with_screw_holes() {
+    difference() {
+        top_plate();
+        // left M2 screw hole
+        translate([-bracket_w/2 + edge_w/2, bracket_d/2, -1]) {
+            cylinder(r=screw_hole_w/2, h=bracket_h+pcb_h+2, $fn=60);
+        }
+        // right M2 screw hole
+        translate([bracket_w/2 - edge_w/2, bracket_d/2, -1]) {
+            cylinder(r=screw_hole_w/2, h=bracket_h+pcb_h+2, $fn=60);
+        }
+        // left nut pocket
+        translate([-bracket_w/2 + edge_w/2, bracket_d/2, top_plate_h - nut_h]) {
+            rotate([0, 0, 30]) {
+                cylinder(r=nut_pocket_w/2, h=top_plate_h, $fn=6);
+            }
+        }
+        // right nut pocket
+        translate([bracket_w/2 - edge_w/2, bracket_d/2, top_plate_h - nut_h]) {
+            rotate([0, 0, 30]) {
+                cylinder(r=nut_pocket_w/2, h=top_plate_h, $fn=6);
+            }
+        }
+    }
+}
+
+// These are the two parts of the bracket (uncomment one)
+
+//bracket_with_screw_holes();
+
+top_plate_with_screw_holes();
