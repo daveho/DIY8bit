@@ -3,7 +3,7 @@ EELAYER 30 0
 EELAYER END
 $Descr User 14173 10953
 encoding utf-8
-Sheet 1 6
+Sheet 1 7
 Title ""
 Date ""
 Rev ""
@@ -1184,4 +1184,10 @@ F 3 "~" H 9650 4300 50  0001 C CNN
 	1    9650 4300
 	1    0    0    -1  
 $EndComp
+$Sheet
+S 4800 7150 1000 2250
+U 60B8196B
+F0 "Display" 50
+F1 "Display.sch" 50
+$EndSheet
 $EndSCHEMATC
