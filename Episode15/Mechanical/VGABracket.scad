@@ -29,7 +29,7 @@ edge_w = 6;
 
 bracket_w = 46 + edge_w*2;
 bracket_d = 8;
-bracket_h = 4.5; // this is the amount we want to elevate the breakout PCB
+bracket_h = 3.9; // this is the amount we want to elevate the breakout PCB
 
 top_plate_h = 2 + nut_h;
 
@@ -101,6 +101,6 @@ module top_plate_with_screw_holes() {
 
 // These are the two parts of the bracket (uncomment one)
 
-//bracket_with_screw_holes();
+bracket_with_screw_holes();
 
-top_plate_with_screw_holes();
+//top_plate_with_screw_holes();
