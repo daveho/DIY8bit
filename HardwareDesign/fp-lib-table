@@ -1,4 +1,5 @@
 (fp_lib_table
   (lib (name P80C32SBPN)(type Legacy)(uri ${KIPRJMOD}/P80C32SBPN.mod)(options "")(descr ""))
   (lib (name SW_1-1825027-2)(type KiCad)(uri ${KIPRJMOD}/SW_1-1825027-2.pretty)(options "")(descr ""))
+  (lib (name HardwareDesign)(type KiCad)(uri ${KIPRJMOD}/HardwareDesign.pretty)(options "")(descr ""))
 )
