@@ -6,9 +6,9 @@
 
 module icevga (output reg vsync,
                output reg hsync,
-               output reg red[3:0],
-               output reg green[3:0],
-               output reg blue[3:0]);
+               output reg [3:0] red,
+               output reg [3:0] green,
+               output reg [3:0] blue);
 
   // high-frequency oscillator (48 MHz)
   wire clk;
@@ -23,7 +23,7 @@ module icevga (output reg vsync,
   // repeatedly count from 0 to 5 in order to divide the 240 MHz
   // PLL clock by 6 to generate the 40 MHz timing we need for 800x600
   // SVGA
-  reg tick[2:0];
+  reg [2:0] tick;
 
   always @(posedge pllclk)
     begin
@@ -49,11 +49,16 @@ module icevga (output reg vsync,
   parameter h_total         = h_front_porch + h_sync_pulse +
                               h_back_porch + h_visible;
 
+  // note that with respect to generation of both sync and
+  // color signals,  the vertical and horizontal counters (vcount
+  // and hcount) indicate the line/column that will be generated
+  // on the *next* PLL clock
+
   // vertical (line) count ranges from 0 to v_total-1
-  reg vcount[9:0];
+  reg [9:0] vcount;
 
   // horizontal (column) count ranges from 0 to h_total-1
-  reg hcount[10:0];
+  reg [10:0] hcount;
 
   // true when end of frame has been reached
   wire at_end_of_frame = (vcount >= (v_total - 1));
