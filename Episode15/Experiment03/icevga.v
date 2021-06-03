@@ -20,6 +20,34 @@ module icevga (output reg vsync,
   pll the_pll(.clock_in(clk), .clock_out(pllclk),
               .locked(pll_is_locked));
 
+  //reg [15:0] count;
+  reg [2:0] tick;
+
+  always @(posedge pllclk)
+    begin
+      //vsync <= count[6];
+      if (tick == 3'b000)
+        begin
+          vsync <= ~vsync;
+          tick <= tick + 1;
+        end
+      else if (tick == 3'b010)
+        begin
+          vsync <= vsync;
+          tick <= 3'b000;
+        end
+      else
+        begin
+          vsync <= vsync;
+          tick <= tick + 1;
+        end
+      red <= 4'b0000;
+      green <= 4'b0000;
+      blue <= 4'b0000;
+      hsync <= 1'b0;
+    end
+
+/*
   // repeatedly count from 0 to 5 in order to divide the 240 MHz
   // PLL clock by 6 to generate the 40 MHz timing we need for 800x600
   // SVGA
@@ -27,12 +55,30 @@ module icevga (output reg vsync,
 
   always @(posedge pllclk)
     begin
-      if (tick >= 3'b101)
-        tick <= 0;
+      if (tick == 3'b101)
+        tick <= 3'b000;
       else
         tick <= tick + 1;
     end
 
+  always @(posedge pllclk)
+    begin
+      if (tick == 3'b000)
+        begin
+          if (vsync)
+            vsync <= 1'b0;
+          else
+            vsync <= 1'b1;
+        end
+
+      red <= 4'b0000;
+      green <= 4'b0000;
+      blue <= 4'b0000;
+      hsync <= 1'b0;
+    end
+*/
+
+/*
   // Source: http://tinyvga.com/vga-timing/800x600@60Hz
   parameter v_front_porch   = 10'd1;
   parameter v_sync_pulse    = 10'd4;
@@ -140,5 +186,6 @@ module icevga (output reg vsync,
           blue <= 4'h0;
         end
     end
+*/
 
 endmodule
