@@ -20,11 +20,54 @@ module icevga (output reg vsync,
   pll the_pll(.clock_in(clk), .clock_out(pllclk),
               .locked(pll_is_locked));
 
-  //reg [15:0] count;
+  // tick counting from 0 to 5 in order to generate 40 MHz timing
+  // from the 240 MHz PLL clock
   reg [2:0] tick;
+
+  // Source: http://tinyvga.com/vga-timing/800x600@60Hz
+  parameter v_front_porch   = 10'd1;
+  parameter v_sync_pulse    = 10'd4;
+  parameter v_back_porch    = 10'd23;
+  parameter v_visible       = 10'd600;
+  parameter v_visible_start = v_sync_pulse + v_front_porch;
+  parameter v_total         = v_front_porch + v_sync_pulse +
+                              v_back_porch + v_visible;
+  parameter h_front_porch   = 11'd40;
+  parameter h_sync_pulse    = 11'd128;
+  parameter h_back_porch    = 11'd88;
+  parameter h_visible       = 11'd800;
+  parameter h_visible_start = h_sync_pulse + h_front_porch;
+  parameter h_total         = h_front_porch + h_sync_pulse +
+                              h_back_porch + h_visible;
+
+  // note that with respect to generation of both sync and
+  // color signals,  the vertical and horizontal counters (vcount
+  // and hcount) indicate the line/column that will be generated
+  // on the *next* PLL clock
+
+  // vertical (line) count ranges from 0 to v_total-1
+  reg [9:0] vcount;
+
+  // horizontal (column) count ranges from 0 to h_total-1
+  reg [10:0] hcount;
+
+  // true when end of frame has been reached
+  wire at_end_of_frame = (vcount >= (v_total - 1));
+
+  // true when end of line has been reached
+  wire at_end_of_line = (hcount >= (h_total - 1));
+
+  // true when a visible line is being displayed
+  wire v_is_visible = (vcount >= v_visible_start &&
+                       vcount < (v_visible_start + v_visible));
+
+  // true when a visible column is being displayed
+  wire h_is_visible = (hcount >= h_visible_start &&
+                       hcount < (h_visible_start + h_visible));
 
   always @(posedge pllclk)
     begin
+/*
       //vsync <= count[6];
       if (tick == 3'b000)
         begin
@@ -41,10 +84,28 @@ module icevga (output reg vsync,
           vsync <= vsync;
           tick <= tick + 1;
         end
+*/
+
+      if (tick == 3'b000)
+        begin
+          // TODO: generate hsync and vsync
+          vsync <= ~vsync;
+          hsync <= ~hsync;
+
+          tick <= tick + 1;
+        end
+      else if (tick == 3'b101)
+        begin
+          tick <= 3'b000;
+        end
+      else
+        begin
+          tick <= tick + 1;
+        end
+
       red <= 4'b0000;
       green <= 4'b0000;
       blue <= 4'b0000;
-      hsync <= 1'b0;
     end
 
 /*
