@@ -52,10 +52,10 @@ module icevga (output reg vsync,
   reg [10:0] hcount;
 
   // true when end of frame has been reached
-  wire at_end_of_frame = (vcount >= (v_total - 1));
+  wire at_end_of_frame = (vcount == (v_total - 1));
 
   // true when end of line has been reached
-  wire at_end_of_line = (hcount >= (h_total - 1));
+  wire at_end_of_line = (hcount == (h_total - 1));
 
   // true when a visible line is being displayed
   wire v_is_visible = (vcount >= v_visible_start &&
@@ -89,8 +89,21 @@ module icevga (output reg vsync,
       if (tick == 3'b000)
         begin
           // TODO: generate hsync and vsync
-          vsync <= ~vsync;
-          hsync <= ~hsync;
+          if (hcount < h_sync_pulse)
+            begin
+              hsync <= 1'b1;
+              hcount <= hcount + 1;
+            end
+          else if (at_end_of_line)
+            begin
+              hsync <= 1'b1;
+              hcount <= 11'd0;
+            end
+          else
+            begin
+              hsync <= 1'b0;
+              hcount <= hcount + 1;
+            end
 
           tick <= tick + 1;
         end
@@ -103,6 +116,7 @@ module icevga (output reg vsync,
           tick <= tick + 1;
         end
 
+      vsync <= 1'b0;
       red <= 4'b0000;
       green <= 4'b0000;
       blue <= 4'b0000;
