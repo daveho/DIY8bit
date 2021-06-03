@@ -13,17 +13,6 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
-$Comp
-L Upduino_3.0:Upduino_3.0 U601
-U 1 1 60B8636D
-P 2400 2400
-F 0 "U601" H 2375 2465 50  0000 C CNN
-F 1 "Upduino_3.0" H 2375 2374 50  0000 C CNN
-F 2 "" H 2400 2350 50  0001 C CNN
-F 3 "" H 2400 2350 50  0001 C CNN
-	1    2400 2400
-	1    0    0    -1  
-$EndComp
 Text Label 3700 4700 0    50   ~ 0
 VSYNC
 Text Label 3700 4800 0    50   ~ 0
@@ -499,18 +488,18 @@ F 3 "" H 1150 2400 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	3200 3300 4550 3300
+	3200 3200 4550 3200
 Wire Wire Line
-	4550 3300 4550 3450
+	4550 3200 4550 3350
 $Comp
 L power:GND #PWR?
 U 1 1 60BF23D5
-P 4550 3450
-F 0 "#PWR?" H 4550 3200 50  0001 C CNN
-F 1 "GND" H 4555 3277 50  0000 C CNN
-F 2 "" H 4550 3450 50  0001 C CNN
-F 3 "" H 4550 3450 50  0001 C CNN
-	1    4550 3450
+P 4550 3350
+F 0 "#PWR?" H 4550 3100 50  0001 C CNN
+F 1 "GND" H 4555 3177 50  0000 C CNN
+F 2 "" H 4550 3350 50  0001 C CNN
+F 3 "" H 4550 3350 50  0001 C CNN
+	1    4550 3350
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
@@ -671,6 +660,17 @@ Entry Wire Line
 	5100 3550 5200 3650
 Entry Wire Line
 	5100 3700 5200 3800
+$Comp
+L Upduino_3.0:Upduino_3.0 U601
+U 1 1 60BB2F09
+P 2400 2400
+F 0 "U601" H 2375 2465 50  0000 C CNN
+F 1 "Upduino_3.0" H 2375 2374 50  0000 C CNN
+F 2 "" H 2400 2350 50  0001 C CNN
+F 3 "" H 2400 2350 50  0001 C CNN
+	1    2400 2400
+	1    0    0    -1  
+$EndComp
 Wire Bus Line
 	5100 2000 5100 3700
 Wire Bus Line
@@ -683,4 +683,6 @@ Wire Bus Line
 	3600 1800 3600 3700
 Wire Bus Line
 	5300 1800 5300 2300
+Text Notes 1600 2100 0    50   ~ 0
+Warning! The signal names for package pins\n41 and 42 were reversed on the silkscreen.\nPin 41 is the 12 MHz clock output, and\npin 42 is the third ground pin.
 $EndSCHEMATC
