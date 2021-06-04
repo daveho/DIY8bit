@@ -111,8 +111,18 @@ module icevga (input wire ext_osc,
 */
       if (tick == 3'b000)
         begin
-          hsync <= 1'b1;
           tick <= tick + 1;
+
+          if (hcount == 11'd99)
+            begin
+              hsync <= ~hsync;
+              hcount <= 11'd0;
+            end
+          else
+            begin
+              hcount <= hcount + 1;
+            end
+
         end
       else if (tick == 3'b101)
         begin
@@ -120,7 +130,6 @@ module icevga (input wire ext_osc,
         end
       else
         begin
-          hsync <= 1'b0;
           tick <= tick + 1;
         end
 
