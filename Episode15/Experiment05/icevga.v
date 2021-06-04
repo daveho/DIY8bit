@@ -19,9 +19,6 @@ module icevga (input wire ext_osc,
   SB_GB clk_buffer(.USER_SIGNAL_TO_GLOBAL_BUFFER(pll_out),
                    .GLOBAL_BUFFER_OUTPUT(clk));
 
-  // tick counting from 0 to 5 in order to generate 40 MHz timing
-  // from the 240 MHz PLL clock
-  reg [2:0] tick;
 /*
   always @(posedge clk)
     begin
@@ -31,7 +28,7 @@ module icevga (input wire ext_osc,
         tick <= tick + 1;
     end
 */
-
+/*
   // 800x600 SVGA timings
   // Source: http://tinyvga.com/vga-timing/800x600@60Hz
   parameter v_front_porch   = 10'd1;
@@ -48,81 +45,64 @@ module icevga (input wire ext_osc,
   parameter h_visible_start = h_sync_pulse + h_front_porch;
   parameter h_total         = h_front_porch + h_sync_pulse +
                               h_back_porch + h_visible;
+*/
+  // tick counting from 0 to 5 in order to generate 40 MHz timing
+  // from the 240 MHz PLL clock
+  reg [2:0] tick;
 
-  // states for hsync generation
-  parameter H_STATE_SYNC        = 2'b00;
-  parameter H_STATE_FRONT_PORCH = 2'b01;
-  parameter H_STATE_VISIBLE     = 2'b10;
-  parameter H_STATE_BACK_PORCH  = 2'b11;
+  // timings for horizontal sync
+  parameter H_VISIBLE_END       = 16'd799;
+  parameter H_FRONT_PORCH_END   = 16'd839;
+  parameter H_SYNC_PULSE_END    = 16'd967;
+  parameter H_BACK_PORCH_END    = 16'd1055;
 
-  reg [1:0] hstate;
-  reg [10:0] hcount;
+  // This counter is larger than it needs to be, but I encountered very
+  // strange behaviors when I made it exactly 11 bits (which could in theory
+  // accommodate counts up to 2047.)
+  reg [15:0] hcount;
 
   always @(posedge clk)
     begin
-/*
       if (tick == 3'b000)
         begin
-          case (hstate)
-            H_STATE_SYNC:
+          case (hcount)
+            //16'd839:
+            H_FRONT_PORCH_END:
               begin
-                if (hcount == h_sync_pulse-1)
-                  begin
-                    hstate <= H_STATE_FRONT_PORCH;
-                    hsync <= 1'b0; // end of sync pulse
-                  end
-
+                hsync <= 1'b1;
                 hcount <= hcount + 1;
               end
-
-            H_STATE_FRONT_PORCH:
+            //16'd967:
+            H_SYNC_PULSE_END:
               begin
-                if (hcount == (h_sync_pulse+h_front_porch)-1)
-                  hstate <= H_STATE_VISIBLE;
-
+                hsync <= 1'b0;
                 hcount <= hcount + 1;
               end
-
-            H_STATE_VISIBLE:
+            //16'd1055:
+            H_BACK_PORCH_END:
               begin
-                if (hcount == (h_sync_pulse+h_front_porch+h_visible)-1)
-                  hstate <= H_STATE_BACK_PORCH;
-
-                hcount <= hcount + 1;
+                hcount <= 16'd0;
               end
-
-            H_STATE_BACK_PORCH:
+            default:
               begin
-                if (hcount == h_total-1)
-                  begin
-                    hstate <= H_STATE_SYNC;
-                    hcount <= 11'd0;
-                    hsync <= 1'b1; // begin next sync pulse
-                  end
-                else
-                  hcount <= hcount + 1;
+                hcount <= hcount + 1;
               end
           endcase
-        end
-      else if (tick == 3'b101)
-        tick <= 3'b000;
-      else
-        tick <= tick + 1;
-*/
-      if (tick == 3'b000)
-        begin
-          tick <= tick + 1;
 
-          if (hcount == 11'd99)
+/*
+          if (hcount == 16'd799)
             begin
               hsync <= ~hsync;
-              hcount <= 11'd0;
+              hcount <= 16'd0;
             end
           else
             begin
+              hsync <= hsync;
               hcount <= hcount + 1;
             end
+*/
 
+          tick <= tick + 1;
         end
       else if (tick == 3'b101)
         begin
