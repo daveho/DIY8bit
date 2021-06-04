@@ -1,0 +1,2 @@
+set_io --warn-no-port ext_osc 20
+set_io --warn-no-port sq_out 28
