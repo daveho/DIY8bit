@@ -10,8 +10,8 @@ module icevga (input wire ext_osc,
 
   // Use global clock buffer to distribute the external clock signal
   wire clk;
-  SB_GB sbGlobalBuffer_inst(.USER_SIGNAL_TO_GLOBAL_BUFFER(ext_osc),
-                            .GLOBAL_BUFFER_OUTPUT(clk));
+  SB_GB clk_buffer(.USER_SIGNAL_TO_GLOBAL_BUFFER(ext_osc),
+                   .GLOBAL_BUFFER_OUTPUT(clk));
 
   reg [15:0] counter;
 
