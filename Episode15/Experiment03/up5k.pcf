@@ -1,3 +1,4 @@
+set_io --warn-no-port ext_osc 20
 set_io --warn-no-port vsync 47
 set_io --warn-no-port hsync 46
 set_io --warn-no-port red[3] 21

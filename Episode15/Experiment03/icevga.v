@@ -4,20 +4,18 @@
 // R/G/B colors are generated using a resistor DAC, with each
 // color component specified by a 4 bit value.
 
-module icevga (output reg vsync,
+module icevga (input wire ext_osc,
+               output reg vsync,
                output reg hsync,
                output reg [3:0] red,
                output reg [3:0] green,
                output reg [3:0] blue);
 
-  // high-frequency oscillator (48 MHz)
-  wire clk;
-  SB_HFOSC inthosc(.CLKHFPU(1'b1), .CLKHFEN(1'b1), .CLKHF(clk));
-
-  // PLL to increase the clock from 48 MHz to 240 MHz
+  // PLL to generate a 240 MHz clock from the 12 MHz external
+  // oscillator signal
   wire pllclk;
   wire pll_is_locked;
-  pll the_pll(.clock_in(clk), .clock_out(pllclk),
+  pll the_pll(.clock_in(ext_osc), .clock_out(pllclk),
               .locked(pll_is_locked));
 
   // tick counting from 0 to 5 in order to generate 40 MHz timing
