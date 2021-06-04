@@ -22,6 +22,7 @@ module icevga (input wire ext_osc,
   // tick counting from 0 to 5 in order to generate 40 MHz timing
   // from the 240 MHz PLL clock
   reg [2:0] tick;
+/*
   always @(posedge clk)
     begin
       if (tick == 3'b101)
@@ -29,6 +30,7 @@ module icevga (input wire ext_osc,
       else
         tick <= tick + 1;
     end
+*/
 
   // 800x600 SVGA timings
   // Source: http://tinyvga.com/vga-timing/800x600@60Hz
@@ -58,6 +60,7 @@ module icevga (input wire ext_osc,
 
   always @(posedge clk)
     begin
+/*
       if (tick == 3'b000)
         begin
           case (hstate)
@@ -101,6 +104,26 @@ module icevga (input wire ext_osc,
               end
           endcase
         end
+      else if (tick == 3'b101)
+        tick <= 3'b000;
+      else
+        tick <= tick + 1;
+*/
+      if (tick == 3'b000)
+        begin
+          hsync <= 1'b1;
+          tick <= tick + 1;
+        end
+      else if (tick == 3'b101)
+        begin
+          tick <= 3'b000;
+        end
+      else
+        begin
+          hsync <= 1'b0;
+          tick <= tick + 1;
+        end
+
     end
 
 endmodule
