@@ -16,8 +16,6 @@ module pll(
 	output locked
 	);
 
-  wire pll_out;
-
 SB_PLL40_CORE #(
 		.FEEDBACK_PATH("SIMPLE"),
 		.DIVR(4'b0000),		// DIVR =  0
@@ -29,13 +27,7 @@ SB_PLL40_CORE #(
 		.RESETB(1'b1),
 		.BYPASS(1'b0),
 		.REFERENCECLK(clock_in),
-		//.PLLOUTCORE(clock_out)
-		.PLLOUTCORE(pll_out)
+		.PLLOUTCORE(clock_out)
 		);
-
-  // Use global clock buffer for PLL output.
-  // See: https://mjoldfield.com/atelier/2018/02/ice40-blinky-icestick.html
-  SB_GB global_clock_buffer(.USER_SIGNAL_TO_GLOBAL_BUFFER(pll_out),
-                            .GLOBAL_BUFFER_OUTPUT(clock_out));
 
 endmodule
