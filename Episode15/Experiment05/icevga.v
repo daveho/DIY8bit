@@ -4,7 +4,11 @@
 // just a solid color for pixels)
 
 module icevga (input wire ext_osc,
-               output reg hsync);
+               output reg vsync,
+               output reg hsync,
+               output reg [3:0] red,
+               output reg [3:0] green,
+               output reg [3:0] blue);
 
   wire pll_out;
   wire pll_locked;
@@ -31,26 +35,7 @@ module icevga (input wire ext_osc,
         tick <= tick + 1;
     end
 
-/*
-  // 800x600 SVGA timings
-  // Source: http://tinyvga.com/vga-timing/800x600@60Hz
-  parameter v_front_porch   = 10'd1;
-  parameter v_sync_pulse    = 10'd4;
-  parameter v_back_porch    = 10'd23;
-  parameter v_visible       = 10'd600;
-  parameter v_visible_start = v_sync_pulse + v_front_porch;
-  parameter v_total         = v_front_porch + v_sync_pulse +
-                              v_back_porch + v_visible;
-  parameter h_front_porch   = 11'd40;
-  parameter h_sync_pulse    = 11'd128;
-  parameter h_back_porch    = 11'd88;
-  parameter h_visible       = 11'd800;
-  parameter h_visible_start = h_sync_pulse + h_front_porch;
-  parameter h_total         = h_front_porch + h_sync_pulse +
-                              h_back_porch + h_visible;
-*/
-
-  // timings for horizontal sync
+  // horizontal timings
   parameter H_VISIBLE_END       = 16'd799;
   parameter H_FRONT_PORCH_END   = 16'd839;
   parameter H_SYNC_PULSE_END    = 16'd967;
@@ -61,62 +46,93 @@ module icevga (input wire ext_osc,
   // accommodate counts up to 2047.)
   reg [15:0] hcount;
 
+  // hcount and hsync generation
   always @(posedge clk)
     begin
       if (tick == 3'b000)
         begin
           case (hcount)
-            //16'd839:
             H_FRONT_PORCH_END:
               begin
-                hsync <= 1'b1;
+                hsync <= 1'b1; // hsync pulse begins
                 hcount <= hcount + 1;
               end
-            //16'd967:
             H_SYNC_PULSE_END:
               begin
-                hsync <= 1'b0;
+                hsync <= 1'b0; // hsync pulse ends
                 hcount <= hcount + 1;
               end
-            //16'd1055:
             H_BACK_PORCH_END:
               begin
-                hcount <= 16'd0;
+                hcount <= 16'd0; // next line begins
               end
             default:
               begin
                 hcount <= hcount + 1;
               end
           endcase
+        end
 
-/*
-          if (hcount == 16'd799)
+    end
+
+  // vertical timings
+  parameter V_VISIBLE_END     = 16'd599;
+  parameter V_FRONT_PORCH_END = 16'd600;
+  parameter V_SYNC_PULSE_END  = 16'd604;
+  parameter V_BACK_PORCH_END  = 16'd627;
+
+  // as with hcount, larger than it needs to be
+  reg [15:0] vcount;
+
+  // vcount and vsync generation
+  always @(posedge clk)
+    begin
+      if (tick == 3'b000 && hcount == H_BACK_PORCH_END)
+        begin
+          case (vcount)
+            V_FRONT_PORCH_END:
+              begin
+                vsync <= 1'b1; // vsync pulse begins
+                vcount <= vcount + 1;
+              end
+            V_SYNC_PULSE_END:
+              begin
+                vsync <= 1'b0; // vsync pulse ends
+                vcount <= vcount + 1;
+              end
+            V_BACK_PORCH_END:
+              begin
+                vcount <= 16'd0; // next frame begins
+              end
+            default:
+              begin
+                vcount <= vcount + 1;
+              end
+          endcase
+        end
+    end
+
+  // pixel color generation
+  always @(posedge clk)
+    begin
+      if (tick == 3'b000)
+        begin
+          if (hcount < 800 && vcount < 600)
             begin
-              hsync <= ~hsync;
-              hcount <= 16'd0;
+              // in visible region, output a pixel
+              // just a solid color for now
+              red <= 4'h6;
+              green <= 4'h1;
+              blue <= 4'hF;
             end
           else
             begin
-              hsync <= hsync;
-              hcount <= hcount + 1;
+              // output black when not in visible region
+              red <= 4'h0;
+              green <= 4'h0;
+              blue <= 4'h0;
             end
-*/
-
-/*
-          tick <= tick + 1;
-*/
         end
-/*
-      else if (tick == 3'b101)
-        begin
-          tick <= 3'b000;
-        end
-      else
-        begin
-          tick <= tick + 1;
-        end
-*/
-
     end
 
 endmodule
