@@ -19,7 +19,10 @@ module icevga (input wire ext_osc,
   SB_GB clk_buffer(.USER_SIGNAL_TO_GLOBAL_BUFFER(pll_out),
                    .GLOBAL_BUFFER_OUTPUT(clk));
 
-/*
+  // tick counting from 0 to 5 in order to generate 40 MHz timing
+  // from the 240 MHz PLL clock
+  reg [2:0] tick;
+
   always @(posedge clk)
     begin
       if (tick == 3'b101)
@@ -27,7 +30,7 @@ module icevga (input wire ext_osc,
       else
         tick <= tick + 1;
     end
-*/
+
 /*
   // 800x600 SVGA timings
   // Source: http://tinyvga.com/vga-timing/800x600@60Hz
@@ -46,9 +49,6 @@ module icevga (input wire ext_osc,
   parameter h_total         = h_front_porch + h_sync_pulse +
                               h_back_porch + h_visible;
 */
-  // tick counting from 0 to 5 in order to generate 40 MHz timing
-  // from the 240 MHz PLL clock
-  reg [2:0] tick;
 
   // timings for horizontal sync
   parameter H_VISIBLE_END       = 16'd799;
@@ -102,8 +102,11 @@ module icevga (input wire ext_osc,
             end
 */
 
+/*
           tick <= tick + 1;
+*/
         end
+/*
       else if (tick == 3'b101)
         begin
           tick <= 3'b000;
@@ -112,6 +115,7 @@ module icevga (input wire ext_osc,
         begin
           tick <= tick + 1;
         end
+*/
 
     end
 
