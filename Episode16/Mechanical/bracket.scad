@@ -106,18 +106,18 @@ module bracket() {
     translate([plate_w/2 - clip_wall_w/2, 0, plate_h]) {
         clip_wall();
     }
-    translate([plate_w/2 - clip_wall_w - clip_wall_h, -plate_d/2, plate_h]) {
+    translate([plate_w/2 - clip_wall_w - clip_wall_h + 0.01, -plate_d/2, plate_h-0.01]) {
         clip_wall_brace();
     }
-    translate([plate_w/2 - clip_wall_w - clip_wall_h, plate_d/2+lip_d, plate_h]) {
+    translate([plate_w/2 - clip_wall_w - clip_wall_h + 0.01, plate_d/2+lip_d, plate_h-0.01]) {
         clip_wall_brace();
     }
-    translate([plate_w/2 + overhang_w/2, 0, connector_h]) {
+    translate([plate_w/2 + overhang_w/2 - 0.01, 0, connector_h]) {
         clip_overhang();
     }
 }
 
 // this will probably need to be printed with supports
-rotate([90, 0, 0]) {
+//rotate([90, 0, 0]) {
     bracket();
-}
+//}
