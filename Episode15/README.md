@@ -27,16 +27,16 @@ The following directories have code for the various FPGA experiments:
 
 * [Experiment01](Experiment01): generate a 6 MHz square wave using the
   internal high-frequency oscillator
-* [Experiment01](Experiment02): generate a 1.875 MHz square wave using
+* [Experiment02](Experiment02): generate a 1.875 MHz square wave using
   the internal high-freqency oscillator and a PLL
-* [Experiment01](Experiment03): generate a 6 MHz square wave using the
+* [Experiment03](Experiment03): generate a 6 MHz square wave using the
   on-board 12 MHz oscillator (the internal high-frequency oscillator is
   not very accurate)
-* [Experiment01](Experiment04): generate a 1.875 MHz square wave using
+* [Experiment04](Experiment04): generate a 1.875 MHz square wave using
   the 12 MHz oscillator and a global clock buffer
-* [Experiment01](Experiment05): generate 800x600 60 video displaying
+* [Experiment05](Experiment05): generate 800x600 60 video displaying
   a solid color
-* [Experiment01](Experiment06): generate a 800x600 test pattern showing
+* [Experiment06](Experiment06): generate a 800x600 test pattern showing
   color gradients, in order to evaluate the 4 bit resistor DACs used for
   converting the digital outputs to analog color voltages
 
