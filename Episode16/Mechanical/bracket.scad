@@ -117,7 +117,7 @@ module bracket() {
     }
 }
 
-// this will probably need to be printed with supports
-//rotate([90, 0, 0]) {
+// this seems to print ok without supports?
+rotate([90, 0, 0]) {
     bracket();
-//}
+}
