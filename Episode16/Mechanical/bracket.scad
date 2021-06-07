@@ -98,7 +98,8 @@ module clip_overhang() {
     }
 }
 
-module bracket() {
+// this is the left bracket, mirror for the right bracket
+module left_bracket() {
     plate_with_screw_hole();
     translate([0, -plate_d/2 - lip_d/2, -pcb_thickness]) {
         lip();
@@ -117,7 +118,19 @@ module bracket() {
     }
 }
 
-// this seems to print ok without supports?
+module right_bracket() {
+    mirror([1, 0, 0]) {
+        left_bracket();
+    }
+}
+
+// the brackets seem to print fine without supports
+// (I guess because the overhangs are small)
+
+//rotate([90, 0, 0]) {
+//    left_bracket();
+//}
+
 rotate([90, 0, 0]) {
-    bracket();
+    right_bracket();
 }
