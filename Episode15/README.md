@@ -1,6 +1,6 @@
 # DIY 8-bit computer, Episode 15
 
-Link to video: Coming soon!
+Link to video: <https://youtu.be/5xY3-Er72VU>
 
 ![screenshot](img/ep15_thumbnail_lg.png)
 
