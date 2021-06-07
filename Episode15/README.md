@@ -2,7 +2,7 @@
 
 Link to video: Coming soon!
 
-![screenshot](img/ep15_thumbnail_lg.jpg)
+![screenshot](img/ep15_thumbnail_lg.png)
 
 In this video, I evaluate possibilities for adding a display to the 8-bit
 computer, and perform some initial experiments to generate an 800x600 SVGA
