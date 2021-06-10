@@ -128,9 +128,9 @@ module right_bracket() {
 // (I guess because the overhangs are small)
 
 //rotate([90, 0, 0]) {
-//    left_bracket();
+    left_bracket();
 //}
 
-rotate([90, 0, 0]) {
-    right_bracket();
-}
+//rotate([90, 0, 0]) {
+//    right_bracket();
+//}
