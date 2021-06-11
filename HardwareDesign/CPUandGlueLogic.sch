@@ -2108,16 +2108,6 @@ Wire Wire Line
 	7500 8400 7750 8400
 Wire Wire Line
 	7750 8400 7750 8200
-Wire Bus Line
-	1050 5750 4250 5750
-Wire Bus Line
-	4350 5300 4350 5650
-Wire Bus Line
-	1400 4300 1400 5650
-Wire Bus Line
-	5450 4500 5450 7300
-Wire Bus Line
-	2700 6200 2700 9250
 $Comp
 L power:VCC #PWR0136
 U 1 1 610CD813
@@ -2131,4 +2121,14 @@ F 3 "" H 7750 8200 50  0001 C CNN
 $EndComp
 Text Notes 6600 9450 0    50   ~ 0
 Ensure that data bus signals\nare always at a valid logic level
+Wire Bus Line
+	1050 5750 4250 5750
+Wire Bus Line
+	4350 5300 4350 5650
+Wire Bus Line
+	1400 4300 1400 5650
+Wire Bus Line
+	5450 4500 5450 7300
+Wire Bus Line
+	2700 6200 2700 9250
 $EndSCHEMATC
