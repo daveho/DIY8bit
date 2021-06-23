@@ -306,10 +306,6 @@ Wire Wire Line
 	6600 4650 6600 6150
 Wire Wire Line
 	6600 6150 1050 6150
-Wire Wire Line
-	6250 5400 6250 4800
-Wire Wire Line
-	6250 4800 6100 4800
 Entry Wire Line
 	2050 3500 2150 3600
 Entry Wire Line
@@ -631,12 +627,41 @@ Text HLabel 1100 2700 0    50   Input ~ 0
 A15
 Entry Wire Line
 	1400 2700 1500 2800
+Text Notes 7100 3400 0    50   ~ 0
+Jumper to select either A15 or ~RAMEN~\nfor enabling the RAM; provides flexibility\nfor CPU/glue logic modules that have\na different memory map (different than\nwhat the F68 6809 CPU/glue logic module\nimplements)
 Wire Wire Line
-	6250 5400 4800 5400
-Entry Wire Line
-	4700 5300 4800 5400
+	7600 3800 8500 3800
+Wire Wire Line
+	7600 4000 8500 4000
 Text Label 4900 5400 0    50   ~ 0
 A15
+Text HLabel 8500 3800 2    50   Input ~ 0
+~RAMEN~
+$Comp
+L Connector_Generic:Conn_01x03 J201
+U 1 1 60D57AC9
+P 7400 3900
+F 0 "J201" H 7318 3575 50  0000 C CNN
+F 1 "Conn_01x03" H 7318 3666 50  0000 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" H 7400 3900 50  0001 C CNN
+F 3 "~" H 7400 3900 50  0001 C CNN
+	1    7400 3900
+	-1   0    0    1   
+$EndComp
+Entry Wire Line
+	4700 5300 4800 5400
+Wire Wire Line
+	4800 5400 8500 5400
+Wire Wire Line
+	8500 5400 8500 4000
+Text Label 8250 4000 0    50   ~ 0
+A15
+Wire Wire Line
+	6100 4800 7950 4800
+Wire Wire Line
+	7950 4800 7950 3900
+Wire Wire Line
+	7950 3900 7600 3900
 Wire Bus Line
 	3400 2950 6450 2950
 Wire Bus Line
@@ -650,7 +675,7 @@ Wire Bus Line
 Wire Bus Line
 	2050 3250 2050 4900
 Wire Bus Line
-	4700 3250 4700 5300
-Wire Bus Line
 	1500 1300 1500 3050
+Wire Bus Line
+	4700 3250 4700 5300
 $EndSCHEMATC
