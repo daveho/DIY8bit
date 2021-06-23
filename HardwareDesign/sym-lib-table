@@ -15,4 +15,5 @@
   (lib (name 1-1825027-2)(type Legacy)(uri ${KIPRJMOD}/1-1825027-2.lib)(options "")(descr ""))
   (lib (name MAX232CPE)(type Legacy)(uri ${KIPRJMOD}/MAX232CPE.lib)(options "")(descr ""))
   (lib (name Upduino_3.0)(type Legacy)(uri ${KIPRJMOD}/Upduino_3.0.lib)(options "")(descr ""))
+  (lib (name 74LVC245)(type Legacy)(uri ${KIPRJMOD}/74LVC245.lib)(options "")(descr ""))
 )
