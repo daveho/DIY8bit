@@ -16,4 +16,5 @@
   (lib (name MAX232CPE)(type Legacy)(uri ${KIPRJMOD}/MAX232CPE.lib)(options "")(descr ""))
   (lib (name Upduino_3.0)(type Legacy)(uri ${KIPRJMOD}/Upduino_3.0.lib)(options "")(descr ""))
   (lib (name 74LVC245)(type Legacy)(uri ${KIPRJMOD}/74LVC245.lib)(options "")(descr ""))
+  (lib (name ARDUINO_NANO)(type Legacy)(uri ${KIPRJMOD}/ARDUINO_NANO.lib)(options "")(descr ""))
 )
