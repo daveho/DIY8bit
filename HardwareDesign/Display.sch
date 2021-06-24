@@ -1113,14 +1113,12 @@ Entry Bus Bus
 Wire Bus Line
 	4000 5950 3250 5950
 Wire Wire Line
-	3350 6300 3350 6850
-Wire Wire Line
 	3350 6850 2650 6850
 Wire Wire Line
 	3350 7400 3350 6950
 Wire Wire Line
 	3350 6950 2650 6950
-Text Label 3400 6300 0    50   ~ 0
+Text Label 3400 6200 0    50   ~ 0
 ~FIFO_WR~
 Text Label 3400 7400 0    50   ~ 0
 ~FIFO_CLR~
@@ -1197,7 +1195,13 @@ Connection ~ 6950 5700
 Wire Wire Line
 	6950 5700 6950 5800
 Wire Wire Line
-	3350 6300 4600 6300
+	3350 6200 4250 6200
+Wire Wire Line
+	4250 6200 4250 6300
+Wire Wire Line
+	4250 6300 4600 6300
+Wire Wire Line
+	3350 6200 3350 6850
 Wire Bus Line
 	3150 6050 3150 8700
 Wire Bus Line
