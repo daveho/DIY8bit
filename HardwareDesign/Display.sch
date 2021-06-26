@@ -983,9 +983,9 @@ Wire Wire Line
 	3950 7400 3950 6950
 Wire Wire Line
 	3950 6950 2650 6950
-Text Label 4000 6200 0    50   ~ 0
+Text Label 2700 6850 0    50   ~ 0
 ~HOST_FIFO_WR~
-Text Label 4000 7400 0    50   ~ 0
+Text Label 2700 6950 0    50   ~ 0
 ~HOST_FIFO_CLR~
 Wire Wire Line
 	7100 6300 6600 6300
@@ -1229,6 +1229,8 @@ Wire Wire Line
 	1000 2700 1800 2700
 Wire Wire Line
 	1000 2700 1000 4500
+Text Notes 1450 8050 0    50   ~ 0
+The Arduino is just standing\nin for the host system for now
 Wire Bus Line
 	3750 6050 3750 8700
 Wire Bus Line
@@ -1251,6 +1253,4 @@ Wire Bus Line
 	10000 4300 10000 7100
 Wire Bus Line
 	1100 3200 1100 4100
-Text Notes 1450 8050 0    50   ~ 0
-The Arduino is just standing\nin for the host system for now
 $EndSCHEMATC
