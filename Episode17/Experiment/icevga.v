@@ -1,7 +1,7 @@
 // ice40 vga device
 
 // Accept data from an IDT7201 (or similar) FIFO memory
-// and use it to control the displayed color.
+// and use it to control the displayed color (of all pixels).
 
 module icevga (input wire ext_osc,
                output reg vsync,
@@ -117,6 +117,12 @@ module icevga (input wire ext_osc,
         end
     end
 
+  // R/G/B color values which can be modified by commands received
+  // via the FIFO
+  reg [3:0] red_val;
+  reg [3:0] green_val;
+  reg [3:0] blue_val;
+
   // pixel color generation
   always @(posedge clk)
     begin
@@ -124,11 +130,10 @@ module icevga (input wire ext_osc,
         begin
           if (hcount < 800 && vcount < 600)
             begin
-              // generate a series of horizontal gradients where
-              // the base color is generated from bits 8:6 of vcount
-              red <= (hcount[8:5] & {4{vcount[8]}});
-              green <= (hcount[8:5] & {4{vcount[7]}});
-              blue <= (hcount[8:5] & {4{vcount[6]}});
+              // generate all pixels using the current R/G/B values
+              red <= red_val;
+              green <= green_val;
+              blue <= blue_val;
             end
           else
             begin
@@ -140,12 +145,49 @@ module icevga (input wire ext_osc,
         end
     end
 
-  // FIFO read (just don't read anything for now)
+  // FIFO read states
+  parameter FIFO_IDLE = 2'b00;
+  parameter FIFO_READ_DATA = 2'b01;
+  parameter FIFO_READ_END = 2'b10;
+
+  reg [1:0] fifo_read_state;
+
+  // FIFO read: this takes three cycles of the 40 MHz clock, which
+  // is 75 ns.  This should be fine for a FIFO rated 50 ns or faster.
   always @(posedge clk)
     begin
       if (tick == 3'b000)
         begin
-          fifo_rd <= 1'b1;
+          case (fifo_read_state)
+            FIFO_IDLE:
+              begin
+                if (fifo_ef == 1'b0)
+                  begin
+                    // FIFO is not empty, initiate read
+                    fifo_rd <= 1'b0; // this is an active-low signal
+                    fifo_read_state <= FIFO_READ_DATA;
+                  end
+              end
+
+            FIFO_READ_DATA:
+              begin
+                // for now, just set green and blue from the high and low
+                // bits of the data value
+                green_val <= fifo_d[7:4];
+                blue_val <= fifo_d[3:0];
+                fifo_read_state <= FIFO_READ_END;
+              end
+
+            FIFO_READ_END:
+              begin
+                // de-assert the FIFO read signal
+                fifo_rd <= 1'b1;
+                fifo_read_state <= FIFO_IDLE;
+              end
+          endcase
+
+          // FIXME: this is just so red_val is assigned somewhere
+          red_val <= 4'b1000;
         end
     end
 
