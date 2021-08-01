@@ -1,6 +1,6 @@
 # DIY 8-bit computer, Episode 17
 
-Link to video: coming soon
+Link to video: <https://youtu.be/EEec0VQM-kc>
 
 This is a quick video in which I test a revised version of the
 CPU and glue logic module PCB for the F68 6809-based microcomputer system.
