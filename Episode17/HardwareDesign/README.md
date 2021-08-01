@@ -1,8 +1,8 @@
 # Hardware design
 
-This directory is intended to be a running up-to-date version
-of the hardware design.
+This is a snapshot of the hardware design for [Episode 17](..),
+in which we test a fixed version of the CPU and glue logic PCB.
 
-The system is named "F68".  There is no particular significance
-to this name other than it's short, and the "68" signifies the
-6809 CPU.
+Note that the most up-to-date hardware design is always in
+the [HardwareDesign](../../HardwareDesign) directory in the top level
+of the project.
