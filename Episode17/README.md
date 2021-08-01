@@ -10,6 +10,6 @@ revision in the [previous episode](../Episode16).
 The [HardwareDesign](HardwareDesign) directory has complete schematics and
 PCB designs.
 
-Note that the [MechanicalDesign](../Episode16/MechanicalDesign) directory from
+Note that the [Mechanical](../Episode16/Mechanical) directory from
 the previous episode has the 3D designs for the mounting clips that secure the
 backplane connector to the PCB.
