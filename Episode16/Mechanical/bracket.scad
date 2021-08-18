@@ -127,9 +127,9 @@ module right_bracket() {
 // the brackets seem to print fine without supports
 // (I guess because the overhangs are small)
 
-//rotate([90, 0, 0]) {
+rotate([90, 0, 0]) {
     left_bracket();
-//}
+}
 
 //rotate([90, 0, 0]) {
 //    right_bracket();
