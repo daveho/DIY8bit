@@ -7,7 +7,7 @@ for the F68 6809 computer system.  The PCB replaces the original hand-wired
 prototype version of the module, and adds support for RS-232 serial
 communication using a MAX232 transceiver chip.
 
-Coming soon: photo
+![6809 system connected to a serial terminal](img/ep18_thumb.png)
 
 The [HardwareDesign](HardwareDesign) directory has the schematics and PCB
 designs.  I updated the PCB design for the memory and peripherals module
