@@ -624,22 +624,6 @@ Wire Wire Line
 	1800 3700 1200 3700
 Wire Wire Line
 	1800 3800 1200 3800
-Text Label 1300 3100 0    50   ~ 0
-CMD_D0
-Text Label 1300 3200 0    50   ~ 0
-CMD_D1
-Text Label 1300 3300 0    50   ~ 0
-CMD_D2
-Text Label 1300 3400 0    50   ~ 0
-CMD_D3
-Text Label 1300 3500 0    50   ~ 0
-CMD_D4
-Text Label 1300 3600 0    50   ~ 0
-CMD_D5
-Text Label 1300 3700 0    50   ~ 0
-CMD_D6
-Text Label 1300 3800 0    50   ~ 0
-CMD_D7
 Entry Wire Line
 	1100 3200 1200 3100
 Entry Wire Line
@@ -1057,9 +1041,9 @@ Wire Wire Line
 Wire Wire Line
 	2650 6650 3650 6650
 Wire Wire Line
-	3550 5100 3550 6750
+	3400 5100 3400 6750
 Wire Wire Line
-	3550 6750 2650 6750
+	3400 6750 2650 6750
 Text Label 2700 6750 0    50   ~ 0
 ~HOST_DISP_RST~
 Text Label 7350 5100 0    50   ~ 0
@@ -1216,7 +1200,7 @@ Text Label 1150 2800 0    50   ~ 0
 Text Label 6650 6300 0    50   ~ 0
 ~FIFO_RD~
 Wire Wire Line
-	3550 5100 7950 5100
+	3400 5100 7950 5100
 Text Label 6650 7300 0    50   ~ 0
 ~FIFO_EF_RAW~
 Text Label 7350 5000 0    50   ~ 0
@@ -1244,6 +1228,74 @@ Wire Wire Line
 	800  2300 800  2100
 Wire Wire Line
 	800  2300 1800 2300
+$Comp
+L power:+3V3 #PWR?
+U 1 1 614F6E9B
+P 9650 4800
+F 0 "#PWR?" H 9650 4650 50  0001 C CNN
+F 1 "+3V3" H 9665 4973 50  0000 C CNN
+F 2 "" H 9650 4800 50  0001 C CNN
+F 3 "" H 9650 4800 50  0001 C CNN
+	1    9650 4800
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9650 4800 9650 4900
+$Comp
+L power:+3V3 #PWR?
+U 1 1 61506165
+P 9650 6200
+F 0 "#PWR?" H 9650 6050 50  0001 C CNN
+F 1 "+3V3" H 9665 6373 50  0000 C CNN
+F 2 "" H 9650 6200 50  0001 C CNN
+F 3 "" H 9650 6200 50  0001 C CNN
+	1    9650 6200
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9650 6200 9650 6300
+$Comp
+L power:+3V3 #PWR?
+U 1 1 61518B8A
+P 7500 4800
+F 0 "#PWR?" H 7500 4650 50  0001 C CNN
+F 1 "+3V3" H 7515 4973 50  0000 C CNN
+F 2 "" H 7500 4800 50  0001 C CNN
+F 3 "" H 7500 4800 50  0001 C CNN
+	1    7500 4800
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7500 4800 7500 4900
+$Comp
+L power:+3V3 #PWR?
+U 1 1 6152CCB4
+P 7500 6200
+F 0 "#PWR?" H 7500 6050 50  0001 C CNN
+F 1 "+3V3" H 7515 6373 50  0000 C CNN
+F 2 "" H 7500 6200 50  0001 C CNN
+F 3 "" H 7500 6200 50  0001 C CNN
+	1    7500 6200
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7500 6200 7500 6300
+Text Label 1350 3800 0    50   ~ 0
+FIFO_D7
+Text Label 1350 3700 0    50   ~ 0
+FIFO_D6
+Text Label 1350 3600 0    50   ~ 0
+FIFO_D5
+Text Label 1350 3500 0    50   ~ 0
+FIFO_D4
+Text Label 1350 3400 0    50   ~ 0
+FIFO_D3
+Text Label 1350 3300 0    50   ~ 0
+FIFO_D2
+Text Label 1350 3200 0    50   ~ 0
+FIFO_D1
+Text Label 1350 3100 0    50   ~ 0
+FIFO_D0
 Wire Bus Line
 	3750 6050 3750 8700
 Wire Bus Line
