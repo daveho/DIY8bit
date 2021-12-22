@@ -1,9 +1,17 @@
 // ice40 vga device
 
-// Sixth test: generate 800x600 SVGA test pattern with
-// a range of colors and intensities.
+// Experiment 1: add a reset input to the test pattern generator
+// from Episode15.  IceStorm/yosys do not seem to allow activation
+// on edges of multiple signals (i.e., you can't do things like
+// "always @(negedge nrst or posedge clk)", so we only activate
+// on positive clock edges, meaning that reset is synchronous with
+// respect to the clock signal. I can't see any downsides to
+// synchronous reset, since the clock should always be running (and
+// if it isn't, the display controller won't be doing anything
+// useful anyway :-)
 
-module icevga (input wire ext_osc,
+module icevga (input wire nrst, // active-low reset signal from host system
+               input wire ext_osc,
                output reg vsync,
                output reg hsync,
                output reg [3:0] red,
@@ -29,10 +37,19 @@ module icevga (input wire ext_osc,
 
   always @(posedge clk)
     begin
-      if (tick == 3'b101)
-        tick <= 3'b000;
+      if (nrst == 1'b0)
+        begin
+          // in reset, keep the tick counter at 0
+          tick <= 3'b000;
+        end
       else
-        tick <= tick + 1;
+        begin
+           /* update the tick counter */
+           if (tick == 3'b101)
+             tick <= 3'b000;
+           else
+             tick <= tick + 1;
+        end
     end
 
   // horizontal timings
@@ -49,30 +66,40 @@ module icevga (input wire ext_osc,
   // hcount and hsync generation
   always @(posedge clk)
     begin
-      if (tick == 3'b000)
+      if (nrst == 1'b0)
         begin
-          case (hcount)
-            H_FRONT_PORCH_END:
-              begin
-                hsync <= 1'b1; // hsync pulse begins
-                hcount <= hcount + 1;
-              end
-            H_SYNC_PULSE_END:
-              begin
-                hsync <= 1'b0; // hsync pulse ends
-                hcount <= hcount + 1;
-              end
-            H_BACK_PORCH_END:
-              begin
-                hcount <= 16'd0; // next line begins
-              end
-            default:
-              begin
-                hcount <= hcount + 1;
-              end
-          endcase
+          // in reset, hold hcount/hsync at 0
+          hcount <= 16'd0;
+          hsync <= 1'b0;
         end
+      else
+        begin
+          // generate hcount/hsync
+          if (tick == 3'b000)
+            begin
+              case (hcount)
+                H_FRONT_PORCH_END:
+                  begin
+                    hsync <= 1'b1; // hsync pulse begins
+                    hcount <= hcount + 1;
+                  end
+                H_SYNC_PULSE_END:
+                  begin
+                    hsync <= 1'b0; // hsync pulse ends
+                    hcount <= hcount + 1;
+                  end
+                H_BACK_PORCH_END:
+                  begin
+                    hcount <= 16'd0; // next line begins
+                  end
+                default:
+                  begin
+                    hcount <= hcount + 1;
+                  end
+              endcase
+            end
 
+        end
     end
 
   // vertical timings
@@ -87,34 +114,51 @@ module icevga (input wire ext_osc,
   // vcount and vsync generation
   always @(posedge clk)
     begin
-      if (tick == 3'b000 && hcount == H_BACK_PORCH_END)
+      if (nrst == 1'b0)
         begin
-          case (vcount)
-            V_FRONT_PORCH_END:
-              begin
-                vsync <= 1'b1; // vsync pulse begins
-                vcount <= vcount + 1;
-              end
-            V_SYNC_PULSE_END:
-              begin
-                vsync <= 1'b0; // vsync pulse ends
-                vcount <= vcount + 1;
-              end
-            V_BACK_PORCH_END:
-              begin
-                vcount <= 16'd0; // next frame begins
-              end
-            default:
-              begin
-                vcount <= vcount + 1;
-              end
-          endcase
+          // in reset, hold vcount/vsync at 0
+          vcount <= 16'd0;
+          vsync <= 1'b0;
+        end
+      else
+        begin
+          // generate vcount/vsync
+          if (tick == 3'b000 && hcount == H_BACK_PORCH_END)
+            begin
+              case (vcount)
+                V_FRONT_PORCH_END:
+                  begin
+                    vsync <= 1'b1; // vsync pulse begins
+                    vcount <= vcount + 1;
+                  end
+                V_SYNC_PULSE_END:
+                  begin
+                    vsync <= 1'b0; // vsync pulse ends
+                    vcount <= vcount + 1;
+                  end
+                V_BACK_PORCH_END:
+                  begin
+                    vcount <= 16'd0; // next frame begins
+                  end
+                default:
+                  begin
+                    vcount <= vcount + 1;
+                  end
+              endcase
+            end
         end
     end
 
   // pixel color generation
   always @(posedge clk)
     begin
+      if (nrst == 1'b0)
+        begin
+          // in reset, output 0 (black) on all color outputs
+          red <= 4'h0;
+          green <= 4'h0;
+          blue <= 4'h0;
+        end
       if (tick == 3'b000)
         begin
           if (hcount < 800 && vcount < 600)
