@@ -1,4 +1,5 @@
-set_io --warn-no-port nrst 26
+set_io --warn-no-port nrst_in 26
+set_io --warn-no-port nrst_out 25
 set_io --warn-no-port ext_osc 20
 set_io --warn-no-port hsync 46
 set_io --warn-no-port vsync 47

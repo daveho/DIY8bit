@@ -1,16 +1,10 @@
 // ice40 vga device
 
-// Experiment 1: add a reset input to the test pattern generator
-// from Episode15.  IceStorm/yosys do not seem to allow activation
-// on edges of multiple signals (i.e., you can't do things like
-// "always @(negedge nrst or posedge clk)", so we only activate
-// on positive clock edges, meaning that reset is synchronous with
-// respect to the clock signal. I can't see any downsides to
-// synchronous reset, since the clock should always be running (and
-// if it isn't, the display controller won't be doing anything
-// useful anyway :-)
+// In this experiment, use the active-low reset input to
+// reset the display controller logic.
 
-module icevga (input wire nrst, // active-low reset signal from host system
+module icevga (input wire nrst_in,
+               output reg nrst_out,
                input wire ext_osc,
                output reg vsync,
                output reg hsync,
@@ -31,6 +25,19 @@ module icevga (input wire nrst, // active-low reset signal from host system
   SB_GB clk_buffer(.USER_SIGNAL_TO_GLOBAL_BUFFER(pll_out),
                    .GLOBAL_BUFFER_OUTPUT(clk));
 
+  reg nrst;
+
+  // use nrst_in for something?
+  always @(posedge clk)
+    begin
+      nrst <= nrst_in;
+/*
+      // for whatever reason, the VGA output does not work unless this
+      // assignment is here
+      nrst_out <= nrst_in;
+*/
+    end
+
   // tick counting from 0 to 5 in order to generate 40 MHz timing
   // from the 240 MHz PLL clock
   reg [2:0] tick;
@@ -39,16 +46,14 @@ module icevga (input wire nrst, // active-low reset signal from host system
     begin
       if (nrst == 1'b0)
         begin
-          // in reset, keep the tick counter at 0
-          tick <= 3'b000;
+         tick <= 3'b000;
         end
       else
         begin
-           /* update the tick counter */
-           if (tick == 3'b101)
-             tick <= 3'b000;
-           else
-             tick <= tick + 1;
+        if (tick == 3'b101)
+          tick <= 3'b000;
+        else
+          tick <= tick + 1;
         end
     end
 
@@ -68,13 +73,11 @@ module icevga (input wire nrst, // active-low reset signal from host system
     begin
       if (nrst == 1'b0)
         begin
-          // in reset, hold hcount/hsync at 0
-          hcount <= 16'd0;
           hsync <= 1'b0;
+          hcount <= 16'd0;
         end
       else
         begin
-          // generate hcount/hsync
           if (tick == 3'b000)
             begin
               case (hcount)
@@ -98,7 +101,6 @@ module icevga (input wire nrst, // active-low reset signal from host system
                   end
               endcase
             end
-
         end
     end
 
@@ -116,13 +118,11 @@ module icevga (input wire nrst, // active-low reset signal from host system
     begin
       if (nrst == 1'b0)
         begin
-          // in reset, hold vcount/vsync at 0
-          vcount <= 16'd0;
           vsync <= 1'b0;
+          vcount <= 16'd0;
         end
       else
         begin
-          // generate vcount/vsync
           if (tick == 3'b000 && hcount == H_BACK_PORCH_END)
             begin
               case (vcount)
@@ -154,27 +154,29 @@ module icevga (input wire nrst, // active-low reset signal from host system
     begin
       if (nrst == 1'b0)
         begin
-          // in reset, output 0 (black) on all color outputs
           red <= 4'h0;
           green <= 4'h0;
           blue <= 4'h0;
         end
-      if (tick == 3'b000)
+      else
         begin
-          if (hcount < 800 && vcount < 600)
+          if (tick == 3'b000)
             begin
-              // generate a series of horizontal gradients where
-              // the base color is generated from bits 8:6 of vcount
-              red <= (hcount[8:5] & {4{vcount[8]}});
-              green <= (hcount[8:5] & {4{vcount[7]}});
-              blue <= (hcount[8:5] & {4{vcount[6]}});
-            end
-          else
-            begin
-              // output black when not in visible region
-              red <= 4'h0;
-              green <= 4'h0;
-              blue <= 4'h0;
+              if (hcount < 800 && vcount < 600)
+                begin
+                  // generate a series of horizontal gradients where
+                  // the base color is generated from bits 8:6 of vcount
+                  red <= (hcount[8:5] & {4{vcount[8]}});
+                  green <= (hcount[8:5] & {4{vcount[7]}});
+                  blue <= (hcount[8:5] & {4{vcount[6]}});
+                end
+              else
+                begin
+                  // output black when not in visible region
+                  red <= 4'h0;
+                  green <= 4'h0;
+                  blue <= 4'h0;
+                end
             end
         end
     end
