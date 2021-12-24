@@ -31,11 +31,10 @@ module icevga (input wire nrst_in,
   always @(posedge clk)
     begin
       nrst <= nrst_in;
-/*
-      // for whatever reason, the VGA output does not work unless this
-      // assignment is here
+
+      // for whatever reason, the VGA output does not work unless
+      // nrst_out is defined and mapped to a GPIO pin
       nrst_out <= nrst_in;
-*/
     end
 
   // tick counting from 0 to 5 in order to generate 40 MHz timing
