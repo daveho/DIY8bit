@@ -1,8 +1,8 @@
 // Experiment 3 Arduino sketch
 // The FIFO is connected, and does read data.
-// TODO: actually send some data periodically.
 
-// A pushbutton generating a manual reset is on pin 19 (a.k.a. A5)
+// A pushbutton generating a manual reset is on pin 19 (a.k.a. A5);
+// pin 19 is shorted to ground when the button is pressed
 #define RST_BTN 19
 
 // display reset output signal
@@ -45,7 +45,28 @@ void handleResetButton(uint8_t val) {
   digitalWrite(DISP_RST, val == 0 ? LOW : HIGH);
 }
 
+void writeToFIFO(uint8_t data) {
+  // write to data bus
+  DATA_BUS_PORT = data;
+
+  // we're using a 25ns FIFO, so delaying for 1 us = 1000 ns
+  // gives the FIFO *plenty* of time to handle the data
+
+  // assert FIFO -WR signal
+  digitalWrite(DISP_CMD_WR, LOW);
+  delayMicroseconds(1);
+
+  // de-assert FIFO -WR signal
+  digitalWrite(DISP_CMD_WR, HIGH);
+  delayMicroseconds(1);
+}
+
+// for debouncing the manual reset pushbutton
 uint8_t button_state, count, activated;
+
+// generate increasing count values (approx 1 per second)
+// to send to the FIFO
+uint8_t data_count, data;
 
 void loop() {
   delay(5);
@@ -65,5 +86,13 @@ void loop() {
   } else if (!activated) {
     // button value is same as last time, increase count
     count++;
+  }
+
+  // periodically write a byte of data to the FIFO
+  data_count++;
+  if (data_count == 200u) {
+    data_count = 0;
+    writeToFIFO(data);
+    data++;
   }
 }
