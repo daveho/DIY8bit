@@ -101,7 +101,7 @@ module icevga (input wire nrst_in,
           case (read_state)
             RD_READY:
               begin
-                if (tick == 0'b000 && nef == 1'b1)
+                if (tick == 3'b000 && nef == 1'b1)
                   begin
                     // data is available, assert FIFO -RD signal
                     // and go to RD_WAIT_FOR_DATA state
@@ -112,7 +112,7 @@ module icevga (input wire nrst_in,
 
             RD_WAIT_FOR_DATA:
               begin
-                if (tick == 0'b000)
+                if (tick == 3'b000)
                   begin
                     // 25ns have elapsed since FIFO -RD signal was asserted;
                     // go to RD_DATA_READY state (in which we will actually grab
@@ -123,7 +123,7 @@ module icevga (input wire nrst_in,
 
             RD_DATA_READY:
               begin
-                if (tick == 0'b111)
+                if (tick == 3'b111)
                   begin
                     // It's now been 37.5ns, which should be fine for a
                     // FIFO with 25ns access time, so latch the data and go to
