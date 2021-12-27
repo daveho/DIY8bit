@@ -1,5 +1,11 @@
 // Experiment 3 Arduino sketch
-// The FIFO is connected, and does read data.
+// The FIFO is connected, and the FPGA
+// does read data from the FIFO. The Arduino just sends
+// increasing binary values to the FPGA via the FIFO.
+
+////////////////////////////////////////////////////////////////////////
+// Constants
+////////////////////////////////////////////////////////////////////////
 
 // A pushbutton generating a manual reset is on pin 19 (a.k.a. A5);
 // pin 19 is shorted to ground when the button is pressed
@@ -14,6 +20,21 @@
 // Data bus is on digital pins 0-7, which is AVR port D
 #define DATA_BUS_DDR  DDRD
 #define DATA_BUS_PORT PORTD
+
+////////////////////////////////////////////////////////////////////////
+// Global data
+////////////////////////////////////////////////////////////////////////
+
+// for debouncing the manual reset pushbutton
+uint8_t button_state, count, activated;
+
+// generate increasing count values (approx 1 per second)
+// to send to the FIFO
+uint8_t data_count, data;
+
+////////////////////////////////////////////////////////////////////////
+// Functions
+////////////////////////////////////////////////////////////////////////
 
 void setup() {
   pinMode(RST_BTN, INPUT_PULLUP);
@@ -43,6 +64,11 @@ void handleResetButton(uint8_t val) {
     delay(200);
   }
   digitalWrite(DISP_RST, val == 0 ? LOW : HIGH);
+  if (val == 0) {
+    // reset the data controlling the values being sent to the FIFO
+    data = 0;
+    data_count = 0;
+  }
 }
 
 void writeToFIFO(uint8_t data) {
@@ -60,13 +86,6 @@ void writeToFIFO(uint8_t data) {
   digitalWrite(DISP_CMD_WR, HIGH);
   delayMicroseconds(1);
 }
-
-// for debouncing the manual reset pushbutton
-uint8_t button_state, count, activated;
-
-// generate increasing count values (approx 1 per second)
-// to send to the FIFO
-uint8_t data_count, data;
 
 void loop() {
   delay(5);
