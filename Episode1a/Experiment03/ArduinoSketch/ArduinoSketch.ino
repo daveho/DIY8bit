@@ -75,6 +75,9 @@ void writeToFIFO(uint8_t data) {
   // write to data bus
   DATA_BUS_PORT = data;
 
+  // just to be paranoid, delay so that the data is stable
+  delayMicroseconds(1);
+
   // we're using a 25ns FIFO, so delaying for 1 us = 1000 ns
   // gives the FIFO *plenty* of time to handle the data
 
