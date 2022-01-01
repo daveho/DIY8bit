@@ -123,7 +123,7 @@ module icevga (input wire nrst_in,
 
             RD_DATA_READY:
               begin
-                if (tick == 3'b111)
+                if (tick == 3'b011)
                   begin
                     // It's now been 37.5ns, which should be fine for a
                     // FIFO with 25ns access time, so latch the data and go to
