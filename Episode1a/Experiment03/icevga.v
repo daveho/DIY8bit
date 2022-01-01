@@ -4,7 +4,6 @@
 // actually do anything with them.
 
 module icevga (input wire nrst_in,
-               output reg nrst_out,
                input wire [7:0] disp_cmd_in, // command data from FIFO
                input wire nef_in,            // active-low empty flag from FIFO
                output reg disp_cmd_rd,       // active-low read strobe output to FIFO
@@ -21,6 +20,7 @@ module icevga (input wire nrst_in,
   ////////////////////////////////////////////////////////////////////////
   // Instantiate PLL and distribute the clock signal
   ////////////////////////////////////////////////////////////////////////
+
   pll the_pll(.clock_in(ext_osc),
               .clock_out(pll_out),
               .locked(pll_locked));
@@ -42,33 +42,31 @@ module icevga (input wire nrst_in,
       // active-low reset signal from host
       nrst <= nrst_in;
 
-      // for whatever reason, the VGA output does not work unless
-      // nrst_out is defined and mapped to a GPIO pin
-      nrst_out <= nrst_in;
-
       // FIFO active-low empty flag
       nef <= nef_in;
     end
 
   ////////////////////////////////////////////////////////////////////////
-  // Tick counting from 0 to 5 in order to generate 40 MHz timing
-  // from the 240 MHz PLL clock. The tick counter is also useful
+  // Tick counting from 0 to 3 in order to generate 39.75 MHz timing
+  // from the 159 MHz PLL clock. The tick counter is also useful
   // for fine-grained timing and sequencing.
   ////////////////////////////////////////////////////////////////////////
 
-  reg [2:0] tick;
+  reg [1:0] tick;
 
   always @(posedge clk)
     begin
       if (nrst == 1'b0)
         begin
-         tick <= 3'b000;
+          tick <= 2'b00;
         end
       else
         begin
-        if (tick == 3'b101)
-          tick <= 3'b000;
-        else
+          // We want the maximum tick value to be 3, and
+          // since the tick counter is only 2 bits, it will
+          // naturally overflow from 3 back to 0. So, there
+          // is no need to use special logic to test whether the
+          // maximum value has been reached.
           tick <= tick + 1;
         end
     end
@@ -101,7 +99,7 @@ module icevga (input wire nrst_in,
           case (read_state)
             RD_READY:
               begin
-                if (tick == 3'b000 && nef == 1'b1)
+                if (tick == 2'b00 && nef == 1'b1)
                   begin
                     // data is available, assert FIFO -RD signal
                     // and go to RD_WAIT_FOR_DATA state
@@ -112,7 +110,7 @@ module icevga (input wire nrst_in,
 
             RD_WAIT_FOR_DATA:
               begin
-                if (tick == 3'b000)
+                if (tick == 2'b00)
                   begin
                     // 25ns have elapsed since FIFO -RD signal was asserted;
                     // go to RD_DATA_READY state (in which we will actually grab
@@ -123,7 +121,7 @@ module icevga (input wire nrst_in,
 
             RD_DATA_READY:
               begin
-                if (tick == 3'b011)
+                if (tick == 2'b10)
                   begin
                     // It's now been 37.5ns, which should be fine for a
                     // FIFO with 25ns access time, so latch the data and go to
@@ -169,7 +167,7 @@ module icevga (input wire nrst_in,
         end
       else
         begin
-          if (tick == 3'b000)
+          if (tick == 2'b00)
             begin
               case (hcount)
                 H_FRONT_PORCH_END:
@@ -217,7 +215,7 @@ module icevga (input wire nrst_in,
         end
       else
         begin
-          if (tick == 3'b000 && hcount == H_BACK_PORCH_END)
+          if (tick == 2'b00 && hcount == H_BACK_PORCH_END)
             begin
               case (vcount)
                 V_FRONT_PORCH_END:
@@ -257,7 +255,7 @@ module icevga (input wire nrst_in,
         end
       else
         begin
-          if (tick == 3'b000)
+          if (tick == 2'b00)
             begin
               if (hcount < 800 && vcount < 600)
                 begin

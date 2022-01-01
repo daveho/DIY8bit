@@ -1,5 +1,4 @@
 set_io --warn-no-port nrst_in 26
-set_io --warn-no-port nrst_out 25
 set_io --warn-no-port nef_in 27
 set_io --warn-no-port disp_cmd_rd 32
 set_io --warn-no-port disp_cmd_in[0] 31
