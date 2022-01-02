@@ -1376,6 +1376,19 @@ Wire Wire Line
 	6400 7000 5650 7000
 Wire Wire Line
 	6500 6100 6500 7100
+Connection ~ 6500 7100
+Wire Wire Line
+	6500 7100 5650 7100
+Text Notes 6000 5700 0    50   ~ 0
+Pull-up resistors ensure that\ninputs to U604 are at a valid\nlogic level when the FIFO is\nnot outputting data
+Wire Wire Line
+	5650 7400 6050 7400
+Wire Wire Line
+	6050 7400 6050 7850
+Wire Wire Line
+	6050 7850 6250 7850
+Wire Wire Line
+	6250 7850 6250 7700
 Wire Bus Line
 	3400 6050 3400 8400
 Wire Bus Line
@@ -1398,9 +1411,15 @@ Wire Bus Line
 	3750 6050 3750 7000
 Wire Bus Line
 	900  3200 900  4100
-Connection ~ 6500 7100
-Wire Wire Line
-	6500 7100 5650 7100
-Text Notes 6000 5700 0    50   ~ 0
-Pull-up resistors ensure that\ninputs to U604 are at a valid\nlogic level when the FIFO is\nnot outputting data
+$Comp
+L power:VCC #PWR?
+U 1 1 61D694BA
+P 6250 7700
+F 0 "#PWR?" H 6250 7550 50  0001 C CNN
+F 1 "VCC" H 6267 7873 50  0000 C CNN
+F 2 "" H 6250 7700 50  0001 C CNN
+F 3 "" H 6250 7700 50  0001 C CNN
+	1    6250 7700
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC
