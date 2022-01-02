@@ -28,6 +28,12 @@
 // for debouncing the manual reset pushbutton
 uint8_t button_state, count, activated;
 
+// 1 if reset button is pressed, 0 if reset button is released
+uint8_t reset_pressed;
+
+// Number of 5 ms ticks for which we've generated a reset pulse so far
+uint8_t reset_count;
+
 // generate increasing count values (approx 1 per second)
 // to send to the FIFO
 uint8_t data_count, data;
@@ -48,27 +54,10 @@ void setup() {
   DATA_BUS_DDR  = 0xFF;
   DATA_BUS_PORT = 0x00;
 
-  // generate a reset pulse
-  generateResetPulse();
-}
-
-void generateResetPulse() {
+  // generate a power-on reset pulse
   digitalWrite(DISP_RST, LOW);
   delay(500);
   digitalWrite(DISP_RST, HIGH);
-}
-
-void handleResetButton(uint8_t val) {
-  if (val != 0) {
-    // if reset button is released, delay for a bit
-    delay(200);
-  }
-  digitalWrite(DISP_RST, val == 0 ? LOW : HIGH);
-  if (val == 0) {
-    // reset the data controlling the values being sent to the FIFO
-    data = 0;
-    data_count = 0;
-  }
 }
 
 void writeToFIFO(uint8_t data) {
@@ -90,6 +79,8 @@ void writeToFIFO(uint8_t data) {
   delayMicroseconds(1);
 }
 
+uint8_t wrote_data;
+
 void loop() {
   delay(5);
 
@@ -103,18 +94,57 @@ void loop() {
   } else if (!activated && count >= 4) {
     // button state has been consistent for long enough to
     // be considered a valid input
-    handleResetButton(button_val);
     activated = 1;
+    reset_pressed = (button_val == 0);
+    if (reset_pressed) {
+      // begin manual reset pulse
+      digitalWrite(DISP_RST, LOW);
+    }
   } else if (!activated) {
     // button value is same as last time, increase count
     count++;
   }
 
-  // periodically write a byte of data to the FIFO
-  data_count++;
-  if (data_count == 200u) {
+  // If the reset button is being pressed, continue the manual reset pulse.
+  // If reset button has been released, continue to generate a manual reset pulse
+  // for 100 5ms ticks (i.e., 0.5 seconds).
+  uint8_t in_reset = 1;
+  if (reset_pressed) {
+    // reset was pressed, so initialize reset pulse generation state
+    // and reset the data count state
+    reset_count = 1;
     data_count = 0;
-    writeToFIFO(data);
-    data++;
+    data = 0;
+    wrote_data = 0;
+  } else {
+    // reset is not currently pressed
+    if (reset_count == 0) {
+      // not generating a manual reset pulse
+      in_reset = 0;
+    } else if (reset_count == 101) {
+      // reset_count has reached the terminal value,
+      // so end the manual reset pulse
+      digitalWrite(DISP_RST, HIGH);
+      reset_count = 0;
+      in_reset = 0;
+    } else if (reset_count <= 100) {
+      // reset count has not reached the terminal value,
+      // so continue the manual reset pulse
+      reset_count++;
+    }
+  }
+
+  // for now, only write one value to the FIFO
+  if (wrote_data) { return; }
+
+  if (!in_reset) {
+    // periodically write a byte of data to the FIFO
+    data_count++;
+    if (data_count == 200u) {
+      data_count = 0;
+      writeToFIFO(data);
+      data++;
+      wrote_data = 1;
+    }
   }
 }
