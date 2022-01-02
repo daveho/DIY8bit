@@ -78,6 +78,7 @@ module icevga (input wire nrst_in,
   reg disp_cmd_avail;
   reg [7:0] disp_cmd;
   reg [1:0] read_state;
+  reg [1:0] next_read_state;
 
   // states for data read state machine
   parameter RD_READY           = 2'd0;
@@ -92,19 +93,22 @@ module icevga (input wire nrst_in,
           // In reset
           disp_cmd_avail <= 1'b0;
           disp_cmd <= 8'd0;
+/*
           read_state <= RD_READY;
+*/
+          next_read_state <= RD_READY;
         end
       else
         begin
           case (read_state)
             RD_READY:
               begin
-                if (tick == 2'b00 && nef == 1'b1)
+                if (tick == 2'b00 && nef == 1'b1 && disp_cmd_avail <= 1'b0)
                   begin
                     // data is available, assert FIFO -RD signal
                     // and go to RD_WAIT_FOR_DATA state
                     disp_cmd_rd <= 1'b0;
-                    read_state <= RD_WAIT_FOR_DATA;
+                    next_read_state <= RD_WAIT_FOR_DATA;
                   end
               end
 
@@ -115,7 +119,7 @@ module icevga (input wire nrst_in,
                     // 25ns have elapsed since FIFO -RD signal was asserted;
                     // go to RD_DATA_READY state (in which we will actually grab
                     // the data when the tick counter has advanced a bit more)
-                    read_state <= RD_DATA_READY;
+                    next_read_state <= RD_DATA_READY;
                   end
               end
 
@@ -128,7 +132,7 @@ module icevga (input wire nrst_in,
                     // the RD_DONE_WITH_READ state
                     disp_cmd <= disp_cmd_in;
                     disp_cmd_avail <= 1'b1;
-                    read_state <= RD_DONE_WITH_READ;
+                    next_read_state <= RD_DONE_WITH_READ;
                   end
               end
 
@@ -137,9 +141,21 @@ module icevga (input wire nrst_in,
                 // We can now de-assert the FIFO -RD signal and
                 // return to the RD_READY
                 disp_cmd_rd <= 1'b1;
-                read_state <= RD_READY;
+                next_read_state <= RD_READY;
               end
           endcase
+        end
+    end
+
+  always @(negedge clk)
+    begin
+      if (nrst == 1'b0)
+        begin
+          read_state <= RD_READY;
+        end
+      else
+        begin
+          read_state <= next_read_state;
         end
     end
 
