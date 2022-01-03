@@ -101,6 +101,7 @@ module icevga (input wire nrst_in,
           read_state <= RD_READY;
           cmdreg_wr <= 1'b0;
           cmdreg_data_send <= 8'd0;
+          disp_cmd_rd <= 1'b1;
         end
       else
         begin
@@ -149,6 +150,7 @@ module icevga (input wire nrst_in,
                   begin
                     // We can now de-assert the FIFO -RD signal and
                     // return to the RD_READY
+                    disp_cmd_rd <= 1'b1;
                     read_state <= RD_READY;
                     read_tick <= READ_MIN_TICK;
 
