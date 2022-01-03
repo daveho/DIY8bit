@@ -80,9 +80,9 @@ module icevga (input wire nrst_in,
   reg [15:0] read_tick;
 
   parameter READ_MIN_TICK        = 16'd0;
-  parameter READ_TICK_WAIT_END   = 16'd4; // at 25 ns
-  parameter READ_TICK_LATCH_DATA = 16'd6; // at 37.5 ns
-  parameter READ_TICK_END_READ   = 16'd8; // at 50 ns
+  parameter READ_TICK_WAIT_END   = 16'd3; // at 25 ns
+  parameter READ_TICK_LATCH_DATA = 16'd5; // at 41.66 ns
+  parameter READ_TICK_END_READ   = 16'd6; // at 50 ns
 
   reg [1:0] read_state;
 
@@ -179,7 +179,7 @@ module icevga (input wire nrst_in,
   reg cmdproc_state;
 
   // Blue value for generated pixels
-  //reg [3:0] bluegen;
+  reg [3:0] bluegen;
 
   always @(posedge clk)
     begin
@@ -187,7 +187,7 @@ module icevga (input wire nrst_in,
         begin
           cmdproc_state <= CMDPROC_READY;
           disp_cmd <= 8'd0;
-          //bluegen <= 4'b1010;
+          bluegen <= 4'b0000;
         end
       else
         begin
@@ -207,7 +207,7 @@ module icevga (input wire nrst_in,
              CMDPROC_PROCESS:
                begin
                  // do something with the command data
-                 //bluegen <= disp_cmd[3:0];
+                 bluegen <= disp_cmd[3:0];
 
                  cmdreg_rd <= 1'b0; // finish read
                  cmdproc_state <= CMDPROC_READY;
@@ -218,14 +218,14 @@ module icevga (input wire nrst_in,
     end
 
   ////////////////////////////////////////////////////////////////////////
-  // Tick counting from 0 to 3 in order to generate 39.75 MHz timing
-  // from the 159 MHz PLL clock.
+  // Tick counting from 0 to 2 in order to generate 40 MHz timing
+  // from the 120 MHz PLL clock.
   ////////////////////////////////////////////////////////////////////////
 
   reg [15:0] tick;
 
   parameter MIN_TICK  = 16'd0;
-  parameter MAX_TICK  = 16'd3;
+  parameter MAX_TICK  = 16'd2;
 
   always @(posedge clk)
     begin
@@ -360,8 +360,8 @@ module icevga (input wire nrst_in,
                   red <= (hcount[8:5] & {4{vcount[8]}});
                   green <= (hcount[8:5] & {4{vcount[7]}});
                   //blue <= (hcount[8:5] & {4{vcount[6]}});
-                  //blue <= bluegen;
-                  blue <= disp_cmd[3:0];
+                  blue <= bluegen;
+                  //blue <= disp_cmd[3:0];
                 end
               else
                 begin
