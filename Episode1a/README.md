@@ -10,6 +10,14 @@ You should probably watch that episode first!
 
 The [HardwareDesign](HardwareDesign) directory has the hardware
 design (tested and verified working in this Episode.)
+The schematics are (of course) developed using [KiCad](https://www.kicad.org/).
+
+In the video, I mention creating a better resistor DAC.
+The resistor DAC PCB you can see in the video can be found
+here: <https://github.com/daveho/BreadboardDAC>.
+I had the PCBs fabbed by [OSHPark](https://oshpark.com/),
+and as usual they did an excellent job.  You should be
+able to upload [BreadboardDAC.kicad\_pcb](https://github.com/daveho/BreadboardDAC/raw/master/BreadboardDAC.kicad_pcb) to OSHPark directly (no need to generate gerbers.)
 
 The [Experiment01](Experiment01) through [Experiment05](Experiment05)
 directories contain the FPGA designs for the various experiments
