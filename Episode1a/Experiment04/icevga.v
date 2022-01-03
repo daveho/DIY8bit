@@ -179,7 +179,7 @@ module icevga (input wire nrst_in,
   reg cmdproc_state;
 
   // Blue value for generated pixels
-  reg [3:0] bluegen;
+  //reg [3:0] bluegen;
 
   always @(posedge clk)
     begin
@@ -187,7 +187,7 @@ module icevga (input wire nrst_in,
         begin
           cmdproc_state <= CMDPROC_READY;
           disp_cmd <= 8'd0;
-          bluegen <= 4'b0000;
+          //bluegen <= 4'b0000;
         end
       else
         begin
@@ -207,7 +207,7 @@ module icevga (input wire nrst_in,
              CMDPROC_PROCESS:
                begin
                  // do something with the command data
-                 bluegen <= disp_cmd[3:0];
+                 //bluegen <= disp_cmd[3:0];
 
                  cmdreg_rd <= 1'b0; // finish read
                  cmdproc_state <= CMDPROC_READY;
@@ -360,8 +360,8 @@ module icevga (input wire nrst_in,
                   red <= (hcount[8:5] & {4{vcount[8]}});
                   green <= (hcount[8:5] & {4{vcount[7]}});
                   //blue <= (hcount[8:5] & {4{vcount[6]}});
-                  blue <= bluegen;
-                  //blue <= disp_cmd[3:0];
+                  //blue <= bluegen;
+                  blue <= disp_cmd[3:0];
                 end
               else
                 begin
