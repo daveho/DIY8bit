@@ -79,7 +79,12 @@ void writeToFIFO(uint8_t data) {
   delayMicroseconds(1);
 }
 
+/*
 uint8_t wrote_data;
+*/
+
+// how many ticks to wait between sending commands
+#define CMD_NTICKS 12u
 
 void loop() {
   delay(5);
@@ -115,7 +120,9 @@ void loop() {
     reset_count = 1;
     data_count = 0;
     data = 0;
+/*
     wrote_data = 0;
+*/
   } else {
     // reset is not currently pressed
     if (reset_count == 0) {
@@ -134,17 +141,21 @@ void loop() {
     }
   }
 
+/*
   // for now, only write one value to the FIFO
   if (wrote_data) { return; }
+*/
 
   if (!in_reset) {
     // periodically write a byte of data to the FIFO
     data_count++;
-    if (data_count == 200u) {
+    if (data_count == CMD_NTICKS) {
       data_count = 0;
       writeToFIFO(data);
       data++;
+/*
       wrote_data = 1;
+*/
     }
   }
 }
