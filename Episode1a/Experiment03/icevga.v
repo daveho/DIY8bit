@@ -52,37 +52,19 @@ module icevga (input wire nrst_in,
     end
 
   ////////////////////////////////////////////////////////////////////////
-  // Tick counting from 0 to 3 in order to generate 39.75 MHz timing
-  // from the 159 MHz PLL clock. The tick counter is also useful
-  // for fine-grained timing and sequencing.
-  ////////////////////////////////////////////////////////////////////////
-
-  reg [15:0] tick;
-
-  parameter MIN_TICK  = 16'd0;
-  parameter HALF_TICK = 16'd2;
-  parameter MAX_TICK  = 16'd3;
-
-  always @(posedge clk)
-    begin
-      if (nrst == RESET_ASSERTED)
-        begin
-          tick <= MIN_TICK;
-        end
-      else
-        begin
-          tick <= (tick == MAX_TICK) ? MIN_TICK : tick + 1;
-        end
-    end
-
-  ////////////////////////////////////////////////////////////////////////
   // Read data from FIFO when it is available
   ////////////////////////////////////////////////////////////////////////
+
+  reg [15:0] read_tick;
+
+  parameter READ_MIN_TICK        = 16'd0;
+  parameter READ_TICK_WAIT_END   = 16'd4; // at 25 ns
+  parameter READ_TICK_LATCH_DATA = 16'd6; // at 37.5 ns
+  parameter READ_TICK_END_READ   = 16'd8; // at 50 ns
 
   reg disp_cmd_avail;
   reg [7:0] disp_cmd;
   reg [1:0] read_state;
-  //reg [1:0] next_read_state;
 
   // states for data read state machine
   parameter RD_READY           = 2'd0;
@@ -95,11 +77,9 @@ module icevga (input wire nrst_in,
       if (nrst == RESET_ASSERTED)
         begin
           // In reset
+          read_tick <= READ_MIN_TICK;
           disp_cmd_avail <= 1'b0;
           disp_cmd <= 8'd0;
-/*
-          read_state <= RD_READY;
-*/
           read_state <= RD_READY;
         end
       else
@@ -113,57 +93,76 @@ module icevga (input wire nrst_in,
                     // and go to RD_WAIT_FOR_DATA state
                     disp_cmd_rd <= 1'b0;
                     read_state <= RD_WAIT_FOR_DATA;
+                    read_tick <= READ_MIN_TICK; // start tick counter for timing
                   end
               end
 
             RD_WAIT_FOR_DATA:
               begin
-                if (tick == MIN_TICK)
+                if (read_tick == READ_TICK_WAIT_END)
                   begin
                     // 25ns have elapsed since FIFO -RD signal was asserted;
                     // go to RD_DATA_READY state (in which we will actually grab
                     // the data when the tick counter has advanced a bit more)
                     read_state <= RD_DATA_READY;
                   end
+                read_tick <= read_tick + 1; // advance tick counter
               end
 
             RD_DATA_READY:
               begin
-                if (tick == HALF_TICK)
+                if (read_tick == READ_TICK_LATCH_DATA)
                   begin
                     // It's now been 37.5ns, which should be fine for a
-                    // FIFO with 25ns access time, so latch the data and go to
-                    // the RD_DONE_WITH_READ state
+                    // FIFO with 25ns access time, so latch the data,
+                    // end the read and go to the RD_DONE_WITH_READ state
                     disp_cmd <= disp_cmd_in;
                     disp_cmd_avail <= 1'b1;
                     read_state <= RD_DONE_WITH_READ;
+                    disp_cmd_rd <= 1'b1;
                   end
+                read_tick <= read_tick + 1; // advance tick counter
               end
 
             RD_DONE_WITH_READ:
               begin
-                // We can now de-assert the FIFO -RD signal and
-                // return to the RD_READY
-                disp_cmd_rd <= 1'b1;
-                read_state <= RD_READY;
+                if (read_tick == READ_TICK_END_READ)
+                  begin
+                    // We can now de-assert the FIFO -RD signal and
+                    // return to the RD_READY
+                    read_state <= RD_READY;
+                    read_tick <= READ_MIN_TICK;
+                  end
+                else
+                  begin
+                    read_tick <= read_tick + 1; // advance tick counter
+                  end
               end
           endcase
         end
     end
 
-/*
-  always @(negedge clk)
+  ////////////////////////////////////////////////////////////////////////
+  // Tick counting from 0 to 3 in order to generate 39.75 MHz timing
+  // from the 159 MHz PLL clock.
+  ////////////////////////////////////////////////////////////////////////
+
+  reg [15:0] tick;
+
+  parameter MIN_TICK  = 16'd0;
+  parameter MAX_TICK  = 16'd3;
+
+  always @(posedge clk)
     begin
       if (nrst == RESET_ASSERTED)
         begin
-          read_state <= RD_READY;
+          tick <= MIN_TICK;
         end
       else
         begin
-          read_state <= next_read_state;
+          tick <= (tick == MAX_TICK) ? MIN_TICK : tick + 1;
         end
     end
-*/
 
   ////////////////////////////////////////////////////////////////////////
   // Horizontal timings and sync generation
