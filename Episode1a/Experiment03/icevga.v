@@ -52,6 +52,28 @@ module icevga (input wire nrst_in,
     end
 
   ////////////////////////////////////////////////////////////////////////
+  // Shared register for command data
+  ////////////////////////////////////////////////////////////////////////
+
+  wire cmdreg_data_avail;
+
+  // for reading data
+  wire [7:0] cmdreg_data_recv;
+  reg cmdreg_rd;
+
+  // for writing data
+  reg [7:0] cmdreg_data_send;
+  reg cmdreg_wr;
+
+  shared_reg cmdreg(.clk(clk),
+                    .nrst(nrst),
+                    .has_data(cmdreg_data_avail),
+                    .rd(cmdreg_rd),
+                    .rd_data(cmdreg_data_recv),
+                    .wr(cmdreg_wr),
+                    .wr_data(cmdreg_data_send));
+
+  ////////////////////////////////////////////////////////////////////////
   // Read data from FIFO when it is available
   ////////////////////////////////////////////////////////////////////////
 
@@ -62,8 +84,6 @@ module icevga (input wire nrst_in,
   parameter READ_TICK_LATCH_DATA = 16'd6; // at 37.5 ns
   parameter READ_TICK_END_READ   = 16'd8; // at 50 ns
 
-  reg disp_cmd_avail;
-  reg [7:0] disp_cmd;
   reg [1:0] read_state;
 
   // states for data read state machine
@@ -78,16 +98,16 @@ module icevga (input wire nrst_in,
         begin
           // In reset
           read_tick <= READ_MIN_TICK;
-          disp_cmd_avail <= 1'b0;
-          disp_cmd <= 8'd0;
           read_state <= RD_READY;
+          cmdreg_wr <= 1'b0;
+          cmdreg_data_send <= 8'd0;
         end
       else
         begin
           case (read_state)
             RD_READY:
               begin
-                if (tick == MIN_TICK && nef == FIFO_NOT_EMPTY && disp_cmd_avail <= 1'b0)
+                if (tick == MIN_TICK && nef == FIFO_NOT_EMPTY && cmdreg_data_avail == 1'b0)
                   begin
                     // data is available, assert FIFO -RD signal
                     // and go to RD_WAIT_FOR_DATA state
@@ -116,10 +136,9 @@ module icevga (input wire nrst_in,
                     // It's now been 37.5ns, which should be fine for a
                     // FIFO with 25ns access time, so latch the data,
                     // end the read and go to the RD_DONE_WITH_READ state
-                    disp_cmd <= disp_cmd_in;
-                    disp_cmd_avail <= 1'b1;
+                    cmdreg_wr <= 1'b1;               // begin write to shared reg
+                    cmdreg_data_send <= disp_cmd_in; // put FIFO data in shared reg
                     read_state <= RD_DONE_WITH_READ;
-                    disp_cmd_rd <= 1'b1;
                   end
                 read_tick <= read_tick + 1; // advance tick counter
               end
@@ -132,12 +151,60 @@ module icevga (input wire nrst_in,
                     // return to the RD_READY
                     read_state <= RD_READY;
                     read_tick <= READ_MIN_TICK;
+
+                    // let the shared reg know that the write is done
+                    // (technically, we could have done this earlier)
+                    cmdreg_wr <= 1'b0;
                   end
                 else
                   begin
                     read_tick <= read_tick + 1; // advance tick counter
                   end
               end
+          endcase
+        end
+    end
+
+  ////////////////////////////////////////////////////////////////////////
+  // Process commands read from FIFO
+  ////////////////////////////////////////////////////////////////////////
+
+  reg [7:0] disp_cmd;
+
+  parameter CMDPROC_READY   = 1'b0;
+  parameter CMDPROC_PROCESS = 1'b1;
+
+  reg cmdproc_state;
+
+  always @(posedge clk)
+    begin
+      if (nrst == RESET_ASSERTED)
+        begin
+          cmdproc_state <= CMDPROC_READY;
+          disp_cmd <= 8'd0;
+        end
+      else
+        begin
+          case (cmdproc_state)
+
+            CMDPROC_READY:
+              if (cmdreg_data_avail == 1'b1)
+                begin
+                  // begin signaling to the shared reg that we're
+                  // reading the data (the data should already be available
+                  // in the receive register)
+                  disp_cmd <= cmdreg_data_recv;
+                  cmdreg_rd <= 1'b1;
+                  cmdproc_state <= CMDPROC_PROCESS;
+                end
+
+             CMDPROC_PROCESS:
+               begin
+                 // TODO: do something with the command data
+                 cmdreg_rd <= 1'b0; // finish read
+                 cmdproc_state <= CMDPROC_READY;
+               end
+
           endcase
         end
     end
