@@ -37,6 +37,8 @@ module icevga (input wire nrst_in,
   reg nrst;
   reg nef;
 
+  parameter RESET_ASSERTED = 1'b0;
+
   always @(posedge clk)
     begin
       // active-low reset signal from host
@@ -52,22 +54,21 @@ module icevga (input wire nrst_in,
   // for fine-grained timing and sequencing.
   ////////////////////////////////////////////////////////////////////////
 
-  reg [1:0] tick;
+  reg [15:0] tick;
+
+  parameter MIN_TICK  = 16'd0;
+  parameter HALF_TICK = 16'd2;
+  parameter MAX_TICK  = 16'd3;
 
   always @(posedge clk)
     begin
-      if (nrst == 1'b0)
+      if (nrst == RESET_ASSERTED)
         begin
-          tick <= 2'b00;
+          tick <= MIN_TICK;
         end
       else
         begin
-          // We want the maximum tick value to be 3, and
-          // since the tick counter is only 2 bits, it will
-          // naturally overflow from 3 back to 0. So, there
-          // is no need to use special logic to test whether the
-          // maximum value has been reached.
-          tick <= tick + 1;
+          tick <= (tick == MAX_TICK) ? MIN_TICK : tick + 1;
         end
     end
 
@@ -88,7 +89,7 @@ module icevga (input wire nrst_in,
 
   always @(posedge clk)
     begin
-      if (nrst == 1'b0)
+      if (nrst == RESET_ASSERTED)
         begin
           // In reset
           disp_cmd_avail <= 1'b0;
@@ -103,7 +104,7 @@ module icevga (input wire nrst_in,
           case (read_state)
             RD_READY:
               begin
-                if (tick == 2'b00 && nef == 1'b1 && disp_cmd_avail <= 1'b0)
+                if (tick == MIN_TICK && nef == 1'b1 && disp_cmd_avail <= 1'b0)
                   begin
                     // data is available, assert FIFO -RD signal
                     // and go to RD_WAIT_FOR_DATA state
@@ -114,7 +115,7 @@ module icevga (input wire nrst_in,
 
             RD_WAIT_FOR_DATA:
               begin
-                if (tick == 2'b00)
+                if (tick == MIN_TICK)
                   begin
                     // 25ns have elapsed since FIFO -RD signal was asserted;
                     // go to RD_DATA_READY state (in which we will actually grab
@@ -125,7 +126,7 @@ module icevga (input wire nrst_in,
 
             RD_DATA_READY:
               begin
-                if (tick == 2'b10)
+                if (tick == HALF_TICK)
                   begin
                     // It's now been 37.5ns, which should be fine for a
                     // FIFO with 25ns access time, so latch the data and go to
@@ -149,7 +150,7 @@ module icevga (input wire nrst_in,
 
   always @(negedge clk)
     begin
-      if (nrst == 1'b0)
+      if (nrst == RESET_ASSERTED)
         begin
           read_state <= RD_READY;
         end
@@ -176,14 +177,14 @@ module icevga (input wire nrst_in,
   // hcount and hsync generation
   always @(posedge clk)
     begin
-      if (nrst == 1'b0)
+      if (nrst == RESET_ASSERTED)
         begin
           hsync <= 1'b0;
           hcount <= 16'd0;
         end
       else
         begin
-          if (tick == 2'b00)
+          if (tick == MIN_TICK)
             begin
               case (hcount)
                 H_FRONT_PORCH_END:
@@ -224,14 +225,14 @@ module icevga (input wire nrst_in,
   // vcount and vsync generation
   always @(posedge clk)
     begin
-      if (nrst == 1'b0)
+      if (nrst == RESET_ASSERTED)
         begin
           vsync <= 1'b0;
           vcount <= 16'd0;
         end
       else
         begin
-          if (tick == 2'b00 && hcount == H_BACK_PORCH_END)
+          if (tick == MIN_TICK && hcount == H_BACK_PORCH_END)
             begin
               case (vcount)
                 V_FRONT_PORCH_END:
@@ -263,7 +264,7 @@ module icevga (input wire nrst_in,
 
   always @(posedge clk)
     begin
-      if (nrst == 1'b0)
+      if (nrst == RESET_ASSERTED)
         begin
           red <= 4'h0;
           green <= 4'h0;
@@ -271,7 +272,7 @@ module icevga (input wire nrst_in,
         end
       else
         begin
-          if (tick == 2'b00)
+          if (tick == MIN_TICK)
             begin
               if (hcount < 800 && vcount < 600)
                 begin
