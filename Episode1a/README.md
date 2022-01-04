@@ -1,6 +1,6 @@
 # DIY 8-bit computer, Episode 1A
 
-Link to video: coming soon
+Link to video: <https://youtu.be/MTqwGI0u0LY>
 
 In this video, I develop a host interface for the FPGA-based
 display controller I started in [Episode 15](../Episode15).
