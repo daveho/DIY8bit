@@ -7,8 +7,7 @@ module icevga (input wire nrst_in,
                input wire nef_in,            // active-low empty flag from FIFO
                output reg disp_cmd_rd,       // active-low read strobe output to FIFO
                input wire ext_osc,
-               output reg vsync,
-               //output reg hsync,
+               output wire vsync,
                output wire hsync,
                output reg [3:0] red,
                output reg [3:0] green,
@@ -252,7 +251,7 @@ module icevga (input wire nrst_in,
 
   syncgen hsync_gen(clk,
                     nrst,
-                    (tick == MIN_TICK) ? 1'b1 : 1'b0,
+                    (tick == MIN_TICK),
                     hcount,
                     hsync,
                     hvis,
@@ -260,48 +259,6 @@ module icevga (input wire nrst_in,
                     H_FRONT_PORCH_END,
                     H_SYNC_PULSE_END,
                     H_BACK_PORCH_END);
-/*
-  // This counter is larger than it needs to be, but I encountered very
-  // strange behaviors when I made it exactly 11 bits (which could in theory
-  // accommodate counts up to 2047.)
-  reg [15:0] hcount;
-
-  // hcount and hsync generation
-  always @(posedge clk)
-    begin
-      if (nrst == RESET_ASSERTED)
-        begin
-          hsync <= 1'b0;
-          hcount <= 16'd0;
-        end
-      else
-        begin
-          if (tick == MIN_TICK)
-            begin
-              case (hcount)
-                H_FRONT_PORCH_END:
-                  begin
-                    hsync <= 1'b1; // hsync pulse begins
-                    hcount <= hcount + 1;
-                  end
-                H_SYNC_PULSE_END:
-                  begin
-                    hsync <= 1'b0; // hsync pulse ends
-                    hcount <= hcount + 1;
-                  end
-                H_BACK_PORCH_END:
-                  begin
-                    hcount <= 16'd0; // next line begins
-                  end
-                default:
-                  begin
-                    hcount <= hcount + 1;
-                  end
-              endcase
-            end
-        end
-    end
-*/
 
   ////////////////////////////////////////////////////////////////////////
   // Vertical timings and sync generation
@@ -312,44 +269,19 @@ module icevga (input wire nrst_in,
   parameter V_SYNC_PULSE_END  = 16'd604;
   parameter V_BACK_PORCH_END  = 16'd627;
 
-  // as with hcount, larger than it needs to be
-  reg [15:0] vcount;
+  wire [15:0] vcount;
+  wire vvis;
 
-  // vcount and vsync generation
-  always @(posedge clk)
-    begin
-      if (nrst == RESET_ASSERTED)
-        begin
-          vsync <= 1'b0;
-          vcount <= 16'd0;
-        end
-      else
-        begin
-          if (tick == MIN_TICK && hcount == H_BACK_PORCH_END)
-            begin
-              case (vcount)
-                V_FRONT_PORCH_END:
-                  begin
-                    vsync <= 1'b1; // vsync pulse begins
-                    vcount <= vcount + 1;
-                  end
-                V_SYNC_PULSE_END:
-                  begin
-                    vsync <= 1'b0; // vsync pulse ends
-                    vcount <= vcount + 1;
-                  end
-                V_BACK_PORCH_END:
-                  begin
-                    vcount <= 16'd0; // next frame begins
-                  end
-                default:
-                  begin
-                    vcount <= vcount + 1;
-                  end
-              endcase
-            end
-        end
-    end
+  syncgen vsync_gen(clk,
+                    nrst,
+                    (tick == MIN_TICK) & (hcount == H_BACK_PORCH_END),
+                    vcount,
+                    vsync,
+                    vvis,
+                    V_VISIBLE_END,
+                    V_FRONT_PORCH_END,
+                    V_SYNC_PULSE_END,
+                    V_BACK_PORCH_END);
 
   ////////////////////////////////////////////////////////////////////////
   // Pixel color generation
