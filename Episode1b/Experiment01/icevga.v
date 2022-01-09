@@ -252,7 +252,7 @@ module icevga (input wire nrst_in,
 
   syncgen hsync_gen(clk,
                     nrst,
-                    tick,
+                    (tick == MIN_TICK) ? 1'b1 : 1'b0,
                     hcount,
                     hsync,
                     hvis,

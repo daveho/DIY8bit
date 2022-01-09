@@ -4,7 +4,7 @@
 
 module syncgen(input clk,
                input nrst,
-               input [15:0] tick,
+               input update, // indicates when to update count/timing
                output reg [15:0] count,
                output reg sync,
                output reg vis,
@@ -14,7 +14,6 @@ module syncgen(input clk,
                input [15:0] back_porch_end);
 
   localparam RESET_ASSERTED = 1'b0;
-  localparam MIN_TICK = 16'd0;
 
   always @(posedge clk)
     begin
@@ -26,7 +25,7 @@ module syncgen(input clk,
         end
       else
         begin
-          if (tick == MIN_TICK)
+          if (update)
             begin
               case (count)
                 vis_end:
