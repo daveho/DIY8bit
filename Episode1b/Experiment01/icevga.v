@@ -274,7 +274,7 @@ module icevga (input wire nrst_in,
 
   syncgen vsync_gen(clk,
                     nrst,
-                    (tick == MIN_TICK) & (hcount == H_BACK_PORCH_END),
+                    (tick == MAX_TICK) & (hcount == H_BACK_PORCH_END),
                     vcount,
                     vsync,
                     vvis,
