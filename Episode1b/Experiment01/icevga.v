@@ -299,7 +299,7 @@ module icevga (input wire nrst_in,
         begin
           if (tick == MIN_TICK)
             begin
-              if (hcount < 800 && vcount < 600)
+              if (hvis & vvis)
                 begin
                   // R/G/B values are generated based on commands
                   // received from the FIFO
