@@ -56,7 +56,7 @@ module readcommand(input clk,
           case (read_state)
             RD_READY:
               begin
-                if (read_tick == READ_MIN_TICK && nef == FIFO_NOT_EMPTY && cmdreg_data_avail == 1'b0)
+                if (read_tick == READ_MIN_TICK & nef == FIFO_NOT_EMPTY & cmdreg_data_avail == 1'b0)
                   begin
                     // data is available, assert FIFO -RD signal
                     // and go to RD_WAIT_FOR_DATA state
