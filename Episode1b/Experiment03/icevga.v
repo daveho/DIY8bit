@@ -70,6 +70,46 @@ module icevga (input wire nrst_in,
                     .wr_data(cmdreg_data_send));
 
   ////////////////////////////////////////////////////////////////////////
+  // Line buffer
+  ////////////////////////////////////////////////////////////////////////
+
+  // set to 1 to write a 16-bit word to the linebuf
+  reg linebuf_wr;
+  // 16-bit word to write to the line buffer
+  reg [15:0] linebuf_wr_data;
+  // address of word to write to linebuf
+  reg [7:0] linebuf_wr_addr;
+
+  // set to 1 to read a 16-bit word from the linebuf
+  reg linebuf_rd;
+  // data of 16-bit word read from linebuf
+  wire [15:0] linebuf_rd_data;
+  // address of word to read from linebuf
+  reg [7:0] linebuf_rd_addr;
+
+  // Directly-instantiated 256x16 block RAM for the line pixel buffer.
+  // Note that in read mode 0 and write mode 0, where 16 bit words are
+  // accessed, only the low 8 bits of the read and write addresses
+  // are used. (Which makes sense for a memory with 256 16-bit words.)
+  //
+  // See:
+  //   https://www.latticesemi.com/-/media/LatticeSemi/Documents/ApplicationNotes/MO/MemoryUsageGuideforiCE40Devices.ashx?document_id=47775
+  //   https://github.com/FPGAwars/toolchain-verilator/blob/master/build-data/share/SB_RAM40_4K.v
+  //
+  SB_RAM40_4K #(.WRITE_MODE(0), .READ_MODE(0))
+              linebuf(.RDATA(linebuf_rd_data),
+                      .RADDR({3'b000, linebuf_rd_addr}),
+                      .RCLK(clk),
+                      .RCLKE(linebuf_rd),
+                      .RE(1'b1),
+                      .WADDR({3'b000, linebuf_wr_addr}),
+                      .WCLK(clk),
+                      .WCLKE(linebuf_wr),
+                      .WDATA(linebuf_wr_data),
+                      .WE(1'b1),
+                      .MASK(16'd0));
+
+  ////////////////////////////////////////////////////////////////////////
   // Read data from FIFO when it is available
   ////////////////////////////////////////////////////////////////////////
 
@@ -86,32 +126,19 @@ module icevga (input wire nrst_in,
   // Process commands read from FIFO
   ////////////////////////////////////////////////////////////////////////
 
-  reg [7:0] disp_cmd;
-
   parameter CMDPROC_READY   = 1'b0;
   parameter CMDPROC_PROCESS = 1'b1;
 
   reg cmdproc_state;
-
-  // RGB values for generated pixels
-/*
-  reg [3:0] values [0:3];
-*/
-/*
-  reg [7:0] linebuf_addr;
-  reg [15:0] pixel_data;
-*/
 
   always @(posedge clk)
     begin
       if (nrst == RESET_ASSERTED)
         begin
           cmdproc_state <= CMDPROC_READY;
-          disp_cmd <= 8'd0;
-/*
-          linebuf_addr <= 8'd0;
-          pixel_data <= 16'd0;
-*/
+
+          linebuf_wr_addr <= 8'd0;
+          linebuf_wr <= 1'b0;
         end
       else
         begin
@@ -120,26 +147,25 @@ module icevga (input wire nrst_in,
             CMDPROC_READY:
               if (cmdreg_data_avail == 1'b1)
                 begin
-                  // begin signaling to the shared reg that we're
+                  // write a word to the line buffer; will be clocked into
+                  // the block RAM on the next positive clock edge
+                  linebuf_wr_data <= {8'b0, cmdreg_data_recv};
+                  linebuf_wr <= 1'b1;
+
+                  // signal to the shared reg that we're
                   // reading the data (the data should already be available
                   // in the receive register)
-                  disp_cmd <= cmdreg_data_recv;
-/*
-                  pixel_data <= {8'd0, cmdreg_data_recv[7:0]};
-*/
                   cmdreg_rd <= 1'b1;
                   cmdproc_state <= CMDPROC_PROCESS;
                 end
 
              CMDPROC_PROCESS:
                begin
-                 // do something with the command data
-/*
-                 values[disp_cmd[5:4]] <= disp_cmd[3:0];
-                 linebuf[linebuf_addr] <= {8'd0, disp_cmd[7:0]};
-                 linebuf[linebuf_addr] <= pixel_data;
-                 linebuf_addr <= linebuf_addr + 1;
-*/
+                 // the write to the line buffer should be finished now
+                 linebuf_wr <= 1'b0;
+
+                 // advance address in block RAM
+                 linebuf_wr_addr <= linebuf_wr_addr + 1;
 
                  cmdreg_rd <= 1'b0; // finish read
                  cmdproc_state <= CMDPROC_READY;
@@ -185,7 +211,7 @@ module icevga (input wire nrst_in,
 
   syncgen hsync_gen(clk,
                     nrst,
-                    (tick == MIN_TICK),
+                    (tick == MAX_TICK),
                     hcount,
                     hsync,
                     hvis,
@@ -208,7 +234,7 @@ module icevga (input wire nrst_in,
 
   syncgen vsync_gen(clk,
                     nrst,
-                    (tick == MIN_TICK) & (hcount == 16'd0),
+                    (tick == MAX_TICK) & (hcount == 16'd0),
                     vcount,
                     vsync,
                     vvis,
@@ -231,23 +257,8 @@ module icevga (input wire nrst_in,
   localparam BG_GREEN = 4'b0000;
   localparam BG_BLUE  = 4'b1000;
 
-  // This should map to one 256x16bit block ram:
-  // each 16 bit word controls 16 pixels
-  reg [15:0] linebuf [0:255];
-
-/*
-  // which word in the linebuf is selected by the current column
-  wire [5:0] word_offset_in_linebuf;
-  assign word_offset_in_linebuf = hcount[9:4];
-
-  // which pixel in the current word is selected by the current column
-  wire [3:0] pixel_offset_in_word;
-  assign pixel_offset_in_word = hcount[3:0];
-*/
-
-  reg [15:0] wordcount;
   reg [3:0] pixcount;
-  reg [15:0] next_pixels;
+  reg [15:0] pixbuf;
 
   always @(posedge clk)
     begin
@@ -256,79 +267,68 @@ module icevga (input wire nrst_in,
           red <= 4'h0;
           green <= 4'h0;
           blue <= 4'h0;
-          wordcount <= 16'd0;
+
+          linebuf_rd_addr <= 8'd0;
           pixcount <= 4'd0;
-          next_pixels <= 16'd0;
+          pixbuf <= 16'd0;
+
+          linebuf_rd_addr <= 8'd0;
+          linebuf_rd <= 1'b1;
         end
       else
         begin
-          if (tick == MIN_TICK)
+          if (tick == MIN_TICK & linebuf_rd)
+            begin
+              // data should be available on BRAM read port now
+              pixbuf <= linebuf_rd_data;
+              // advance read address
+              linebuf_rd_addr <= linebuf_rd_addr + 1;
+              // can finish read now
+              linebuf_rd <= 1'b0;
+            end
+
+          if (tick == MAX_TICK)
             begin
               if (hvis & vvis)
+                // In visible region
                 begin
-/*
-                  // R/G/B values are generated based on commands
-                  // received from the FIFO
-                  red <= values[2'b10];
-                  green <= values[2'b01];
-                  blue <= values[2'b00];
-*/
-/*
-                  if ( (linebuf[word_offset_in_linebuf] >> pixel_offset_in_word)[0] )
+                  if (pixbuf[15])
                     begin
-                      // foreground pixel
+                      // display foreground pixel
                       red <= FG_RED;
                       green <= FG_GREEN;
                       blue <= FG_BLUE;
                     end
                   else
                     begin
-                      // background pixel
-                      red <= BG_RED;
-                      green <= BG_GREEN;
-                      blue <= BG_BLUE;
-                    end
-*/
-                  if (next_pixels[15])
-                    begin
-                      // foreground pixel
-                      red <= FG_RED;
-                      green <= FG_GREEN;
-                      blue <= FG_BLUE;
-                    end
-                  else
-                    begin
-                      // background pixel
+                      // display background pixel
                       red <= BG_RED;
                       green <= BG_GREEN;
                       blue <= BG_BLUE;
                     end
 
-                  if (pixcount == 4'b1111)
-                    begin
-                      next_pixels <= linebuf[wordcount[7:0]]; // fetch next 16 pixels
-                      wordcount <= wordcount + 1;             // advance to next word to fetch
-                      pixcount <= 4'd0;                       // reset pixel count
-                    end
-                  else
-                    begin
-                      next_pixels <= (next_pixels << 1);      // shift pixels
-                      pixcount <= pixcount + 1;               // advance to next pixel in word
-                    end
+                  // advance to next pixel
+                  pixbuf <= pixbuf << 1;
+                  pixcount <= pixcount + 1;
 
+                  if (pixcount == 4'b1111 & hcount != H_VISIBLE_END)
+                    begin
+                      // At end of block of 16 pixels, and there is at least one
+                      // more block of 16 pixels to generate. Initiate fetch of
+                      // word containing next 16 pixel values.
+                      linebuf_rd <= 1'd1;
+                    end
                 end
               else
                 begin
-                  // output black when not in visible region
-                  red <= 4'h0;
-                  green <= 4'h0;
-                  blue <= 4'h0;
-
-                  if (hcount == H_SYNC_PULSE_END)
+                  // Not in visible region.
+                  // If we're close to the beginning of the next line,
+                  // we'll initiate a read from the linebuf (even if
+                  // it's not necessary.)
+                  if (hcount == H_BACK_PORCH_END)
                     begin
-                      wordcount <= 16'd1;
-                      pixcount <= 4'd0;
-                      next_pixels <= linebuf[8'd0];
+                      linebuf_rd_addr <= 8'd0;
+                      linebuf_rd <= 1'b1;
                     end
                 end
             end
