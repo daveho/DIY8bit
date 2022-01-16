@@ -268,7 +268,6 @@ module icevga (input wire nrst_in,
           green <= 4'h0;
           blue <= 4'h0;
 
-          linebuf_rd_addr <= 8'd0;
           pixcount <= 4'd0;
           pixbuf <= 16'd0;
 
