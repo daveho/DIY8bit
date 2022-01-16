@@ -1,6 +1,14 @@
 // ice40 vga device
 
-// Modularization of Experiment05 code from Episode 1A.
+// Experiment to use a Block RAM for the pixels to be displayed for visible
+// lines, with 1=foreground and 2=background. Colors are hard coded. The
+// command processor just puts the received command data from the FIFO
+// in the Block RAM (in the low byte of the 16-bit word written to the
+// block RAM), so if this works as intended, as the Arduino sends command
+// bytes (which are really intended to represent RGB color values),
+// we should see vertical lines on the display matching the bit patterns
+// in the command bytes.
+
 
 module icevga (input wire nrst_in,
                input wire [7:0] disp_cmd_in, // command data from FIFO
