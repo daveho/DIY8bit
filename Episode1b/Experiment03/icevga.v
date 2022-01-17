@@ -184,14 +184,17 @@ module icevga (input wire nrst_in,
     end
 
   ////////////////////////////////////////////////////////////////////////
-  // Tick counting from 0 to 2 in order to generate 40 MHz timing
-  // from the 120 MHz PLL clock.
+  // Tick counting from 0 to 1 in order to generate 39.75 MHz timing
+  // from the 79.5 MHz PLL clock.
   ////////////////////////////////////////////////////////////////////////
 
-  reg [15:0] tick;
+  //reg [15:0] tick;
+  reg tick;
 
-  parameter MIN_TICK  = 16'd0;
-  parameter MAX_TICK  = 16'd2;
+  //parameter MIN_TICK  = 16'd0;
+  //parameter MAX_TICK  = 16'd1;
+  parameter MIN_TICK  = 1'b0;
+  parameter MAX_TICK  = 1'b1;
 
   always @(posedge clk)
     begin
@@ -201,7 +204,8 @@ module icevga (input wire nrst_in,
         end
       else
         begin
-          tick <= (tick == MAX_TICK) ? MIN_TICK : tick + 1;
+          //tick <= (tick == MAX_TICK) ? MIN_TICK : tick + 1;
+          tick <= ~tick;
         end
     end
 
@@ -219,7 +223,7 @@ module icevga (input wire nrst_in,
 
   syncgen hsync_gen(clk,
                     nrst,
-                    (tick == MAX_TICK),
+                    (tick == MIN_TICK),
                     hcount,
                     hsync,
                     hvis,
@@ -242,7 +246,7 @@ module icevga (input wire nrst_in,
 
   syncgen vsync_gen(clk,
                     nrst,
-                    (tick == MAX_TICK) & (hcount == 16'd0),
+                    (tick == MIN_TICK) & (hcount == 16'd0),
                     vcount,
                     vsync,
                     vvis,
@@ -268,6 +272,12 @@ module icevga (input wire nrst_in,
   reg [3:0] pixcount;
   reg [15:0] pixbuf;
 
+  reg [1:0] pixgen_state;
+
+  localparam PIXGEN_VIS       = 2'b00; // in visible region
+  localparam PIXGEN_LINE_END  = 2'b01; // past end of visible part of line
+  localparam PIXGEN_FRAME_END = 2'b10; // past end of visible part of frame
+
   always @(posedge clk)
     begin
       if (nrst == RESET_ASSERTED)
@@ -281,63 +291,64 @@ module icevga (input wire nrst_in,
 
           linebuf_rd_addr <= 8'd0;
           linebuf_rd <= 1'b1;
+
+          pixgen_state <= PIXGEN_VIS;
         end
       else
         begin
-          if (tick == MIN_TICK & linebuf_rd)
+          if (tick == MIN_TICK)
             begin
-              // data should be available on BRAM read port now
-              pixbuf <= linebuf_rd_data;
-              // advance read address
-              linebuf_rd_addr <= linebuf_rd_addr + 1;
-              // can finish read now
-              linebuf_rd <= 1'b0;
-            end
+              case (pixgen_state)
 
-          if (tick == MAX_TICK)
-            begin
-              if (hvis & vvis)
-                // In visible region
-                begin
-                  if (pixbuf[15])
-                    begin
-                      // display foreground pixel
-                      red <= FG_RED;
-                      green <= FG_GREEN;
-                      blue <= FG_BLUE;
-                    end
-                  else
-                    begin
-                      // display background pixel
-                      red <= BG_RED;
-                      green <= BG_GREEN;
-                      blue <= BG_BLUE;
-                    end
+                PIXGEN_VIS:
+                  begin
 
-                  // advance to next pixel
-                  pixbuf <= pixbuf << 1;
-                  pixcount <= pixcount + 1;
+                    if (hcount == H_VISIBLE_END)
+                      begin
+                        // reached end of visible part of line
+                        pixgen_state <= PIXGEN_LINE_END;
+                        red <= 4'h0;
+                        green <= 4'h0;
+                        blue <= 4'h0;
+                      end
+                    else
+                      begin
+                        // In visible part of line
+                        // For now, just generate the background color
+                        red <= BG_RED;
+                        green <= BG_GREEN;
+                        blue <= BG_BLUE;
+                      end
+                  end
 
-                  if (pixcount == 4'b1111 & hcount != H_VISIBLE_END)
-                    begin
-                      // At end of block of 16 pixels, and there is at least one
-                      // more block of 16 pixels to generate. Initiate fetch of
-                      // word containing next 16 pixel values.
-                      linebuf_rd <= 1'd1;
-                    end
-                end
-              else
-                begin
-                  // Not in visible region.
-                  // If we're close to the beginning of the next line,
-                  // we'll initiate a read from the linebuf (even if
-                  // it's not necessary.)
-                  if (hcount == H_BACK_PORCH_END)
-                    begin
-                      linebuf_rd_addr <= 8'd0;
-                      linebuf_rd <= 1'b1;
-                    end
-                end
+                PIXGEN_LINE_END:
+                  begin
+                    if (hcount == H_BACK_PORCH_END)
+                      begin
+                        if (vcount == V_VISIBLE_END)
+                          begin
+                            // Next line is not a visible line
+                            pixgen_state <= PIXGEN_FRAME_END;
+                          end
+                        else
+                          begin
+                            // Next line is a viisble line
+                            pixgen_state <= PIXGEN_VIS;
+                          end
+                      end
+                  end
+
+                PIXGEN_FRAME_END:
+                  begin
+                    if (hcount == H_BACK_PORCH_END & vcount == V_BACK_PORCH_END)
+                      begin
+                        // reached end of frame, next tick will be the
+                        // beginning of the visible part of the first line
+                        pixgen_state <= PIXGEN_VIS;
+                      end
+                  end
+
+              endcase
             end
         end
     end
