@@ -320,9 +320,20 @@ module icevga (input wire nrst_in,
                         // In visible part of line
 
                         // For now, just generate the background color
-                        red <= BG_RED;
-                        green <= BG_GREEN;
-                        blue <= BG_BLUE;
+                        if (pixbuf[15])
+                          begin
+                            // display foreground color
+                            red <= FG_RED;
+                            green <= FG_GREEN;
+                            blue <= FG_BLUE;
+                          end
+                        else
+                          begin
+                            // display background color
+                            red <= BG_RED;
+                            green <= BG_GREEN;
+                            blue <= BG_BLUE;
+                          end
 
                         // update pixel count, fetch next 16 pixels if necessary
                         if (pixcount == 4'b1111)
