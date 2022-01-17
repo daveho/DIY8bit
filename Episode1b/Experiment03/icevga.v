@@ -286,11 +286,11 @@ module icevga (input wire nrst_in,
           green <= 4'h0;
           blue <= 4'h0;
 
-          pixcount <= 4'd0;
           pixbuf <= 16'd0;
+          pixcount <= 4'd0;
 
           linebuf_rd_addr <= 8'd0;
-          linebuf_rd <= 1'b1;
+          linebuf_rd <= 1'b1; // just leave this asserted
 
           pixgen_state <= PIXGEN_VIS;
         end
@@ -310,14 +310,35 @@ module icevga (input wire nrst_in,
                         red <= 4'h0;
                         green <= 4'h0;
                         blue <= 4'h0;
+
+                        // reset read address to beginning of line buffer
+                        linebuf_rd_addr <= 8'd0;
+                        pixcount <= 4'd0;
                       end
                     else
                       begin
                         // In visible part of line
+
                         // For now, just generate the background color
                         red <= BG_RED;
                         green <= BG_GREEN;
                         blue <= BG_BLUE;
+
+                        // update pixel count, fetch next 16 pixels if necessary
+                        if (pixcount == 4'b1111)
+                          begin
+                            // we've reached the end of a block of 16 pixels, so
+                            // fetch the next 16 pixels, and advance the read address
+                            pixbuf <= linebuf_rd_data;
+                            pixcount <= 4'd0;
+                            linebuf_rd_addr <= linebuf_rd_addr + 1;
+                          end
+                        else
+                          begin
+                            // continue in current block of 16 pixels
+                            pixbuf <= pixbuf << 1;
+                            pixcount <= pixcount + 1;
+                          end
                       end
                   end
 
@@ -332,8 +353,14 @@ module icevga (input wire nrst_in,
                           end
                         else
                           begin
-                            // Next line is a viisble line
+                            // Next line is a visible line
                             pixgen_state <= PIXGEN_VIS;
+
+                            // Read the next block of 16 pixels, and advance the
+                            // read address
+                            pixbuf <= linebuf_rd_data;
+                            pixcount <= 4'd0;
+                            linebuf_rd_addr <= linebuf_rd_addr + 1;
                           end
                       end
                   end
@@ -345,6 +372,12 @@ module icevga (input wire nrst_in,
                         // reached end of frame, next tick will be the
                         // beginning of the visible part of the first line
                         pixgen_state <= PIXGEN_VIS;
+
+                        // Read first block of 16 pixels, and prepare to read the
+                        // second block of 16 pixels
+                        pixbuf <= linebuf_rd_data;
+                        pixcount <= 4'd0;
+                        linebuf_rd_addr <= linebuf_rd_addr + 1;
                       end
                   end
 
