@@ -1,14 +1,13 @@
 // ice40 vga device
 
 // Experiment to use a Block RAM for the pixels to be displayed for visible
-// lines, with 1=foreground and 2=background. Colors are hard coded. The
+// lines, with 1=foreground and 0=background. Colors are hard coded. The
 // command processor just puts the received command data from the FIFO
 // in the Block RAM (in the low byte of the 16-bit word written to the
 // block RAM), so if this works as intended, as the Arduino sends command
 // bytes (which are really intended to represent RGB color values),
 // we should see vertical lines on the display matching the bit patterns
 // in the command bytes.
-
 
 module icevga (input wire nrst_in,
                input wire [7:0] disp_cmd_in, // command data from FIFO
@@ -188,11 +187,11 @@ module icevga (input wire nrst_in,
   // from the 79.5 MHz PLL clock.
   ////////////////////////////////////////////////////////////////////////
 
-  //reg [15:0] tick;
+  // Since we're only dividing the internal clock frequency by 2,
+  // a simple flip-flop is sufficient.
+
   reg tick;
 
-  //parameter MIN_TICK  = 16'd0;
-  //parameter MAX_TICK  = 16'd1;
   parameter MIN_TICK  = 1'b0;
   parameter MAX_TICK  = 1'b1;
 
@@ -204,7 +203,6 @@ module icevga (input wire nrst_in,
         end
       else
         begin
-          //tick <= (tick == MAX_TICK) ? MIN_TICK : tick + 1;
           tick <= ~tick;
         end
     end
