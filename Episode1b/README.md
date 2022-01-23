@@ -1,6 +1,6 @@
 # DIY 8-bit computer, Episode 1B
 
-Link to video: Coming soon!
+Link to video: <https://youtu.be/UeyVLJ2qZhI>
 
 In this video, I discuss an approach for making the display controller
 design work.  (We started the display controller in
