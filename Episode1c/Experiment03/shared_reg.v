@@ -62,6 +62,10 @@ module shared_reg (input clk,
                   begin
                     // the data is already present on rd_data
                     state <= READ_STARTED;
+
+                    // assume that the reader will latch the data as soon as it observes
+                    // that the FIFO has data available
+                    has_data <= 1'b0;
                   end
               end
 
@@ -69,7 +73,6 @@ module shared_reg (input clk,
               begin
                 if (rd == 1'b0)
                   begin
-                    has_data <= 1'b0;
                     state <= EMPTY;
                   end
               end

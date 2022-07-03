@@ -153,14 +153,14 @@ void loop() {
 
   const uint8_t CMD_PIXDATA = 129;
 
-  if (!in_reset && ticks == 0) {
+  if (!in_reset /*&& ticks == 0*/) {
     if (!writing) {
       red = readColor(RED_INPUT);
       writeToFIFO(CMD_PIXDATA);
       writing = 1;
     } else {
-      //writeToFIFO(red);
-      writeToFIFO(0x05);
+      writeToFIFO(red);
+      //writeToFIFO(0x05);
       writing = 0;
     }
   }
