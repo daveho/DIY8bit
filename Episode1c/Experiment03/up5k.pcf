@@ -26,3 +26,4 @@ set_io --warn-no-port blue[1] 48
 set_io --warn-no-port blue[0] 45
 set_io --warn-no-port debug_led_1 23
 set_io --warn-no-port debug_led_2 25
+set_io --warn-no-port debug_led_3 2

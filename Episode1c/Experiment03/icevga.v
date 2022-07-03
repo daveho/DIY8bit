@@ -13,7 +13,8 @@ module icevga (input wire nrst_in,
                output reg [3:0] green,
                output reg [3:0] blue,
                output reg debug_led_1,
-               output reg debug_led_2);
+               output reg debug_led_2,
+               output reg debug_led_3);
 
   wire pll_out;
   wire pll_locked;
@@ -125,6 +126,7 @@ module icevga (input wire nrst_in,
 
           debug_led_1 <= 1'b0;
           debug_led_2 <= 1'b0;
+          debug_led_3 <= 1'b0;
         end
       else
         begin
@@ -154,12 +156,14 @@ module icevga (input wire nrst_in,
                        if (cmd_input_val == CMD_PIXDATA) // TODO: other commands
                          begin
                            active_cmd <= cmd_input_val;
+                           debug_led_3 <= 1'b1;
                          end
                        else
                          begin
                            active_cmd <= CMD_NONE;
                            debug_led_1 <= 1'b1;
                            debug_led_2 <= 1'b0;
+                           debug_led_3 <= 1'b0;
                          end
                      end
 
@@ -170,9 +174,16 @@ module icevga (input wire nrst_in,
                        active_cmd <= CMD_NONE;
                        debug_led_1 <= 1'b0;
                        debug_led_2 <= 1'b1;
+                       debug_led_3 <= 1'b0;
                      end
 
                    // TODO: other commands
+/*
+                   default:
+                     begin
+                       debug_led_3 <= 1'b1;
+                     end
+*/
 
                  endcase
 
