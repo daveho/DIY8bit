@@ -95,6 +95,8 @@ uint8_t readColor(int pin) {
   return uint8_t(val);
 }
 
+uint16_t ticks;
+
 void loop() {
   delay(5);
 
@@ -147,8 +149,16 @@ void loop() {
     }
   }
 
-  if (!in_reset) {
+  const uint8_t CMD_PIXDATA = 129;
+
+  if (!in_reset && ticks == 0) {
     red = readColor(RED_INPUT);
+    writeToFIFO(CMD_PIXDATA);
     writeToFIFO(red);
+  }
+
+  ticks++;
+  if (ticks >= 200) {
+    ticks = 0;
   }
 }

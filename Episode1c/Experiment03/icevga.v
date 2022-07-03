@@ -11,7 +11,9 @@ module icevga (input wire nrst_in,
                output wire hsync,
                output reg [3:0] red,
                output reg [3:0] green,
-               output reg [3:0] blue);
+               output reg [3:0] blue,
+               output reg debug_led_1,
+               output reg debug_led_2);
 
   wire pll_out;
   wire pll_locked;
@@ -100,17 +102,15 @@ module icevga (input wire nrst_in,
   // Process commands read from FIFO
   ////////////////////////////////////////////////////////////////////////
 
-/*
+  parameter CMD_NONE        = 8'b00000000;
   parameter CMD_LOAD_FONT   = 8'b10000000; // the next 4906 bytes are font data
   parameter CMD_PIXDATA     = 8'b10000001; // just store byte value in pixreg
-*/
 
   parameter CMDPROC_READY   = 1'b0;
   parameter CMDPROC_PROCESS = 1'b1;
 
-/*
-  reg [7:0] cmdval;
-*/
+  reg [7:0] cmd_input_val; // most recent byte of input data from FIFO
+  reg [7:0] active_cmd;    // what the active command is
 
   reg cmdproc_state;
 
@@ -119,7 +119,12 @@ module icevga (input wire nrst_in,
       if (nrst == RESET_ASSERTED)
         begin
           cmdproc_state <= CMDPROC_READY;
+          cmd_input_val <= 8'd0;
+          active_cmd <= CMD_NONE;
           pixreg <= 8'd0;
+
+          debug_led_1 <= 1'b0;
+          debug_led_2 <= 1'b0;
         end
       else
         begin
@@ -128,20 +133,49 @@ module icevga (input wire nrst_in,
             CMDPROC_READY:
               if (cmdreg_data_avail == 1'b1)
                 begin
-                  // write data to the pixel register
-                  pixreg <= cmdreg_data_recv;
-
                   // signal to the shared reg that we're
                   // reading the data (the data should already be available
                   // in the receive register)
                   cmdreg_rd <= 1'b1;
                   cmdproc_state <= CMDPROC_PROCESS;
+                  cmd_input_val <= cmdreg_data_recv;
                 end
 
              CMDPROC_PROCESS:
                begin
                  cmdreg_rd <= 1'b0; // finish read
-                 cmdproc_state <= CMDPROC_READY;
+                 cmdproc_state <= CMDPROC_READY; // ready to get another byte from FIFO
+
+                 case (active_cmd)
+                   CMD_NONE:
+                     begin
+                       // if the input value was a valid command, make
+                       // it the active command, otherwise ignore it
+                       if (cmd_input_val == CMD_PIXDATA) // TODO: other commands
+                         begin
+                           active_cmd <= cmd_input_val;
+                         end
+                       else
+                         begin
+                           active_cmd <= CMD_NONE;
+                           debug_led_1 <= 1'b1;
+                           debug_led_2 <= 1'b0;
+                         end
+                     end
+
+                   CMD_PIXDATA:
+                     begin
+                       // store the input value in pixreg
+                       pixreg <= cmd_input_val;
+                       active_cmd <= CMD_NONE;
+                       debug_led_1 <= 1'b0;
+                       debug_led_2 <= 1'b1;
+                     end
+
+                   // TODO: other commands
+
+                 endcase
+
                end
 
           endcase
@@ -225,7 +259,7 @@ module icevga (input wire nrst_in,
           green <= 4'h0;
           blue <= 4'h0;
 
-          pixgen <= 16'd0;
+          pixgen <= 8'd0;
           pixcount <= 3'd0;
 
           pixgen_state <= PIXGEN_VIS;
