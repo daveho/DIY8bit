@@ -116,6 +116,7 @@ void loop() {
     if (reset_pressed) {
       // begin manual reset pulse
       digitalWrite(DISP_RST, LOW);
+      writing = 0;
     }
   } else if (!activated) {
     // button value is same as last time, increase count
@@ -158,7 +159,8 @@ void loop() {
       writeToFIFO(CMD_PIXDATA);
       writing = 1;
     } else {
-      writeToFIFO(red);
+      //writeToFIFO(red);
+      writeToFIFO(0x05);
       writing = 0;
     }
   }

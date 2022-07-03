@@ -12,9 +12,7 @@ module icevga (input wire nrst_in,
                output reg [3:0] red,
                output reg [3:0] green,
                output reg [3:0] blue,
-               output reg debug_led_1,
-               output reg debug_led_2,
-               output reg debug_led_3);
+               output reg [2:0] debug_led);
 
   wire pll_out;
   wire pll_locked;
@@ -124,9 +122,9 @@ module icevga (input wire nrst_in,
           active_cmd <= CMD_NONE;
           pixreg <= 8'd0;
 
-          debug_led_1 <= 1'b0;
-          debug_led_2 <= 1'b0;
-          debug_led_3 <= 1'b0;
+          debug_led[0] <= 1'b0;
+          debug_led[1] <= 1'b0;
+          debug_led[2] <= 1'b0;
         end
       else
         begin
@@ -156,14 +154,18 @@ module icevga (input wire nrst_in,
                        if (cmd_input_val == CMD_PIXDATA) // TODO: other commands
                          begin
                            active_cmd <= cmd_input_val;
-                           debug_led_3 <= 1'b1;
+                           debug_led[0] <= 1'b0;
+                           debug_led[1] <= 1'b0;
+                           //debug_led[2] <= 1'b1;
                          end
                        else
                          begin
                            active_cmd <= CMD_NONE;
-                           debug_led_1 <= 1'b1;
-                           debug_led_2 <= 1'b0;
-                           debug_led_3 <= 1'b0;
+                           debug_led[0] <= 1'b1;
+                           debug_led[1] <= 1'b0;
+                           //debug_led[2] <= 1'b0;
+                           if (cmd_input_val == 8'h05) // this is the *data* value written by the Arduino
+                             debug_led[2] <= 1'b1;
                          end
                      end
 
@@ -172,16 +174,16 @@ module icevga (input wire nrst_in,
                        // store the input value in pixreg
                        pixreg <= cmd_input_val;
                        active_cmd <= CMD_NONE;
-                       debug_led_1 <= 1'b0;
-                       debug_led_2 <= 1'b1;
-                       debug_led_3 <= 1'b0;
+                       debug_led[0] <= 1'b0;
+                       debug_led[1] <= 1'b1;
+                       //debug_led[2] <= 1'b0;
                      end
 
                    // TODO: other commands
 /*
                    default:
                      begin
-                       debug_led_3 <= 1'b1;
+                       debug_led[2] <= 1'b1;
                      end
 */
 
