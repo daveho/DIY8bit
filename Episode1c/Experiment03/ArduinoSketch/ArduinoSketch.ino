@@ -1,8 +1,11 @@
-// Episode 1C, Experiment 02 Arduino sketch
+// Episode 1C, Experiment 03 Arduino sketch
 
 // Just send data values from the red trimpot to the FIFO.
 // These values will be used to generate blocks of 8 foreground/background
-// pixels.
+// pixels. In experiment 3, a command byte must be sent before
+// the pixel data. (The idea is to start to develop a proper
+// communication protocol to allow the host system to communicate
+// with the display controller.)
 
 ////////////////////////////////////////////////////////////////////////
 // Constants
