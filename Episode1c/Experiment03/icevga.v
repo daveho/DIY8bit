@@ -1,6 +1,9 @@
 // ice40 vga device
 
-// Allow loading of font data into block RAM.
+// Experiment 3: start to implement a proper communication protocol to
+// allow the host system to send commands and data to the display
+// controller. For now, only one command is supported, to store a byte
+// in the pixel output register.
 
 module icevga (input wire nrst_in,
                input wire [7:0] disp_cmd_in, // command data from FIFO
