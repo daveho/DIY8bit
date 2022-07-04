@@ -1,3 +1,5 @@
-Experiment 3: add support for loading font data into block RAM.
-This means we need to start to hash out the command protocol
-that the host will use to communicate with the display controller.
+Experiment 3: start to implement a command protocol. Each command
+will be signified by a command byte, followed by 1 or more data
+bytes. (Perhaps at some point there will be commands without
+a data bytes.) For now, there is just one command, which stores
+data in the pixel output register.
