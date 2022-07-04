@@ -1389,6 +1389,140 @@ Wire Wire Line
 	6050 7850 6250 7850
 Wire Wire Line
 	6250 7850 6250 7700
+$Comp
+L power:VCC #PWR?
+U 1 1 61D694BA
+P 6250 7700
+F 0 "#PWR?" H 6250 7550 50  0001 C CNN
+F 1 "VCC" H 6267 7873 50  0000 C CNN
+F 2 "" H 6250 7700 50  0001 C CNN
+F 3 "" H 6250 7700 50  0001 C CNN
+	1    6250 7700
+	1    0    0    -1  
+$EndComp
+$Comp
+L device:LED D601
+U 1 1 62C6CE09
+P 5650 2950
+F 0 "D601" H 5900 2900 50  0000 C CNN
+F 1 "LED" H 5650 2850 50  0000 C CNN
+F 2 "" H 5650 2950 50  0001 C CNN
+F 3 "" H 5650 2950 50  0001 C CNN
+	1    5650 2950
+	-1   0    0    1   
+$EndComp
+$Comp
+L device:LED D602
+U 1 1 62C6DBC0
+P 5650 3150
+F 0 "D602" H 5900 3100 50  0000 C CNN
+F 1 "LED" H 5650 3050 50  0000 C CNN
+F 2 "" H 5650 3150 50  0001 C CNN
+F 3 "" H 5650 3150 50  0001 C CNN
+	1    5650 3150
+	-1   0    0    1   
+$EndComp
+$Comp
+L device:LED D603
+U 1 1 62C90E00
+P 5650 3350
+F 0 "D603" H 5900 3300 50  0000 C CNN
+F 1 "LED" H 5650 3250 50  0000 C CNN
+F 2 "" H 5650 3350 50  0001 C CNN
+F 3 "" H 5650 3350 50  0001 C CNN
+	1    5650 3350
+	-1   0    0    1   
+$EndComp
+$Comp
+L device:R R625
+U 1 1 62CA2E1D
+P 5000 2950
+F 0 "R625" V 4950 2750 50  0000 C CNN
+F 1 "R" V 4900 2950 50  0000 C CNN
+F 2 "" V 4930 2950 50  0001 C CNN
+F 3 "" H 5000 2950 50  0001 C CNN
+	1    5000 2950
+	0    1    1    0   
+$EndComp
+$Comp
+L device:R R626
+U 1 1 62CE9D70
+P 5000 3150
+F 0 "R626" V 4950 2950 50  0000 C CNN
+F 1 "R" V 4900 3150 50  0000 C CNN
+F 2 "" V 4930 3150 50  0001 C CNN
+F 3 "" H 5000 3150 50  0001 C CNN
+	1    5000 3150
+	0    1    1    0   
+$EndComp
+$Comp
+L device:R R627
+U 1 1 62CFB62E
+P 5000 3350
+F 0 "R627" V 4950 3150 50  0000 C CNN
+F 1 "R" V 4900 3350 50  0000 C CNN
+F 2 "" V 4930 3350 50  0001 C CNN
+F 3 "" H 5000 3350 50  0001 C CNN
+	1    5000 3350
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	4400 2950 4850 2950
+Wire Wire Line
+	4400 3150 4850 3150
+Wire Wire Line
+	4400 3350 4850 3350
+$Comp
+L power:GND #PWR?
+U 1 1 62D67C00
+P 6100 3350
+F 0 "#PWR?" H 6100 3100 50  0001 C CNN
+F 1 "GND" V 6105 3222 50  0000 R CNN
+F 2 "" H 6100 3350 50  0001 C CNN
+F 3 "" H 6100 3350 50  0001 C CNN
+	1    6100 3350
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	5800 3350 6050 3350
+Wire Wire Line
+	5800 2950 6050 2950
+Wire Wire Line
+	6050 2950 6050 3150
+Connection ~ 6050 3350
+Wire Wire Line
+	6050 3350 6100 3350
+Wire Wire Line
+	5800 3150 6050 3150
+Connection ~ 6050 3150
+Wire Wire Line
+	6050 3150 6050 3350
+Wire Wire Line
+	5150 2950 5500 2950
+Wire Wire Line
+	5150 3150 5500 3150
+Wire Wire Line
+	5150 3350 5500 3350
+Text Label 4450 2950 0    50   ~ 0
+DBG0
+Text Label 4450 3150 0    50   ~ 0
+DBG1
+Text Label 4450 3350 0    50   ~ 0
+DBG2
+Wire Wire Line
+	1800 2500 1350 2500
+Wire Wire Line
+	1800 2600 1350 2600
+Text Label 1400 2500 0    50   ~ 0
+DBG0
+Text Label 1400 2600 0    50   ~ 0
+DBG1
+Wire Wire Line
+	3450 3800 3900 3800
+Text Label 3650 3800 0    50   ~ 0
+DBG2
+Text Notes 6150 3200 0    50   ~ 0
+Debugging LEDs (helpful for\nseeing what is going on within\nthe internal FPGA logic)
 Wire Bus Line
 	3400 6050 3400 8400
 Wire Bus Line
@@ -1406,20 +1540,9 @@ Wire Bus Line
 Wire Bus Line
 	750  6750 750  8400
 Wire Bus Line
+	900  3200 900  4100
+Wire Bus Line
 	10000 4300 10000 7100
 Wire Bus Line
 	3750 6050 3750 7000
-Wire Bus Line
-	900  3200 900  4100
-$Comp
-L power:VCC #PWR?
-U 1 1 61D694BA
-P 6250 7700
-F 0 "#PWR?" H 6250 7550 50  0001 C CNN
-F 1 "VCC" H 6267 7873 50  0000 C CNN
-F 2 "" H 6250 7700 50  0001 C CNN
-F 3 "" H 6250 7700 50  0001 C CNN
-	1    6250 7700
-	1    0    0    -1  
-$EndComp
 $EndSCHEMATC
