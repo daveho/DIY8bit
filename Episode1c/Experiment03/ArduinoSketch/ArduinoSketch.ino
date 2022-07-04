@@ -156,7 +156,7 @@ void loop() {
 
   const uint8_t CMD_PIXDATA = 129;
 
-  if (!in_reset /*&& ticks == 0*/) {
+  if (!in_reset /*&& ticks == 0*/) { // uncomment "&& ticks == 0" for slow data send (1 byte/sec)
     if (!writing) {
       red = readColor(RED_INPUT);
       writeToFIFO(CMD_PIXDATA);
