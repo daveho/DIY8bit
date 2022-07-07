@@ -112,7 +112,7 @@ module icevga (input wire nrst_in,
   parameter CMD_NONE        = 8'b00000000;
   parameter CMD_LOAD_FONT   = 8'b10000000; // the next 4906 bytes are font data
   parameter CMD_PIXDATA     = 8'b10000001; // just store byte value in pixreg
-  parameter CMD_CHDATA      = 8'b10000010; // the next 512 bytes are character data
+  parameter CMD_LOAD_CHDATA = 8'b10000010; // the next 512 bytes are character data
 
   parameter CMDPROC_READY   = 1'b0;
   parameter CMDPROC_PROCESS = 1'b1;
@@ -166,7 +166,7 @@ module icevga (input wire nrst_in,
                        // it the active command, otherwise ignore it
                        if (cmd_input_val == CMD_PIXDATA ||
                            cmd_input_val == CMD_LOAD_FONT ||
-                           cmd_input_val == CMD_CHDATA)
+                           cmd_input_val == CMD_LOAD_CHDATA)
                          begin
                            active_cmd <= cmd_input_val;
                            debug_led[0] <= 1'b0;
@@ -208,7 +208,7 @@ module icevga (input wire nrst_in,
                          active_cmd <= CMD_NONE;
                      end
 
-                   CMD_CHDATA:
+                   CMD_LOAD_CHDATA:
                      begin
                        // put the byte in the next location in the character memory
                        ch_data[data_addr[8:0]] <= cmd_input_val;

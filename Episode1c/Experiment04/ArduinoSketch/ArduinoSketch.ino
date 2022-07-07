@@ -583,7 +583,8 @@ void setup() {
   // wait a bit, then send font data
   delay(500);
 
-  const uint8_t CMD_LOAD_FONT = 128;
+  const uint8_t CMD_LOAD_FONT   = 128;
+  const uint8_t CMD_LOAD_CHDATA = 130;
 
   writeToFIFO(CMD_LOAD_FONT);
   
@@ -591,6 +592,13 @@ void setup() {
     delayMicroseconds(10);
     uint8_t val = pgm_read_byte_near(font_data + i);
     writeToFIFO(val);
+  }
+
+  writeToFIFO(CMD_LOAD_CHDATA);
+
+  for (uint16_t i = 0; i < 512; i++) {
+    delayMicroseconds(10);
+    writeToFIFO((uint8_t) i); // just generate all of the character codes
   }
 }
 
