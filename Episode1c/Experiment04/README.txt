@@ -1,4 +1,5 @@
-Experiment 4: add support for loading font data into block RAM.
+Experiment 4: add support for loading font data and
+character data into block RAM.
 
 The font is the "IBM DOS ISO8" font, downloaded from here:
 

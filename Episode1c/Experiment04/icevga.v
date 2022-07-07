@@ -1,6 +1,6 @@
 // ice40 vga device
 
-// Experiment 4: allow loading of font data into block RAM.
+// Experiment 4: allow loading of font and character data into block RAM.
 
 module icevga (input wire nrst_in,
                input wire [7:0] disp_cmd_in, // command data from FIFO
@@ -98,12 +98,21 @@ module icevga (input wire nrst_in,
   reg [7:0] font_data[4095:0]; // hopefully this gets inferred as block RAM!
 
   ////////////////////////////////////////////////////////////////////////
+  // Character data
+  ////////////////////////////////////////////////////////////////////////
+
+  // for now, just store 512 characters of character data;
+  // this would be sufficient for 4 lines of text (in 100x37 text mode)
+  reg [7:0] ch_data[511:0];
+
+  ////////////////////////////////////////////////////////////////////////
   // Process commands read from FIFO
   ////////////////////////////////////////////////////////////////////////
 
   parameter CMD_NONE        = 8'b00000000;
   parameter CMD_LOAD_FONT   = 8'b10000000; // the next 4906 bytes are font data
   parameter CMD_PIXDATA     = 8'b10000001; // just store byte value in pixreg
+  parameter CMD_CHDATA      = 8'b10000010; // the next 512 bytes are character data
 
   parameter CMDPROC_READY   = 1'b0;
   parameter CMDPROC_PROCESS = 1'b1;
@@ -113,7 +122,7 @@ module icevga (input wire nrst_in,
 
   reg cmdproc_state;
 
-  reg [11:0] font_data_addr;
+  reg [11:0] data_addr;
 
   always @(posedge clk)
     begin
@@ -122,7 +131,7 @@ module icevga (input wire nrst_in,
           cmdproc_state <= CMDPROC_READY;
           cmd_input_val <= 8'd0;
           active_cmd <= CMD_NONE;
-          font_data_addr <= 12'd0;
+          data_addr <= 12'd0;
           pixreg <= 8'd0;
 
           debug_led[0] <= 1'b0;
@@ -155,13 +164,15 @@ module icevga (input wire nrst_in,
                      begin
                        // if the input value was a valid command, make
                        // it the active command, otherwise ignore it
-                       if (cmd_input_val == CMD_PIXDATA || cmd_input_val == CMD_LOAD_FONT)
+                       if (cmd_input_val == CMD_PIXDATA ||
+                           cmd_input_val == CMD_LOAD_FONT ||
+                           cmd_input_val == CMD_CHDATA)
                          begin
                            active_cmd <= cmd_input_val;
                            debug_led[0] <= 1'b0;
                            debug_led[1] <= 1'b0;
                            //debug_led[2] <= 1'b1;
-                           font_data_addr <= 12'd0;
+                           data_addr <= 12'd0;
                          end
                        else
                          begin
@@ -187,13 +198,26 @@ module icevga (input wire nrst_in,
                    CMD_LOAD_FONT:
                      begin
                        // put the byte in the next location in the font data memory
-                       font_data[font_data_addr] <= cmd_input_val;
+                       font_data[data_addr] <= cmd_input_val;
 
                        // advance to next address in the font data memory
-                       font_data_addr <= font_data_addr + 1;
+                       data_addr <= data_addr + 1;
 
                        // check whether all font data has been loaded
-                       if (font_data_addr == 12'd4095)
+                       if (data_addr == 12'd4095)
+                         active_cmd <= CMD_NONE;
+                     end
+
+                   CMD_CHDATA:
+                     begin
+                       // put the byte in the next location in the character memory
+                       ch_data[data_addr[8:0]] <= cmd_input_val;
+
+                       // advance to next address in the character data memory
+                       data_addr <= data_addr + 1;
+
+                       // check whether all character data has been loaded
+                       if (data_addr[8:0] == 9'd511)
                          active_cmd <= CMD_NONE;
                      end
 
