@@ -102,7 +102,7 @@ module icevga (input wire nrst_in,
   ////////////////////////////////////////////////////////////////////////
 
   // for now, just store 512 characters of character data;
-  // this would be sufficient for 4 lines of text (in 100x37 text mode)
+  // this would be sufficient for 5 lines of text (in 100x37 text mode)
   reg [7:0] ch_data[511:0];
 
   ////////////////////////////////////////////////////////////////////////
