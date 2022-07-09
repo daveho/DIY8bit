@@ -409,7 +409,7 @@ module icevga (input wire nrst_in,
 
                 PIXGEN_LINE_END:
                   begin
-                    if (hcount == (H_BACK_PORCH_END - 8) && vcount < 592)
+                    if (hcount == (H_BACK_PORCH_END - 8) & vcount < 592)
                       begin
                         // it's time to start rendering the next row of character
                         // pixel data
@@ -464,14 +464,30 @@ module icevga (input wire nrst_in,
   // Character generator
   ////////////////////////////////////////////////////////////////////////
 
+  reg [7:0] ch_val;
+
   always @(posedge clk)
     begin
       if (nrst == RESET_ASSERTED)
         begin
           ch_pixel_data <= 8'd0;
+          ch_val <= 8'd0;
         end
       else
         begin
+          if (ch_needed & hcount[2:0] == 3'b001)
+            begin
+              // even though the character data has enough room for 5 lines,
+              // just address it as 4 sequences of 128 characters (with only
+              // the first 100 in each sequence displayed as a line)
+              ch_val <= ch_data[ { ch_row[1:0], ch_col } ];
+            end
+          if (ch_needed & hcount[2:0] == 3'b010)
+            begin
+              // select the font data based on the character and
+              // which pixel row within the character is being generated
+              ch_pixel_data <= font_data[ { ch_val, vcount[3:0] } ];
+            end
         end
     end
 
