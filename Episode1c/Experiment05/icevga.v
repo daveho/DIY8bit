@@ -96,7 +96,23 @@ module icevga (input wire nrst_in,
   // Font data
   ////////////////////////////////////////////////////////////////////////
 
-  reg [7:0] font_data[4095:0]; // hopefully this gets inferred as block RAM!
+  //reg [7:0] font_data[4095:0]; // hopefully this gets inferred as block RAM!
+
+  reg font_data_rd;
+  reg [11:0] font_data_rd_addr;
+  wire [7:0] font_data_rd_data;
+
+  reg font_data_wr;
+  reg [11:0] font_data_wr_addr;
+  reg [7:0] font_data_wr_data;
+
+  fontram font_data(.clk(clk),
+                    .rd(font_data_rd),
+                    .rd_addr(font_data_rd_addr),
+                    .rd_data(font_data_rd_data),
+                    .wr(font_data_wr),
+                    .wr_addr(font_data_wr_addr),
+                    .wr_data(font_data_wr_data));
 
   ////////////////////////////////////////////////////////////////////////
   // Character data
@@ -115,13 +131,14 @@ module icevga (input wire nrst_in,
   parameter CMD_PIXDATA     = 8'b10000001; // just store byte value in pixreg
   parameter CMD_LOAD_CHDATA = 8'b10000010; // the next 512 bytes are character data
 
-  parameter CMDPROC_READY   = 1'b0;
-  parameter CMDPROC_PROCESS = 1'b1;
+  parameter CMDPROC_READY       = 2'b00;
+  parameter CMDPROC_PROCESS     = 2'b01;
+  parameter CMDPROC_END_FONT_WR = 2'b10;
 
   reg [7:0] cmd_input_val; // most recent byte of input data from FIFO
   reg [7:0] active_cmd;    // what the active command is
 
-  reg cmdproc_state;
+  reg [1:0] cmdproc_state;
 
   reg [11:0] data_addr;
 
@@ -134,6 +151,10 @@ module icevga (input wire nrst_in,
           active_cmd <= CMD_NONE;
           data_addr <= 12'd0;
           pixreg <= 8'd0;
+
+          font_data_wr_addr <= 12'd0;
+          font_data_wr <= 1'b0;
+          font_data_wr_data <= 8'd0;
 
           debug_led[0] <= 1'b0;
           debug_led[1] <= 1'b0;
@@ -199,7 +220,8 @@ module icevga (input wire nrst_in,
                    CMD_LOAD_FONT:
                      begin
                        // put the byte in the next location in the font data memory
-                       font_data[data_addr] <= cmd_input_val;
+                       //font_data[data_addr] <= cmd_input_val;
+                       font_data_wr_addr <= data_addr;
 
                        // advance to next address in the font data memory
                        data_addr <= data_addr + 1;
