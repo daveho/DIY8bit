@@ -10,12 +10,12 @@
 module fontram(input clk,
 
                input rd,
-               input rd_addr[11:0],
-               output reg rd_data[7:0],
+               input [11:0] rd_addr,
+               output reg [7:0] rd_data,
 
                input wr,
-               input wr_addr[11:0],
-               input wr_data[7:0])
+               input [11:0] wr_addr,
+               input [7:0] wr_data);
 
   reg [7:0] font_data[4095:0];
 

@@ -178,7 +178,6 @@ module icevga (input wire nrst_in,
              CMDPROC_PROCESS:
                begin
                  cmdreg_rd <= 1'b0; // finish read
-                 cmdproc_state <= CMDPROC_READY; // ready to get another byte from FIFO
 
                  // process the byte, based on which command is currently active (if any)
                  case (active_cmd)
@@ -205,6 +204,9 @@ module icevga (input wire nrst_in,
                            if (cmd_input_val == 8'h05) // this is the *data* value written by the Arduino
                              debug_led[2] <= 1'b1;
                          end
+
+                       // ready to get another byte from FIFO
+                       cmdproc_state <= CMDPROC_READY;
                      end
 
                    CMD_PIXDATA:
@@ -222,13 +224,13 @@ module icevga (input wire nrst_in,
                        // put the byte in the next location in the font data memory
                        //font_data[data_addr] <= cmd_input_val;
                        font_data_wr_addr <= data_addr;
+                       font_data_wr <= 1'b1;
 
                        // advance to next address in the font data memory
                        data_addr <= data_addr + 1;
 
-                       // check whether all font data has been loaded
-                       if (data_addr == 12'd4095)
-                         active_cmd <= CMD_NONE;
+                       // write will finish on next clock cycle
+                       cmdproc_state <= CMDPROC_END_FONT_WR;
                      end
 
                    CMD_LOAD_CHDATA:
@@ -242,18 +244,23 @@ module icevga (input wire nrst_in,
                        // check whether all character data has been loaded
                        if (data_addr[8:0] == 9'd511)
                          active_cmd <= CMD_NONE;
-                     end
 
-                   // TODO: other commands
-/*
-                   default:
-                     begin
-                       debug_led[2] <= 1'b1;
+                       // check whether all font data has been loaded,
+                       // if so, we can continue processing other commands
+                       if (data_addr == 12'd4095)
+                         active_cmd <= CMD_NONE;
                      end
-*/
 
                  endcase
 
+               end
+
+             CMDPROC_END_FONT_WR:
+               begin
+                 font_data_wr <= 1'b0;
+
+                 // ready to get another byte from FIFO
+                 cmdproc_state <= CMDPROC_READY;
                end
 
           endcase
@@ -499,16 +506,31 @@ module icevga (input wire nrst_in,
         begin
           if (ch_needed & hcount[2:0] == 3'b001)
             begin
-              // even though the character data has enough room for 5 lines,
-              // just address it as 4 sequences of 128 characters (with only
-              // the first 100 in each sequence displayed as a line)
-              ch_val <= ch_data[ { ch_row[1:0], ch_col } ];
+              // initiate read of character data
+/*
+              ch_data_rd_addr <= { ch_row[1:0], ch_col };
+              ch_data_rd <= 1'b1;
+*/
             end
+
           if (ch_needed & hcount[2:0] == 3'b010)
             begin
-              // select the font data based on the character and
-              // which pixel row within the character is being generated
-              ch_pixel_data <= font_data[ { ch_val, vcount[3:0] } ];
+/*
+              // complete read of character data
+              ch_data_rd <= 1'b0;
+*/
+              // initiate read of font pixel data
+              font_data_rd_addr <= { ch_val, vcount[3:0] }; // TODO: use ch_read_rd_data
+              font_data_rd <= 1'b1;
+            end
+
+          if (ch_needed & hcount[2:0] == 3'b011)
+            begin
+              // complete read of font pixel data
+              font_data_rd <= 1'b0;
+
+              // communicate the pixel data to the pixel generator
+              ch_pixel_data <= font_data_rd_data;
             end
         end
     end
