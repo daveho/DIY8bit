@@ -96,8 +96,6 @@ module icevga (input wire nrst_in,
   // Font data
   ////////////////////////////////////////////////////////////////////////
 
-  //reg [7:0] font_data[4095:0]; // hopefully this gets inferred as block RAM!
-
   reg font_data_rd;
   reg [11:0] font_data_rd_addr;
   wire [7:0] font_data_rd_data;
@@ -120,7 +118,22 @@ module icevga (input wire nrst_in,
 
   // for now, just store 512 characters of character data;
   // this would be sufficient for 5 lines of text (in 100x37 text mode)
-  reg [7:0] ch_data[511:0];
+
+  reg ch_data_rd;
+  reg [8:0] ch_data_rd_addr;
+  wire [7:0] ch_data_rd_data;
+
+  reg ch_data_wr;
+  reg [8:0] ch_data_wr_addr;
+  reg [7:0] ch_data_wr_data;
+
+  charram ch_data(.clk(clk),
+                  .rd(ch_data_rd),
+                  .rd_addr(ch_data_rd_addr),
+                  .rd_data(ch_data_rd_data),
+                  .wr(ch_data_wr),
+                  .wr_addr(ch_data_wr_addr),
+                  .wr_data(ch_data_wr_data));
 
   ////////////////////////////////////////////////////////////////////////
   // Process commands read from FIFO
@@ -134,6 +147,7 @@ module icevga (input wire nrst_in,
   parameter CMDPROC_READY       = 2'b00;
   parameter CMDPROC_PROCESS     = 2'b01;
   parameter CMDPROC_END_FONT_WR = 2'b10;
+  parameter CMDPROC_END_CH_WR   = 2'b11;
 
   reg [7:0] cmd_input_val; // most recent byte of input data from FIFO
   reg [7:0] active_cmd;    // what the active command is
@@ -155,6 +169,10 @@ module icevga (input wire nrst_in,
           font_data_wr_addr <= 12'd0;
           font_data_wr <= 1'b0;
           font_data_wr_data <= 8'd0;
+
+          ch_data_wr_addr <= 9'd0;
+          ch_data_wr <= 1'b0;
+          ch_data_wr_data <= 8'd0;
 
           debug_led[0] <= 1'b0;
           debug_led[1] <= 1'b0;
@@ -222,8 +240,8 @@ module icevga (input wire nrst_in,
                    CMD_LOAD_FONT:
                      begin
                        // put the byte in the next location in the font data memory
-                       //font_data[data_addr] <= cmd_input_val;
                        font_data_wr_addr <= data_addr;
+                       font_data_wr_data <= cmd_input_val;
                        font_data_wr <= 1'b1;
 
                        // advance to next address in the font data memory
@@ -231,23 +249,28 @@ module icevga (input wire nrst_in,
 
                        // write will finish on next clock cycle
                        cmdproc_state <= CMDPROC_END_FONT_WR;
+
+                       // check whether all font data has been loaded,
+                       // if so, we can continue processing other commands
+                       if (data_addr == 12'd4095)
+                         active_cmd <= CMD_NONE;
                      end
 
                    CMD_LOAD_CHDATA:
                      begin
                        // put the byte in the next location in the character memory
-                       ch_data[data_addr[8:0]] <= cmd_input_val;
+                       ch_data_wr_addr <= data_addr[8:0];
+                       ch_data_wr_data <= cmd_input_val;
+                       ch_data_wr <= 1'b1;
 
                        // advance to next address in the character data memory
                        data_addr <= data_addr + 1;
 
+                       // write will finish on next clock cycle
+                       cmdproc_state <= CMDPROC_END_CH_WR;
+
                        // check whether all character data has been loaded
                        if (data_addr[8:0] == 9'd511)
-                         active_cmd <= CMD_NONE;
-
-                       // check whether all font data has been loaded,
-                       // if so, we can continue processing other commands
-                       if (data_addr == 12'd4095)
                          active_cmd <= CMD_NONE;
                      end
 
@@ -257,7 +280,17 @@ module icevga (input wire nrst_in,
 
              CMDPROC_END_FONT_WR:
                begin
+                 // finish writing byte of font data
                  font_data_wr <= 1'b0;
+
+                 // ready to get another byte from FIFO
+                 cmdproc_state <= CMDPROC_READY;
+               end
+
+             CMDPROC_END_CH_WR:
+               begin
+                 // finsh writing byte of character data
+                 ch_data_wr <= 1'b0;
 
                  // ready to get another byte from FIFO
                  cmdproc_state <= CMDPROC_READY;
@@ -493,34 +526,32 @@ module icevga (input wire nrst_in,
   // Character generator
   ////////////////////////////////////////////////////////////////////////
 
-  reg [7:0] ch_val;
-
   always @(posedge clk)
     begin
       if (nrst == RESET_ASSERTED)
         begin
           ch_pixel_data <= 8'd0;
-          ch_val <= 8'd0;
+          font_data_rd <= 1'b0;
+          font_data_rd_addr <= 11'b0;
+          ch_data_rd <= 1'b0;
+          ch_data_rd_addr <= 9'd0;
         end
       else
         begin
           if (ch_needed & hcount[2:0] == 3'b001)
             begin
               // initiate read of character data
-/*
               ch_data_rd_addr <= { ch_row[1:0], ch_col };
               ch_data_rd <= 1'b1;
-*/
             end
 
           if (ch_needed & hcount[2:0] == 3'b010)
             begin
-/*
               // complete read of character data
               ch_data_rd <= 1'b0;
-*/
+
               // initiate read of font pixel data
-              font_data_rd_addr <= { ch_val, vcount[3:0] }; // TODO: use ch_read_rd_data
+              font_data_rd_addr <= { ch_data_rd_data, vcount[3:0] };
               font_data_rd <= 1'b1;
             end
 
