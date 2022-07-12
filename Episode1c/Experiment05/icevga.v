@@ -218,9 +218,11 @@ module icevga (input wire nrst_in,
                            active_cmd <= CMD_NONE;
                            debug_led[0] <= 1'b1;
                            debug_led[1] <= 1'b0;
+/*
                            //debug_led[2] <= 1'b0;
                            if (cmd_input_val == 8'h05) // this is the *data* value written by the Arduino
                              debug_led[2] <= 1'b1;
+*/
                          end
 
                        // ready to get another byte from FIFO
