@@ -104,9 +104,9 @@ module icevga (input wire nrst_in,
                 end
               else
                 begin
-                  red <= 4'd0;
+                  red <= 4'd3;
                   green <= 4'd0;
-                  blue <= 4'd15;
+                  blue <= 4'd8;
                 end
             end
           else

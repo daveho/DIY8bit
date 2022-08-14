@@ -17,7 +17,7 @@ module syncgen2(input clk,                 // 40 MHz dot clock input
   // my monitor
   delay hsync_delay(.clk(clk), .in(hsync_internal), .out(hsync));
 
-  reg [15:0] vcount_internal;
+  reg [15:0] vcount_internal, vcount_delay;
 
   always @(posedge clk)
     begin
@@ -31,6 +31,7 @@ module syncgen2(input clk,                 // 40 MHz dot clock input
           vcount <= 16'd0;
 
           vcount_internal <= V_BACK_PORCH_END - 1;
+          vcount_delay <= V_FRONT_PORCH_END;
 
           vis <= 1'b1;
         end
@@ -65,7 +66,8 @@ module syncgen2(input clk,                 // 40 MHz dot clock input
 
               // I'm not sure exactly why this hack is necessary, but
               // it seems to work
-              vcount <= vcount_internal - 16'd1;
+              vcount <= vcount_delay;
+              vcount_delay <= vcount_internal;
 
               // update vcount_internal and vsync
               if (vcount_internal == V_VISIBLE_END)
