@@ -2,6 +2,9 @@
 
 // Experiment 6: try to fix the bugs in the experiment 5 design that
 // caused the characters to not appear in the correct positions.
+// Note that we're not actually trying to generate characters,
+// we're just trying to get hcount and vcount to accurately reflect
+// the placement of pixels on the display.
 
 module icevga (input wire nrst_in,
                input wire [7:0] disp_cmd_in, // command data from FIFO
