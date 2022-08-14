@@ -302,71 +302,23 @@ module icevga (input wire nrst_in,
         end
     end
 
-/*
   ////////////////////////////////////////////////////////////////////////
-  // Horizontal timings and sync generation
+  // Horizontal and vertical count and sync generation
   ////////////////////////////////////////////////////////////////////////
-
-  parameter H_VISIBLE_END       = 16'd799;
-  parameter H_FRONT_PORCH_END   = 16'd839;
-  parameter H_SYNC_PULSE_END    = 16'd967;
-  parameter H_BACK_PORCH_END    = 16'd1055;
-
-  wire [15:0] hcount;
-  wire hvis;
-
-  syncgen hsync_gen(clk,
-                    nrst,
-                    1'b1,
-                    hcount,
-                    hsync,
-                    hvis,
-                    H_VISIBLE_END,
-                    H_FRONT_PORCH_END,
-                    H_SYNC_PULSE_END,
-                    H_BACK_PORCH_END);
-
-  ////////////////////////////////////////////////////////////////////////
-  // Vertical timings and sync generation
-  ////////////////////////////////////////////////////////////////////////
-
-  parameter V_VISIBLE_END     = 16'd599;
-  parameter V_FRONT_PORCH_END = 16'd600;
-  parameter V_SYNC_PULSE_END  = 16'd604;
-  parameter V_BACK_PORCH_END  = 16'd627;
-
-  wire [15:0] vcount;
-  wire vvis;
-
-  syncgen vsync_gen(clk,
-                    nrst,
-                    (hcount == H_BACK_PORCH_END),
-                    vcount,
-                    vsync,
-                    vvis,
-                    V_VISIBLE_END,
-                    V_FRONT_PORCH_END,
-                    V_SYNC_PULSE_END,
-                    V_BACK_PORCH_END);
-*/
 
   `include "timing.vh"
-
-  ////////////////////////////////////////////////////////////////////////
-  // Sync generation
-  ////////////////////////////////////////////////////////////////////////
 
   wire [15:0] hcount;
   wire [15:0] vcount;
   wire vis;
 
-  syncgen2 hv_sync_gen(clk,
-                       nrst,
-                       hcount,
-                       hsync,
-                       vcount,
-                       vsync,
-                       vis);
+  syncgen2 hv_sync_gen(.clk(clk),
+                       .nrst(nrst),
+                       .hcount(hcount),
+                       .hsync(hsync),
+                       .vcount(vcount),
+                       .vsync(vsync),
+                       .vis(vis));
 
   ////////////////////////////////////////////////////////////////////////
   // Pixel color generation
@@ -430,7 +382,7 @@ module icevga (input wire nrst_in,
                 PIXGEN_VIS:
                   begin
 
-                    if (hcount == H_VISIBLE_END)
+                    if (hcount == H_VISIBLE_END+1)
                       begin
                         // reached end of visible part of line
                         pixgen_state <= PIXGEN_LINE_END;
@@ -456,10 +408,10 @@ module icevga (input wire nrst_in,
                         // In visible part of line
 
                         // For now, just generate fixed foreground/background colors
-                        if (/*vcount[3:0] == 4'b0000*/ vcount == 16'd0)
+                        if (ch_row == 8'd0 & ch_col == 8'd0 & hcount[2:0] == 3'b0)
                           begin
-                            red <= 4'd0;
-                            green <= 4'd15;
+                            red <= 4'd15;
+                            green <= 4'd0;
                             blue <= 4'd0;
                           end
                         else if (hcount == 16'd0)
@@ -467,6 +419,12 @@ module icevga (input wire nrst_in,
                             red <= 4'd15;
                             green <= 4'd0;
                             blue <= 4'd15;
+                          end
+                        else if (/*vcount[3:0] == 4'b0000*/ vcount == 16'd0)
+                          begin
+                            red <= 4'd0;
+                            green <= 4'd15;
+                            blue <= 4'd0;
                           end
                         else if (pixgen[7])
                           begin
@@ -505,7 +463,7 @@ module icevga (input wire nrst_in,
 
                 PIXGEN_LINE_END:
                   begin
-                    if (hcount == (H_BACK_PORCH_END - 8) & vcount < 592)
+                    if (hcount == (H_BACK_PORCH_END - 16) & vcount < 592)
                       begin
                         // it's time to start rendering the next row of character
                         // pixel data
@@ -532,7 +490,7 @@ module icevga (input wire nrst_in,
 
                 PIXGEN_FRAME_END:
                   begin
-                    if (hcount == (H_BACK_PORCH_END - 8) & vcount == V_BACK_PORCH_END)
+                    if (hcount == (H_BACK_PORCH_END - 16) & vcount == V_BACK_PORCH_END)
                       begin
                         // it's time to start rendering the next row of character
                         // pixel data
@@ -574,30 +532,33 @@ module icevga (input wire nrst_in,
         end
       else
         begin
-          if (ch_needed & hcount[2:0] == 3'b001)
+          if (ch_needed)
             begin
-              // initiate read of character data
-              ch_data_rd_addr <= { ch_row[1:0], ch_col[6:0] };
-              ch_data_rd <= 1'b1;
-            end
+              if (hcount[2:0] == 3'b001)
+                begin
+                  // initiate read of character data
+                  ch_data_rd_addr <= { ch_row[1:0], ch_col[6:0] };
+                  ch_data_rd <= 1'b1;
+                end
 
-          if (ch_needed & hcount[2:0] == 3'b011)
-            begin
-              // complete read of character data
-              ch_data_rd <= 1'b0;
+              else if (hcount[2:0] == 3'b011)
+                begin
+                  // complete read of character data
+                  ch_data_rd <= 1'b0;
 
-              // initiate read of font pixel data
-              font_data_rd_addr <= { ch_data_rd_data, vcount[3:0] };
-              font_data_rd <= 1'b1;
-            end
+                  // initiate read of font pixel data
+                  font_data_rd_addr <= { ch_data_rd_data, vcount[3:0] };
+                  font_data_rd <= 1'b1;
+                end
 
-          if (ch_needed & hcount[2:0] == 3'b100)
-            begin
-              // complete read of font pixel data
-              font_data_rd <= 1'b0;
+              else if (hcount[2:0] == 3'b101)
+                begin
+                  // complete read of font pixel data
+                  font_data_rd <= 1'b0;
 
-              // communicate the pixel data to the pixel generator
-              ch_pixel_data <= font_data_rd_data;
+                  // communicate the pixel data to the pixel generator
+                  ch_pixel_data <= font_data_rd_data;
+                end
             end
         end
     end
