@@ -530,8 +530,6 @@ module icevga (input wire nrst_in,
   // Character generator
   ////////////////////////////////////////////////////////////////////////
 
-  reg [8:0] ch_data_rd_addr_tmp;
-
   always @(posedge clk)
     begin
       if (nrst == RESET_ASSERTED)
@@ -541,7 +539,6 @@ module icevga (input wire nrst_in,
           font_data_rd_addr <= 11'b0;
           ch_data_rd <= 1'b0;
           ch_data_rd_addr <= 9'd0;
-          ch_data_rd_addr_tmp <= 9'd0;
         end
       else
         begin

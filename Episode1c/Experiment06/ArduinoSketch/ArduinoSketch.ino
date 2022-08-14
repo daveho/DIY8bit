@@ -46,6 +46,8 @@ uint8_t red, green, blue;
 // this is defined in vga_font.ino
 extern const PROGMEM uint8_t font_data[];
 
+const PROGMEM char MESSAGE[] = "All your base are belong to us. ";
+
 ////////////////////////////////////////////////////////////////////////
 // Functions
 ////////////////////////////////////////////////////////////////////////
@@ -85,9 +87,19 @@ void setup() {
 
   writeToFIFO(CMD_LOAD_CHDATA);
 
-  for (uint16_t i = 0; i < 512; i++) {
+  for (uint16_t i = 0; i < 256; i++) {
     delayMicroseconds(10);
     writeToFIFO((uint8_t) i); // just generate all of the character codes
+  }
+
+  uint16_t count = 0;
+  for (uint16_t i = 0; i < 256; i++) {
+    delayMicroseconds(10);
+    writeToFIFO(pgm_read_byte_near(MESSAGE + count));
+    if (count == 31)
+      count = 0;
+    else
+      count++;
   }
 }
 
