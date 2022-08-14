@@ -1,4 +1,4 @@
-// Episode 1C, Experiment 04 Arduino sketch
+// Episode 1C, Experiment 05 Arduino sketch
 
 // Send font and character data to the display controller
 
