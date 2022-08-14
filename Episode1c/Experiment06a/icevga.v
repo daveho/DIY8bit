@@ -87,7 +87,8 @@ module icevga (input wire nrst_in,
           // output pixels and whatnot
           if (vis)
             begin
-              if (vcount[3:0] == 4'b0000)
+              //if (vcount[3:0] == 4'b0000)
+              if (vcount[3:0] == 4'd2)
                 begin
                   red <= 4'd0;
                   green <= 4'd15;
