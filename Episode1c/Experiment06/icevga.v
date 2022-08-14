@@ -302,6 +302,7 @@ module icevga (input wire nrst_in,
         end
     end
 
+/*
   ////////////////////////////////////////////////////////////////////////
   // Horizontal timings and sync generation
   ////////////////////////////////////////////////////////////////////////
@@ -347,6 +348,25 @@ module icevga (input wire nrst_in,
                     V_FRONT_PORCH_END,
                     V_SYNC_PULSE_END,
                     V_BACK_PORCH_END);
+*/
+
+  `include "timing.vh"
+
+  ////////////////////////////////////////////////////////////////////////
+  // Sync generation
+  ////////////////////////////////////////////////////////////////////////
+
+  wire [15:0] hcount;
+  wire [15:0] vcount;
+  wire vis;
+
+  syncgen2 hv_sync_gen(clk,
+                       nrst,
+                       hcount,
+                       hsync,
+                       vcount,
+                       vsync,
+                       vis);
 
   ////////////////////////////////////////////////////////////////////////
   // Pixel color generation
