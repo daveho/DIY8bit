@@ -13,7 +13,11 @@ module syncgen2(input clk,                 // 40 MHz dot clock input
 
   reg hsync_internal;
 
+  // This hack seems to get horizontal placement correct on
+  // my monitor
   delay hsync_delay(.clk(clk), .in(hsync_internal), .out(hsync));
+
+  reg [15:0] vcount_internal;
 
   always @(posedge clk)
     begin
@@ -25,6 +29,8 @@ module syncgen2(input clk,                 // 40 MHz dot clock input
 
           hcount <= 16'd0;
           vcount <= 16'd0;
+
+          vcount_internal <= V_BACK_PORCH_END - 1;
 
           vis <= 1'b1;
         end
@@ -57,37 +63,41 @@ module syncgen2(input clk,                 // 40 MHz dot clock input
               // new horizontal line begins
               hcount <= 16'd0;
 
-              // update vcount and vsync
-              if (vcount == V_VISIBLE_END)
+              // I'm not sure exactly why this hack is necessary, but
+              // it seems to work
+              vcount <= vcount_internal - 16'd1;
+
+              // update vcount_internal and vsync
+              if (vcount_internal == V_VISIBLE_END)
                 begin
-                  vcount <= vcount + 1;
+                  vcount_internal <= vcount_internal + 1;
                 end
 
-              else if (vcount == V_FRONT_PORCH_END)
+              else if (vcount_internal == V_FRONT_PORCH_END)
                 begin
                   // begin vsync pulse
                   vsync <= 1'b1;
-                  vcount <= vcount + 1;
+                  vcount_internal <= vcount_internal + 1;
                 end
 
-              else if (vcount == V_SYNC_PULSE_END)
+              else if (vcount_internal == V_SYNC_PULSE_END)
                 begin
                   // end vsync pulse
                   vsync <= 1'b0;
-                  vcount <= vcount + 1;
+                  vcount_internal <= vcount_internal + 1;
                 end
 
-              else if (vcount == V_BACK_PORCH_END)
+              else if (vcount_internal == V_BACK_PORCH_END)
                 begin
                   // frame ends
-                  vcount <= 16'd0;
+                  vcount_internal <= 16'd0;
                   vis <= 1'b1;
                 end
 
               else
                 begin
                   // move on to next line in visible region
-                  vcount <= vcount + 1;
+                  vcount_internal <= vcount_internal + 1;
                   vis <= 1'b1;
                 end
 
