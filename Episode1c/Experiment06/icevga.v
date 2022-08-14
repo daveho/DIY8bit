@@ -343,13 +343,6 @@ module icevga (input wire nrst_in,
   localparam PIXGEN_LINE_END  = 2'b01; // past end of visible part of line
   localparam PIXGEN_FRAME_END = 2'b10; // past end of visible part of frame
 
-  // row and column of next character to render
-  reg [7:0] ch_row;
-  reg [7:0] ch_col;
-
-  // true when we need to generate a character
-  reg ch_needed;
-
   // character pixel data to generate next
   reg [7:0] ch_pixel_data;
 
@@ -365,15 +358,6 @@ module icevga (input wire nrst_in,
           pixcount <= 3'd0;
 
           pixgen_state <= PIXGEN_VIS;
-
-          // The first character to render will actually be in column 1,
-          // because we IMMEDIATELY start generating a frame once out of
-          // reset, so the first 8 pixels of the first row can't be
-          // generated propertly. Not really a big deal.
-          ch_row <= 8'd0;
-          ch_col <= 8'd1;
-
-          ch_needed <= 1'b1;
         end
       else
         begin
@@ -390,43 +374,13 @@ module icevga (input wire nrst_in,
                         green <= 4'h0;
                         blue <= 4'h0;
                         pixcount <= 3'd0;
-
-                        // next character column to generate will be 0
-                        ch_col <= 8'd0;
-
-                        // advance to next character row if we've generated all 16
-                        // rows of pixels for the current row
-                        if (vcount[3:0] == 4'b1111)
-                          ch_row <= ch_row + 1;
-
-                        // we won't need character pixel data until just
-                        // before the beginning of the next row
-                        ch_needed <= 1'b0;
                       end
                     else
                       begin
                         // In visible part of line
 
                         // For now, just generate fixed foreground/background colors
-                        if (ch_row == 8'd0 & ch_col == 8'd0 & hcount[2:0] == 3'b0)
-                          begin
-                            red <= 4'd15;
-                            green <= 4'd0;
-                            blue <= 4'd0;
-                          end
-                        else if (hcount == 16'd0)
-                          begin
-                            red <= 4'd15;
-                            green <= 4'd0;
-                            blue <= 4'd15;
-                          end
-                        else if (/*vcount[3:0] == 4'b0000*/ vcount == 16'd0)
-                          begin
-                            red <= 4'd0;
-                            green <= 4'd15;
-                            blue <= 4'd0;
-                          end
-                        else if (pixgen[7])
+                        if (pixgen[7])
                           begin
                             // display foreground color
                             red <= FG_RED;
@@ -448,9 +402,6 @@ module icevga (input wire nrst_in,
                             // fetch the next 8 pixels
                             pixgen <= ch_pixel_data;
                             pixcount <= 3'd0;
-
-                            // advance to the next character column
-                            ch_col <= ch_col + 1;
                           end
                         else
                           begin
@@ -463,12 +414,6 @@ module icevga (input wire nrst_in,
 
                 PIXGEN_LINE_END:
                   begin
-                    if (hcount == (H_BACK_PORCH_END - 16) & vcount < 592)
-                      begin
-                        // it's time to start rendering the next row of character
-                        // pixel data
-                        ch_needed <= 1'b1;
-                      end
                     if (hcount == H_BACK_PORCH_END)
                       begin
                         if (vcount == V_VISIBLE_END)
@@ -490,15 +435,6 @@ module icevga (input wire nrst_in,
 
                 PIXGEN_FRAME_END:
                   begin
-                    if (hcount == (H_BACK_PORCH_END - 16) & vcount == V_BACK_PORCH_END)
-                      begin
-                        // it's time to start rendering the next row of character
-                        // pixel data
-                        ch_needed <= 1'b1;
-                        ch_col <= 8'd0;
-                        ch_row <= 8'd0;
-                      end
-
                     if (hcount == H_BACK_PORCH_END & vcount == V_BACK_PORCH_END)
                       begin
                         // reached end of frame, next tick will be the
@@ -520,10 +456,16 @@ module icevga (input wire nrst_in,
   // Character generator
   ////////////////////////////////////////////////////////////////////////
 
+  reg [7:0] ch_col;
+  reg [7:0] ch_row;
+
   always @(posedge clk)
     begin
       if (nrst == RESET_ASSERTED)
         begin
+          ch_row <= 8'd0;
+          ch_col <= 8'd1;
+
           ch_pixel_data <= 8'd0;
           font_data_rd <= 1'b0;
           font_data_rd_addr <= 11'b0;
@@ -532,33 +474,39 @@ module icevga (input wire nrst_in,
         end
       else
         begin
-          if (ch_needed)
+          if (hcount == H_BACK_PORCH_END - 8)
             begin
-              if (hcount[2:0] == 3'b001)
-                begin
-                  // initiate read of character data
-                  ch_data_rd_addr <= { ch_row[1:0], ch_col[6:0] };
-                  ch_data_rd <= 1'b1;
-                end
+              // get ready to generate pixels for another row of characters
+              ch_col <= 8'd0;
+              ch_row <= vcount[11:4];
+            end
+          else if (hcount[2:0] == 3'b001)
+            begin
+              // initiate read of character data
+              ch_data_rd_addr <= { ch_row[1:0], ch_col[6:0] };
+              ch_data_rd <= 1'b1;
+            end
 
-              else if (hcount[2:0] == 3'b011)
-                begin
-                  // complete read of character data
-                  ch_data_rd <= 1'b0;
+          else if (hcount[2:0] == 3'b011)
+            begin
+              // complete read of character data
+              ch_data_rd <= 1'b0;
 
-                  // initiate read of font pixel data
-                  font_data_rd_addr <= { ch_data_rd_data, vcount[3:0] };
-                  font_data_rd <= 1'b1;
-                end
+              // initiate read of font pixel data
+              font_data_rd_addr <= { ch_data_rd_data, vcount[3:0] };
+              font_data_rd <= 1'b1;
+            end
 
-              else if (hcount[2:0] == 3'b101)
-                begin
-                  // complete read of font pixel data
-                  font_data_rd <= 1'b0;
+          else if (hcount[2:0] == 3'b101)
+            begin
+              // complete read of font pixel data
+              font_data_rd <= 1'b0;
 
-                  // communicate the pixel data to the pixel generator
-                  ch_pixel_data <= font_data_rd_data;
-                end
+              // communicate the pixel data to the pixel generator
+              ch_pixel_data <= font_data_rd_data;
+
+              // advance ch_col
+              ch_col <= ch_col + 1;
             end
         end
     end
