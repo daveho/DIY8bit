@@ -13,20 +13,19 @@ module syncgen2(input clk,                 // 40 MHz dot clock input
 
   // We want hsync and vsync to "lag" by one clock.
   // That way, the pixel-generation code can look at hcount and
-  // vcount as an accurate representation of which pixel will
+  // vcount_internal as an accurate representation of which pixel will
   // be generated *next*. The hsync_next and vsync_next values
-  // are computed based on the current hcount and vcount,
+  // are computed based on the current hcount and vcount_internal,
   // and then copied to hsync and vsync on the next clock.
   // Similarly, vis can be taken as indicating whether the
   // next clock is a pixel in the visible region.
   reg hsync_next;
   reg vsync_next;
 
+  reg [15:0] vcount_internal;
+
   always @(posedge clk)
     begin
-      hsync <= hsync_next;
-      vsync <= vsync_next;
-
       if (nrst == 1'b0)
         begin
           // reset asserted
@@ -37,7 +36,9 @@ module syncgen2(input clk,                 // 40 MHz dot clock input
           hsync <= 1'b0;
           vsync <= 1'b0;
 
-          hcount <= 16'd0;
+          hcount <= 16'd2;
+
+          vcount_internal <= 16'd1;
           vcount <= 16'd0;
 
           vis <= 1'b1;
@@ -45,6 +46,16 @@ module syncgen2(input clk,                 // 40 MHz dot clock input
 
       else
         begin
+          hsync <= hsync_next;
+          vsync <= vsync_next;
+
+/*
+          if (vcount_internal == 16'd0)
+            vcount <= V_BACK_PORCH_END;
+          else
+            vcount <= vcount_internal - 1;
+*/
+
           if (hcount == H_VISIBLE_END)
             begin
               // visible part of line ends
@@ -70,36 +81,39 @@ module syncgen2(input clk,                 // 40 MHz dot clock input
               // new horizontal line begins
               hcount <= 16'd0;
 
-              // update vcount and vsync
-              if (vcount == V_VISIBLE_END)
+              // vcount lags vcount_internal on update
+              vcount <= vcount_internal;
+
+              // update vcount_internal and vsync
+              if (vcount_internal == V_VISIBLE_END)
                 begin
-                  vcount <= vcount + 1;
+                  vcount_internal <= vcount_internal + 1;
                 end
 
-              else if (vcount == V_FRONT_PORCH_END)
+              else if (vcount_internal == V_FRONT_PORCH_END)
                 begin
                   // begin vsync pulse
                   vsync_next <= 1'b1;
-                  vcount <= vcount + 1;
+                  vcount_internal <= vcount_internal + 1;
                 end
 
-              else if (vcount == V_SYNC_PULSE_END)
+              else if (vcount_internal == V_SYNC_PULSE_END)
                 begin
                   // end vsync pulse
                   vsync_next <= 1'b0;
-                  vcount <= vcount + 1;
+                  vcount_internal <= vcount_internal + 1;
                 end
 
-              else if (vcount == V_BACK_PORCH_END)
+              else if (vcount_internal == V_BACK_PORCH_END)
                 begin
                   // frame ends
-                  vcount <= 16'd0;
+                  vcount_internal <= 16'd0;
                 end
 
               else
                 begin
                   // move on to next line in visible region
-                  vcount <= vcount + 1;
+                  vcount_internal <= vcount_internal + 1;
                 end
 
             end

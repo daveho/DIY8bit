@@ -456,13 +456,13 @@ module icevga (input wire nrst_in,
                         // In visible part of line
 
                         // For now, just generate fixed foreground/background colors
-                        if (vcount[3:0] == 4'b0000)
+                        if (/*vcount[3:0] == 4'b0000*/ vcount == 16'd0)
                           begin
                             red <= 4'd0;
                             green <= 4'd15;
                             blue <= 4'd0;
                           end
-                        else if (hcount[2:0] == 3'b000)
+                        else if (hcount == 16'd0)
                           begin
                             red <= 4'd15;
                             green <= 4'd0;
