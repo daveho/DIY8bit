@@ -436,7 +436,13 @@ module icevga (input wire nrst_in,
                         // In visible part of line
 
                         // For now, just generate fixed foreground/background colors
-                        if (pixgen[7])
+                        if (vcount[3:0] == 4'b0000)
+                          begin
+                            red <= 4'd0;
+                            green <= 4'd15;
+                            blue <= 4'd0;
+                          end
+                        else if (pixgen[7])
                           begin
                             // display foreground color
                             red <= FG_RED;
@@ -492,7 +498,7 @@ module icevga (input wire nrst_in,
                             pixgen_state <= PIXGEN_VIS;
 
                             // Read the next block of 8 pixels
-                            pixgen <= (pixreg | ch_pixel_data);
+                            pixgen <=  ch_pixel_data;
                             pixcount <= 3'd0;
                           end
                       end
@@ -517,7 +523,7 @@ module icevga (input wire nrst_in,
 
                         // Read first block of 8 pixels, and prepare to read the
                         // second block of 8 pixels
-                        pixgen <= (pixreg | ch_pixel_data);
+                        pixgen <= ch_pixel_data;
                         pixcount <= 3'd0;
                       end
                   end
