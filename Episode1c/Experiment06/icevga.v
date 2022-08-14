@@ -478,7 +478,10 @@ module icevga (input wire nrst_in,
             begin
               // get ready to generate pixels for another row of characters
               ch_col <= 8'd0;
-              ch_row <= vcount[11:4];
+              if (vcount == V_BACK_PORCH_END)
+                ch_row <= 8'd0;
+              else
+                ch_row <= vcount[11:4];
             end
           else if (hcount[2:0] == 3'b001)
             begin
