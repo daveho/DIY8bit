@@ -462,6 +462,12 @@ module icevga (input wire nrst_in,
                             green <= 4'd15;
                             blue <= 4'd0;
                           end
+                        else if (hcount[2:0] == 3'b000)
+                          begin
+                            red <= 4'd15;
+                            green <= 4'd0;
+                            blue <= 4'd15;
+                          end
                         else if (pixgen[7])
                           begin
                             // display foreground color

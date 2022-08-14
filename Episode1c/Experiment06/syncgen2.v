@@ -24,6 +24,8 @@ module syncgen2(input clk,                 // 40 MHz dot clock input
 
   always @(posedge clk)
     begin
+      hsync <= hsync_next;
+      vsync <= vsync_next;
 
       if (nrst == 1'b0)
         begin
@@ -34,10 +36,11 @@ module syncgen2(input clk,                 // 40 MHz dot clock input
 
           hsync <= 1'b0;
           vsync <= 1'b0;
+
           hcount <= 16'd0;
           vcount <= 16'd0;
 
-          vis <= 1'b0; // FIXME
+          vis <= 1'b1;
         end
 
       else
@@ -51,14 +54,14 @@ module syncgen2(input clk,                 // 40 MHz dot clock input
           else if (hcount == H_FRONT_PORCH_END)
             begin
               // begin hsync pulse
-              hsync <= 1'b1;
+              hsync_next <= 1'b1;
               hcount <= hcount + 1;
             end
 
           else if (hcount == H_SYNC_PULSE_END)
             begin
               // end hsync pulse
-              hsync <= 1'b0;
+              hsync_next <= 1'b0;
               hcount <= hcount + 1;
             end
 
@@ -76,14 +79,14 @@ module syncgen2(input clk,                 // 40 MHz dot clock input
               else if (vcount == V_FRONT_PORCH_END)
                 begin
                   // begin vsync pulse
-                  vsync <= 1'b1;
+                  vsync_next <= 1'b1;
                   vcount <= vcount + 1;
                 end
 
               else if (vcount == V_SYNC_PULSE_END)
                 begin
                   // end vsync pulse
-                  vsync <= 1'b0;
+                  vsync_next <= 1'b0;
                   vcount <= vcount + 1;
                 end
 
