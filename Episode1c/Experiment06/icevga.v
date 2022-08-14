@@ -339,7 +339,7 @@ module icevga (input wire nrst_in,
 
   syncgen vsync_gen(clk,
                     nrst,
-                    (hcount == 16'd0),
+                    (hcount == H_BACK_PORCH_END),
                     vcount,
                     vsync,
                     vvis,
