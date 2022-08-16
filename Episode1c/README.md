@@ -1,6 +1,6 @@
 # Episode 1C
 
-Link to video: *coming soon*
+Link to video: <https://youtu.be/Fw6ido_NeqQ>
 
 The goal of this episode is to have the display controller display
 characters as 800x600 SVGA video, with the Arduino (standing in for
