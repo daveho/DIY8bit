@@ -95,16 +95,16 @@ module icevga (input wire nrst_in,
 
   // these are used by the command processor to set the count
   // of available font data words
-  reg [7:0] fontbuf_count_wrdata1;
+  reg [8:0] fontbuf_count_wrdata1;
   reg fontbuf_count_wr1;
 
   // these are used by the character generator to clear the count
   // of available font data words once the data has been loaded
   // into SPRAM
-  reg [7:0] fontbuf_count_wrdata2;
+  reg [8:0] fontbuf_count_wrdata2;
   reg fontbuf_count_wr2;
 
-  wire [7:0] fontbuf_count_value;
+  wire [8:0] fontbuf_count_value;
 
   // shared counter so the command processor and the character
   // generator can communicate about how much data is in the
@@ -187,21 +187,28 @@ module icevga (input wire nrst_in,
   // Process commands read from FIFO
   ////////////////////////////////////////////////////////////////////////
 
+  // command bytes (stored in active_cmd)
   parameter CMD_NONE        = 8'b00000000;
   parameter CMD_LOAD_FONT   = 8'b10000000; // the next 4906 bytes are font data
   parameter CMD_LOAD_CHDATA = 8'b10000010; // the next 512 bytes are character data
 
-  parameter CMDPROC_READY       = 2'b00;
-  parameter CMDPROC_PROCESS     = 2'b01;
-  parameter CMDPROC_END_FONT_WR = 2'b10;
-  parameter CMDPROC_END_CH_WR   = 2'b11;
+  // states receiving and processing bytes (stored in cmdproc_state)
+  parameter CMDPROC_READY            = 3'd0; // ready to receive another data byte from command FIFO
+  parameter CMDPROC_PROCESS          = 3'd1; // process data byte for current command
+  parameter CMDPROC_FONT_STORE_BEGIN = 3'd2; // begin storing word in font load buffer
+  parameter CMDPROC_FONT_STORE_END   = 3'd3; // end storing word in font load buffer
+  parameter CMDPROC_CHDATA_END       = 3'd4; // end processing of received character data
 
   reg [7:0] cmd_input_val; // most recent byte of input data from FIFO
   reg [7:0] active_cmd;    // what the active command is
 
-  reg [1:0] cmdproc_state;
+  reg [2:0] cmdproc_state;
 
   reg [11:0] data_addr;
+
+  // font bytes are received in pairs
+  reg [7:0] font_word_byte1;
+  reg [7:0] font_word_byte2;
 
   always @(posedge clk)
     begin
@@ -273,6 +280,19 @@ module icevga (input wire nrst_in,
 
                    CMD_LOAD_FONT:
                      begin
+                       if (data_addr[0] == 1'b0)
+                         font_word_byte1 <= cmd_input_val;
+                       else
+                         begin
+                           font_word_byte2 <= cmd_input_val;
+                           // now that the second byte of the font word
+                           // has been received, we can put the word in the
+                           // font load buffer
+                           cmdproc_state <= CMDPROC_FONT_STORE_BEGIN;
+                         end
+
+                       data_addr <= data_addr + 1;
+/*
                        // put the byte in the next location in the font data memory
                        font_data_wr_addr <= data_addr;
                        font_data_wr_data <= cmd_input_val;
@@ -288,6 +308,7 @@ module icevga (input wire nrst_in,
                        // if so, we can continue processing other commands
                        if (data_addr == 12'd4095)
                          active_cmd <= CMD_NONE;
+*/
                      end
 
                    CMD_LOAD_CHDATA:
@@ -301,7 +322,7 @@ module icevga (input wire nrst_in,
                        data_addr <= data_addr + 1;
 
                        // write will finish on next clock cycle
-                       cmdproc_state <= CMDPROC_END_CH_WR;
+                       cmdproc_state <= CMDPROC_CHDATA_END;
 
                        // check whether all character data has been loaded
                        if (data_addr[8:0] == 9'd511)
@@ -312,16 +333,48 @@ module icevga (input wire nrst_in,
 
                end
 
-             CMDPROC_END_FONT_WR:
+             CMDPROC_FONT_STORE_BEGIN:
                begin
-                 // finish writing byte of font data
-                 font_data_wr <= 1'b0;
-
-                 // ready to get another byte from FIFO
-                 cmdproc_state <= CMDPROC_READY;
+                 // Only write to the font load buffer if we're sure that the
+                 // character generator is not reading from it! The character
+                 // generator will only check the font buffer if it's *not* in
+                 // the vertical visible region, so if we *are* in the vertical visible
+                 // region but not on the last line, we should be completely safe.
+                 if (vcount < V_VISIBLE_END - 1)
+                   begin
+                     // begin writing the word of font data into the font load buffer
+                     fontbuf_wr <= 1'b1;
+                     fontbuf_wr_addr <= data_addr[7:1];
+                     fontbuf_wr_data <= {font_word_byte1, font_word_byte2};
+                     cmdproc_state <= CMDPROC_FONT_STORE_END;
+                   end
                end
 
-             CMDPROC_END_CH_WR:
+             CMDPROC_FONT_STORE_END:
+               begin
+                 // finish writing font data word to font load buffer
+                 fontbuf_wr <= 1'b0;
+
+                 // ready to receive another byte from FIFO
+                 cmdproc_state <= CMDPROC_READY;
+
+                 // if we've received 512 bytes of font data, then we're
+                 // done with the CMD_LOAD_FONT command; note that we need
+                 // to let the character generator know that there is data
+                 // in the font load buffer
+                 if (data_addr == 12'd512)
+                   begin
+                     // done with the CMD_LOAD_FONT command
+                     active_cmd <= CMD_NONE;
+
+                     // let the character generator know that there is font
+                     // data available
+                     fontbuf_count_wr1 <= 1'b1;
+                     fontbuf_count_wrdata1 <= 9'd256;
+                   end
+               end
+
+             CMDPROC_CHDATA_END:
                begin
                  // finsh writing byte of character data
                  ch_data_wr <= 1'b0;

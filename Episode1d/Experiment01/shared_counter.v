@@ -1,4 +1,4 @@
-// An 8-bit counter that two processes may write to. Note that
+// A 9-bit counter that two processes may write to. Note that
 // if both processes try to write simultaneously, the data
 // written will be the bitwise-OR of the written data,
 // so the processes should have some out-of-band protocol
@@ -7,13 +7,13 @@
 module shared_counter(input clk,
                       input nrst,
 
-                      input [7:0] wrdata1,
+                      input [8:0] wrdata1,
                       input wr1,            // if 1, wrdata1 is stored
 
-                      input [7:0] wrdata2,
+                      input [8:0] wrdata2,
                       input wr2,            // if 1, wrdata2 is stored
 
-                      output reg [7:0] value);
+                      output reg [8:0] value);
 
   wire data1, data2;
 
