@@ -50,6 +50,24 @@ module icevga (input wire nrst_in,
     end
 
   ////////////////////////////////////////////////////////////////////////
+  // Horizontal and vertical count and sync generation
+  ////////////////////////////////////////////////////////////////////////
+
+  `include "timing.vh"
+
+  wire [15:0] hcount;
+  wire [15:0] vcount;
+  wire vis;
+
+  syncgen2 hv_sync_gen(.clk(clk),
+                       .nrst(nrst),
+                       .hcount(hcount),
+                       .hsync(hsync),
+                       .vcount(vcount),
+                       .vsync(vsync),
+                       .vis(vis));
+
+  ////////////////////////////////////////////////////////////////////////
   // Shared register for command data
   ////////////////////////////////////////////////////////////////////////
 
@@ -144,6 +162,7 @@ module icevga (input wire nrst_in,
 
   // FIXME: eventually font data will go in SPRAM
 
+/*
   reg font_data_rd;
   reg [11:0] font_data_rd_addr;
   wire [7:0] font_data_rd_data;
@@ -159,6 +178,27 @@ module icevga (input wire nrst_in,
                     .wr(font_data_wr),
                     .wr_addr(font_data_wr_addr),
                     .wr_data(font_data_wr_data));
+*/
+
+  reg [13:0] font_data_spram_addr;
+  reg [15:0] font_data_spram_wr_data;
+  reg font_data_spram_wren; // 1=write, 0=read
+  reg font_data_spram_cs;
+  wire [15:0] font_data_spram_rd_data;
+
+  wire [3:0] font_data_spram_wr_mask;
+  assign font_data_spram_wr_mask = 4'b1111;
+
+  SB_SPRAM256KA font_data_spram(.ADDRESS(font_data_spram_addr),
+                                .DATAIN(font_data_spram_wr_data),
+                                .MASKWREN(font_data_spram_wr_mask),
+                                .WREN(font_data_spram_wren),
+                                .CHIPSELECT(font_data_spram_cs),
+                                .CLOCK(clk),
+                                .STANDBY(1'b0),
+                                .SLEEP(1'b0),
+                                .POWEROFF(1'b1),
+                                .DATAOUT(font_data_spram_rd_data));
 
   ////////////////////////////////////////////////////////////////////////
   // Character data
@@ -219,9 +259,11 @@ module icevga (input wire nrst_in,
           active_cmd <= CMD_NONE;
           data_addr <= 12'd0;
 
+/*
           font_data_wr_addr <= 12'd0;
           font_data_wr <= 1'b0;
           font_data_wr_data <= 8'd0;
+*/
 
           ch_data_wr_addr <= 9'd0;
           ch_data_wr <= 1'b0;
@@ -280,6 +322,8 @@ module icevga (input wire nrst_in,
 
                    CMD_LOAD_FONT:
                      begin
+                       debug_led[1] <= 1'b1;
+
                        if (data_addr[0] == 1'b0)
                          font_word_byte1 <= cmd_input_val;
                        else
@@ -371,6 +415,8 @@ module icevga (input wire nrst_in,
                      // data available
                      fontbuf_count_wr1 <= 1'b1;
                      fontbuf_count_wrdata1 <= 9'd256;
+
+                     debug_led[1] <= 1'b1;
                    end
                end
 
@@ -386,24 +432,6 @@ module icevga (input wire nrst_in,
           endcase
         end
     end
-
-  ////////////////////////////////////////////////////////////////////////
-  // Horizontal and vertical count and sync generation
-  ////////////////////////////////////////////////////////////////////////
-
-  `include "timing.vh"
-
-  wire [15:0] hcount;
-  wire [15:0] vcount;
-  wire vis;
-
-  syncgen2 hv_sync_gen(.clk(clk),
-                       .nrst(nrst),
-                       .hcount(hcount),
-                       .hsync(hsync),
-                       .vcount(vcount),
-                       .vsync(vsync),
-                       .vis(vis));
 
   ////////////////////////////////////////////////////////////////////////
   // Pixel color generation
@@ -544,6 +572,16 @@ module icevga (input wire nrst_in,
   reg [7:0] ch_col;
   reg [7:0] ch_row;
 
+  reg font_load_active;      // 1 if the character generator is loading font data to SPRAM
+  reg [10:0] font_load_addr; // where to store next font data word in SPRAM
+  reg [8:0] font_load_count; // how many words to load
+  reg [1:0] font_load_state; // state machine for loading font data to SPRAM
+
+  parameter FONT_LOAD_READ_WORD  = 2'b00;
+  parameter FONT_LOAD_WRITE_WORD = 2'b01;
+  parameter FONT_LOAD_NEXT_WORD  = 2'b10;
+  parameter FONT_LOAD_FINISH     = 2'b11;
+
   always @(posedge clk)
     begin
       if (nrst == RESET_ASSERTED)
@@ -552,49 +590,170 @@ module icevga (input wire nrst_in,
           ch_col <= 8'd1;
 
           ch_pixel_data <= 8'd0;
+/*
           font_data_rd <= 1'b0;
           font_data_rd_addr <= 11'b0;
+*/
+
+          font_data_spram_wren <= 1'b0;
+          font_data_spram_cs <= 1'b0;
+          font_data_spram_addr <= 14'd0;
+          font_data_spram_wr_data <= 16'd0;
+
           ch_data_rd <= 1'b0;
           ch_data_rd_addr <= 9'd0;
+
+          font_load_active <= 1'b0;
+          font_load_addr <= 11'd0;
+          font_load_count <= 9'd0;
+          font_load_state <= FONT_LOAD_READ_WORD;
         end
       else
         begin
-          if (hcount == H_BACK_PORCH_END - 8)
+          if (vcount > V_VISIBLE_END & vcount != V_BACK_PORCH_END)
             begin
-              // get ready to generate pixels for another row of characters
-              ch_col <= 8'd0;
-              if (vcount == V_BACK_PORCH_END)
-                ch_row <= 8'd0;
+              // We're not in the vertical visible region, so we can
+              // transfer data from the font load buffer to the
+              // SPRAM if necessary
+
+              if (!font_load_active)
+                begin
+                  if (fontbuf_count_value != 9'd0)
+                    begin
+                      // Font data is available in the font load buffer!
+                      // Prepare to load it.
+                      font_load_active <= 1'b1;
+                      font_load_count <= fontbuf_count_value;
+                      font_load_state <= FONT_LOAD_READ_WORD;
+                      fontbuf_rd_addr <= 8'd0;
+                    end
+                end
+
               else
-                ch_row <= vcount[11:4];
+                begin
+                  // Loading font data
+                  case (font_load_state)
+
+                    FONT_LOAD_READ_WORD:
+                      begin
+                        // read a word from the font load buffer
+                        fontbuf_rd <= 1'b1;
+                        font_load_state <= FONT_LOAD_WRITE_WORD;
+                      end
+
+                    FONT_LOAD_WRITE_WORD:
+                      begin
+                        // finish read from font load buffer,
+                        // begin write to the SPRAM
+                        fontbuf_rd <= 1'b0;
+                        fontbuf_rd_addr <= fontbuf_rd_addr + 1;
+                        font_data_spram_addr <= {3'b000, font_load_addr};
+                        font_data_spram_wr_data <= fontbuf_rd_data;
+                        font_data_spram_wren <= 1'b1;
+                        font_data_spram_cs <= 1'b1;
+                        font_load_count <= font_load_count - 1;
+                        font_load_state <= FONT_LOAD_NEXT_WORD;
+                      end
+
+                    FONT_LOAD_NEXT_WORD:
+                      begin
+                        // finish write to SPRAM, advance to next word
+                        // and check whether we're done
+                        font_data_spram_wren <= 1'b0;
+                        font_data_spram_cs <= 1'b0;
+                        font_load_addr <= font_load_addr + 1;
+
+                        if (font_load_count == 9'd0)
+                          begin
+                            // All of the data has been loaded from the font load buffer
+                            // into the SPRAM. Reset the font buffer available count to 0
+                            // and head to the FONT_LOAD_FINISH state
+                            fontbuf_count_wrdata2 <= 9'd0;
+                            fontbuf_count_wr2 <= 1'b1;
+                            font_load_state <= FONT_LOAD_FINISH;
+                          end
+
+                        else
+                          begin
+                            // There is more data to transfer from the font load buffer
+                            // to the SPRAM. We should actually be able to start the
+                            // read now (since fontbuf_rd_addr should be set to the correct
+                            // value) and jump to the FONT_LOAD_WRITE_WORD state.
+                            fontbuf_rd <= 1'b1;
+                            font_load_state <= FONT_LOAD_WRITE_WORD;
+                          end
+                      end
+
+                    FONT_LOAD_FINISH:
+                      begin
+                        // end write to the font buffer counter
+                        fontbuf_count_wrdata2 <= 1'b0;
+
+                        // it should now be safe to set font_load_active to 0
+                        // (since in theory we've set the load buffer count to 0)
+                        font_load_active <= 1'b0;
+                      end
+
+                  endcase // font_load_state
+                end
             end
-          else if (hcount[2:0] == 3'b001)
+
+          else
+            // in visible region (or on last line of vertical back porch), so
+            // generate character pixel data
+
             begin
-              // initiate read of character data
-              ch_data_rd_addr <= { ch_row[1:0], ch_col[6:0] };
-              ch_data_rd <= 1'b1;
-            end
+              if (hcount == H_BACK_PORCH_END - 8)
+                begin
+                  // get ready to generate pixels for another row of characters
+                  ch_col <= 8'd0;
+                  if (vcount == V_BACK_PORCH_END)
+                    ch_row <= 8'd0;
+                  else
+                    ch_row <= vcount[11:4];
+                end
+              else if (hcount[2:0] == 3'b001)
+                begin
+                  // initiate read of character data
+                  ch_data_rd_addr <= { ch_row[1:0], ch_col[6:0] };
+                  ch_data_rd <= 1'b1;
+                end
 
-          else if (hcount[2:0] == 3'b011)
-            begin
-              // complete read of character data
-              ch_data_rd <= 1'b0;
+              else if (hcount[2:0] == 3'b011)
+                begin
+                  // complete read of character data
+                  ch_data_rd <= 1'b0;
 
-              // initiate read of font pixel data
-              font_data_rd_addr <= { ch_data_rd_data, vcount[3:0] };
-              font_data_rd <= 1'b1;
-            end
+                  // initiate read of font pixel data
+/*
+                  font_data_rd_addr <= { ch_data_rd_data, vcount[3:0] };
+                  font_data_rd <= 1'b1;
+*/
+                  // note that we're addressing a 16 bit word of font
+                  // data here, so we don't use the low bit of vcount
+                  // in the address
+                  font_data_spram_addr <= { 3'b000, ch_data_rd_data, vcount[3:1] };
+                  font_data_spram_wren <= 1'b0;
+                  font_data_spram_cs <= 1'b1;
+                end
 
-          else if (hcount[2:0] == 3'b101)
-            begin
-              // complete read of font pixel data
-              font_data_rd <= 1'b0;
+              else if (hcount[2:0] == 3'b101)
+                begin
+                  // complete read of font pixel data
+/*
+                  font_data_rd <= 1'b0;
+*/
+                  font_data_spram_cs <= 1'b0;
 
-              // communicate the pixel data to the pixel generator
-              ch_pixel_data <= font_data_rd_data;
+                  // communicate the pixel data to the pixel generator
+                  if (vcount[0] == 1'b0)
+                    ch_pixel_data <= font_data_spram_rd_data[7:0];
+                  else
+                    ch_pixel_data <= font_data_spram_rd_data[15:8];
 
-              // advance ch_col
-              ch_col <= ch_col + 1;
+                  // advance ch_col
+                  ch_col <= ch_col + 1;
+                end
             end
         end
     end

@@ -77,12 +77,22 @@ void setup() {
   const uint8_t CMD_LOAD_FONT   = 128;
   const uint8_t CMD_LOAD_CHDATA = 130;
 
-  writeToFIFO(CMD_LOAD_FONT);
-  
-  for (uint16_t i = 0; i < 4096; i++) {
-    delayMicroseconds(10);
-    uint8_t val = pgm_read_byte_near(font_data + i);
-    writeToFIFO(val);
+  // note that the font data is transferred in blocks
+  // of 512 bytes
+  uint16_t font_count = 0;
+
+  while (font_count < 4096) {
+    writeToFIFO(CMD_LOAD_FONT);
+    
+    for (uint16_t i = 0; i < 512; i++, font_count++) {
+      delayMicroseconds(10);
+      uint8_t val = pgm_read_byte_near(font_data + font_count);
+      writeToFIFO(val);
+    }
+
+    // the display controller only processes 512 bytes per frame,
+    // so to be very safe, wait until at least the next frame
+    delay(17);
   }
 
   writeToFIFO(CMD_LOAD_CHDATA);
