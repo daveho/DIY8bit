@@ -50,14 +50,6 @@ module icevga (input wire nrst_in,
     end
 
   ////////////////////////////////////////////////////////////////////////
-  // Pixel register
-  ////////////////////////////////////////////////////////////////////////
-
-  // The bits in this register are the next 8 pixels to be generated
-  // (0=background, 1=foreground)
-  reg [7:0] pixreg;
-
-  ////////////////////////////////////////////////////////////////////////
   // Shared register for command data
   ////////////////////////////////////////////////////////////////////////
 
@@ -197,7 +189,6 @@ module icevga (input wire nrst_in,
 
   parameter CMD_NONE        = 8'b00000000;
   parameter CMD_LOAD_FONT   = 8'b10000000; // the next 4906 bytes are font data
-  parameter CMD_PIXDATA     = 8'b10000001; // just store byte value in pixreg
   parameter CMD_LOAD_CHDATA = 8'b10000010; // the next 512 bytes are character data
 
   parameter CMDPROC_READY       = 2'b00;
@@ -220,7 +211,6 @@ module icevga (input wire nrst_in,
           cmd_input_val <= 8'd0;
           active_cmd <= CMD_NONE;
           data_addr <= 12'd0;
-          pixreg <= 8'd0;
 
           font_data_wr_addr <= 12'd0;
           font_data_wr <= 1'b0;
@@ -259,10 +249,10 @@ module icevga (input wire nrst_in,
                      begin
                        // if the input value was a valid command, make
                        // it the active command, otherwise ignore it
-                       if (cmd_input_val == CMD_PIXDATA ||
-                           cmd_input_val == CMD_LOAD_FONT ||
+                       if (cmd_input_val == CMD_LOAD_FONT ||
                            cmd_input_val == CMD_LOAD_CHDATA)
                          begin
+                           // Valid command, so enter sub-state machine for that command
                            active_cmd <= cmd_input_val;
                            debug_led[0] <= 1'b0;
                            debug_led[1] <= 1'b0;
@@ -271,28 +261,14 @@ module icevga (input wire nrst_in,
                          end
                        else
                          begin
+                           // Invalid command, ignore
                            active_cmd <= CMD_NONE;
                            debug_led[0] <= 1'b1;
                            debug_led[1] <= 1'b0;
-/*
-                           //debug_led[2] <= 1'b0;
-                           if (cmd_input_val == 8'h05) // this is the *data* value written by the Arduino
-                             debug_led[2] <= 1'b1;
-*/
                          end
 
                        // ready to get another byte from FIFO
                        cmdproc_state <= CMDPROC_READY;
-                     end
-
-                   CMD_PIXDATA:
-                     begin
-                       // store the input value in pixreg
-                       pixreg <= cmd_input_val;
-                       active_cmd <= CMD_NONE;
-                       debug_led[0] <= 1'b0;
-                       debug_led[1] <= 1'b1;
-                       //debug_led[2] <= 1'b0;
                      end
 
                    CMD_LOAD_FONT:

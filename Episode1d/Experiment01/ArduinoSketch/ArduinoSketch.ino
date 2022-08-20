@@ -130,9 +130,6 @@ uint8_t readColor(int pin) {
   return uint8_t(val);
 }
 
-uint16_t ticks;
-uint8_t writing = 0;
-
 void loop() {
   delay(5);
 
@@ -151,7 +148,6 @@ void loop() {
     if (reset_pressed) {
       // begin manual reset pulse
       digitalWrite(DISP_RST, LOW);
-      writing = 0;
     }
   } else if (!activated) {
     // button value is same as last time, increase count
@@ -184,24 +180,5 @@ void loop() {
       // so continue the manual reset pulse
       reset_count++;
     }
-  }
-
-  const uint8_t CMD_PIXDATA = 129;
-
-  if (!in_reset /*&& ticks == 0*/) { // uncomment "&& ticks == 0" for slow data send (1 byte/sec)
-    if (!writing) {
-      red = readColor(RED_INPUT);
-      writeToFIFO(CMD_PIXDATA);
-      writing = 1;
-    } else {
-      writeToFIFO(red);
-      //writeToFIFO(0x05);
-      writing = 0;
-    }
-  }
-
-  ticks++;
-  if (ticks >= 200) {
-    ticks = 0;
   }
 }
