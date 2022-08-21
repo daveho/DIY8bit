@@ -816,7 +816,7 @@ module icevga (input wire nrst_in,
               // transfer data from the font load buffer to the
               // SPRAM if necessary
 
-              if (!font_load_active)
+              if (font_load_active == 1'b0)
                 begin
                   if (fontbuf_count_value != 9'd0)
                     begin
@@ -826,6 +826,8 @@ module icevga (input wire nrst_in,
                       font_load_count <= fontbuf_count_value;
                       font_load_state <= FONT_LOAD_READ_WORD;
                       fontbuf_rd_addr <= 8'd0;
+
+                      debug_led[4] <= 1'b1; // white: started loading font buffer into SPRAM
                     end
                 end
 
@@ -893,7 +895,7 @@ module icevga (input wire nrst_in,
                         // (since in theory we've set the load buffer count to 0)
                         font_load_active <= 1'b0;
 
-                        debug_led[4] <= 1'b1;
+                        debug_led[5] <= 1'b1; // orange: finished loading font buffer into SPRAM
                       end
 
                   endcase // font_load_state
