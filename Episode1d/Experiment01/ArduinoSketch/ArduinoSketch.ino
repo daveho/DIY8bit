@@ -52,6 +52,54 @@ const PROGMEM char MESSAGE[] = "All your base are belong to us. ";
 // Functions
 ////////////////////////////////////////////////////////////////////////
 
+void onReset() {
+  // wait a bit, then send font data
+  delay(500);
+
+  const uint8_t CMD_LOAD_FONT   = 128;
+  const uint8_t CMD_LOAD_CHDATA = 130;
+
+  // note that the font data is transferred in blocks
+  // of 512 bytes
+  uint16_t font_count = 0;
+
+  //while (font_count < 4096) {
+    writeToFIFO(CMD_LOAD_FONT);
+    delayMicroseconds(10);
+    writeToFIFO(0x69);
+    delayMicroseconds(10);
+    
+/*    for (uint16_t i = 0; i < 512; i++, font_count++) {
+      delayMicroseconds(10);
+      uint8_t val = pgm_read_byte_near(font_data + font_count);
+      writeToFIFO(val);
+    }*/
+
+    // the display controller only processes 512 bytes per frame,
+    // so to be very safe, wait until at least the next frame
+    delay(17);
+  //}
+
+/*
+  writeToFIFO(CMD_LOAD_CHDATA);
+
+  for (uint16_t i = 0; i < 256; i++) {
+    delayMicroseconds(10);
+    writeToFIFO((uint8_t) i); // just generate all of the character codes
+  }
+
+  uint16_t count = 0;
+  for (uint16_t i = 0; i < 256; i++) {
+    delayMicroseconds(10);
+    writeToFIFO(pgm_read_byte_near(MESSAGE + count));
+    if (count == 31)
+      count = 0;
+    else
+      count++;
+  }
+  */
+}
+
 void setup() {
   //Serial.begin(9600);
   
@@ -71,46 +119,7 @@ void setup() {
   delay(500);
   digitalWrite(DISP_RST, HIGH);
 
-  // wait a bit, then send font data
-  delay(500);
-
-  const uint8_t CMD_LOAD_FONT   = 128;
-  const uint8_t CMD_LOAD_CHDATA = 130;
-
-  // note that the font data is transferred in blocks
-  // of 512 bytes
-  uint16_t font_count = 0;
-
-  while (font_count < 4096) {
-    writeToFIFO(CMD_LOAD_FONT);
-    
-    for (uint16_t i = 0; i < 512; i++, font_count++) {
-      delayMicroseconds(10);
-      uint8_t val = pgm_read_byte_near(font_data + font_count);
-      writeToFIFO(val);
-    }
-
-    // the display controller only processes 512 bytes per frame,
-    // so to be very safe, wait until at least the next frame
-    delay(17);
-  }
-
-  writeToFIFO(CMD_LOAD_CHDATA);
-
-  for (uint16_t i = 0; i < 256; i++) {
-    delayMicroseconds(10);
-    writeToFIFO((uint8_t) i); // just generate all of the character codes
-  }
-
-  uint16_t count = 0;
-  for (uint16_t i = 0; i < 256; i++) {
-    delayMicroseconds(10);
-    writeToFIFO(pgm_read_byte_near(MESSAGE + count));
-    if (count == 31)
-      count = 0;
-    else
-      count++;
-  }
+  onReset();
 }
 
 void writeToFIFO(uint8_t data) {
@@ -185,6 +194,9 @@ void loop() {
       digitalWrite(DISP_RST, HIGH);
       reset_count = 0;
       in_reset = 0;
+
+      // send reset/startup data
+      onReset();
     } else if (reset_count <= 100) {
       // reset count has not reached the terminal value,
       // so continue the manual reset pulse

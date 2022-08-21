@@ -56,7 +56,7 @@ module readcommand(input clk,
           case (read_state)
             RD_READY:
               begin
-                if (read_tick == READ_MIN_TICK & nef == FIFO_NOT_EMPTY & cmdreg_data_avail == 1'b0)
+                if (nef == FIFO_NOT_EMPTY & cmdreg_data_avail == 1'b0)
                   begin
                     // data is available, assert FIFO -RD signal
                     // and go to RD_WAIT_FOR_DATA state
@@ -100,10 +100,8 @@ module readcommand(input clk,
                     // return to the RD_READY
                     disp_cmd_rd <= 1'b1;
                     read_state <= RD_READY;
-                    read_tick <= READ_MIN_TICK;
 
                     // let the shared reg know that the write is done
-                    // (technically, we could have done this earlier)
                     cmdreg_wr <= 1'b0;
                   end
                 else

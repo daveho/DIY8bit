@@ -13,7 +13,7 @@ module icevga (input wire nrst_in,
                output reg [3:0] red,
                output reg [3:0] green,
                output reg [3:0] blue,
-               output reg [2:0] debug_led);
+               output reg [3:0] debug_led);
 
   wire pll_out;
   wire pll_locked;
@@ -242,236 +242,391 @@ module icevga (input wire nrst_in,
   // Process commands read from FIFO
   ////////////////////////////////////////////////////////////////////////
 
-  // command bytes (stored in active_cmd)
-  parameter CMD_NONE        = 8'b00000000;
-  parameter CMD_LOAD_FONT   = 8'b10000000; // the next 4906 bytes are font data
-  parameter CMD_LOAD_CHDATA = 8'b10000010; // the next 512 bytes are character data
+  // shared register for load font process (lfreg)
 
-  // states receiving and processing bytes (stored in cmdproc_state)
-  parameter CMDPROC_READY             = 3'd0; // ready to receive another data byte from command FIFO
-  parameter CMDPROC_PROCESS           = 3'd1; // process data byte for current command
-  parameter CMDPROC_FONT_STORE_BEGIN  = 3'd2; // begin storing word in font load buffer
-  parameter CMDPROC_FONT_STORE_END    = 3'd3; // end storing word in font load buffer
-  parameter CMDPROC_FONT_STORE_FINISH = 3'd4; // finish storing data in font buffer
-  parameter CMDPROC_CHDATA_END        = 3'd5; // end processing of received character data
+  wire lfreg_data_avail;
+  wire [7:0] lfreg_data_recv;
+  reg lfreg_rd;
+  reg [7:0] lfreg_data_send;
+  reg lfreg_wr;
 
-  reg [7:0] cmd_input_val; // most recent byte of input data from FIFO
-  reg [7:0] active_cmd;    // what the active command is
+  shared_reg lfreg(.clk(clk),
+                   .nrst(nrst),
+                   .has_data(lfreg_data_avail),
+                   .rd(lfreg_rd),
+                   .rd_data(lfreg_data_recv),
+                   .wr(lfreg_wr),
+                   .wr_data(lfreg_data_send));
 
-  reg [2:0] cmdproc_state;
+  // shared register for load chdata process (chdreg)
 
-  reg [11:0] data_addr;
+  wire chdreg_data_avail;
+  wire [7:0] chdreg_data_recv;
+  reg chdreg_rd;
+  reg [7:0] chdreg_data_send;
+  reg chdreg_wr;
 
-  // font bytes are received in pairs
-  reg [7:0] font_word_byte1;
-  reg [7:0] font_word_byte2;
+  shared_reg chdreg(.clk(clk),
+                   .nrst(nrst),
+                   .has_data(chdreg_data_avail),
+                   .rd(chdreg_rd),
+                   .rd_data(chdreg_data_recv),
+                   .wr(chdreg_wr),
+                   .wr_data(chdreg_data_send));
 
-  reg [2:0] font_load_nchunks;
+  // command byte values
+  parameter CMD_NONE        = 8'd0;
+  parameter CMD_LOAD_FONT   = 8'd128;
+  parameter CMD_LOAD_CHDATA = 8'd130;
+
+  //----------------------------------------------------------------------
+  // process to read bytes of data from the command FIFO,
+  // determine which command they belong to, and dispatch them
+  // to the appropriate process via its shared register
+  //----------------------------------------------------------------------
+
+  // command reader states
+  parameter CMDREADER_READY                = 3'd0;
+  parameter CMDREADER_RECV_BYTE            = 3'd1;
+  parameter CMDREADER_HANDLE_BYTE          = 3'd2;
+  parameter CMDREADER_LOAD_FONT_DISPATCH   = 3'd3;
+  parameter CMDREADER_LOAD_CHDATA_DISPATCH = 3'd4;
+
+  reg [2:0] cmdreader_state;
+  reg [7:0] cmdreader_received_byte;
+  reg [7:0] cmdreader_active_cmd;
+  reg [15:0] cmdreader_data_count; // how many bytes of data read so far for active command
 
   always @(posedge clk)
     begin
-      if (nrst == RESET_ASSERTED)
+      if (nrst == 1'b0)
         begin
-          cmdproc_state <= CMDPROC_READY;
-          cmd_input_val <= 8'd0;
-          active_cmd <= CMD_NONE;
-          data_addr <= 12'd0;
+          cmdreg_rd <= 1'b0;
 
-/*
-          font_data_wr_addr <= 12'd0;
-          font_data_wr <= 1'b0;
-          font_data_wr_data <= 8'd0;
-*/
+          lfreg_data_send <= 8'd0;
+          lfreg_wr <= 1'b0;
 
-          ch_data_wr_addr <= 9'd0;
-          ch_data_wr <= 1'b0;
-          ch_data_wr_data <= 8'd0;
+          chdreg_data_send <= 8'd0;
+          chdreg_wr <= 1'b0;
 
-          font_load_nchunks <= 3'd0;
+          cmdreader_state <= CMDREADER_READY;
+          cmdreader_received_byte <= 8'd0;
+          cmdreader_active_cmd <= CMD_NONE;
+          cmdreader_data_count <= 16'd0;
+
+          debug_led[2] <= 1'b0;
+          debug_led[3] <= 1'b0;
+        end
+
+      else
+        begin
+          case (cmdreader_state)
+
+            CMDREADER_READY:
+              begin
+                if (cmdreg_data_avail == 1'b1)
+                  begin
+                    // let shared reg know we are reading the byte
+                    cmdreg_rd <= 1'b1;
+
+                    // next state will read the byte
+                    cmdreader_state <= CMDREADER_RECV_BYTE;
+                  end
+              end // CMDREADER_READY
+
+            CMDREADER_RECV_BYTE:
+              begin
+                // read the byte
+                cmdreader_received_byte <= cmdreg_data_recv;
+
+                // let shared reg know byte has been read
+                cmdreg_rd <= 1'b0;
+
+                // the CMDREADER_HANDLE_BYTE state will figure out what to do
+                // with the byte (which could involve an delay
+                // depending on what needs to be done with the byte)
+                cmdreader_state <= CMDREADER_HANDLE_BYTE;
+              end // CMDREADER_RECV_BYTE
+
+            CMDREADER_HANDLE_BYTE:
+              // In this state, we figure out what to do with the most-recently
+              // received data byte. If there is no active command, then the
+              // received data byte becomes the active command (assuming it is
+              // a valid command.) If there is a valid command, then the byte
+              // is dispatched to the appropriate shared register, for asynchronous
+              // processing by a different state machine. Note that it might not
+              // be possible to do the dispatch until a later clock cycle.
+
+              begin
+                case (cmdreader_active_cmd)
+                  CMD_NONE:
+                    begin
+                      if (cmdreader_received_byte == CMD_LOAD_FONT | cmdreader_received_byte == CMD_LOAD_CHDATA)
+                        begin
+                          // valid command
+                          cmdreader_active_cmd <= cmdreader_received_byte;
+
+                          debug_led[3] <= 1'b1;
+                        end
+                      else
+                        // invalid command
+                        debug_led[2] <= 1'b1;
+
+                      // ready to receive another data byte
+                      cmdreader_state <= CMDREADER_READY;
+                      cmdreader_data_count <= 16'd0;
+                    end
+
+                  CMD_LOAD_FONT:
+                    begin
+                      // if lfreg is empty, we can transfer the received byte
+                      if (lfreg_data_avail == 1'b0)
+                        begin
+                          // dispatch the received byte to the load font data process
+                          lfreg_data_send <= cmdreader_received_byte;
+                          lfreg_wr <= 1'b1;
+                          cmdreader_data_count <= cmdreader_data_count + 1;
+                          cmdreader_state <= CMDREADER_LOAD_FONT_DISPATCH;
+                        end
+                    end
+
+                  CMD_LOAD_CHDATA:
+                    begin
+                      // if chdreg is empty, we can transfer the received byte
+                      if (chdreg_data_avail == 1'b0)
+                        begin
+                          // dispatch the received byte to the load character data process
+                          chdreg_data_send <= cmdreader_received_byte;
+                          chdreg_wr <= 1'b1;
+                          cmdreader_data_count <= cmdreader_data_count + 1;
+                          cmdreader_state <= CMDREADER_LOAD_CHDATA_DISPATCH;
+                        end
+                    end
+                endcase // cmdreader_active_cmd
+              end // CMDREADER_HANDLE_BYTE
+
+            CMDREADER_LOAD_FONT_DISPATCH:
+              begin
+                // end write to lfreg
+                lfreg_wr <= 1'b0;
+
+                if (cmdreader_data_count == 16'd512)
+                  // all of the data for this command has been received
+                  cmdreader_active_cmd <= CMD_NONE;
+
+                cmdreader_state <= CMDREADER_READY;
+              end
+
+            CMDREADER_LOAD_CHDATA_DISPATCH:
+              begin
+                // end write to chdreg
+                chdreg_wr <= 1'b0;
+
+                if (cmdreader_data_count == 16'd512)
+                  // all of the data for this command has been received
+                  cmdreader_active_cmd <= CMD_NONE;
+
+                cmdreader_state <= CMDREADER_READY;
+              end
+
+          endcase // cmdreader_state
+        end
+    end
+
+  //----------------------------------------------------------------------
+  // process to handle data from CMD_LOAD_FONT commands
+  //----------------------------------------------------------------------
+
+  // states
+  parameter LF_RECV_BYTE1      = 3'd0;
+  parameter LF_READ_BYTE1      = 3'd1;
+  parameter LF_RECV_BYTE2      = 3'd2;
+  parameter LF_READ_BYTE2      = 3'd3;
+  parameter LF_END_WRITE       = 3'd4;
+  parameter LF_END_TRANSACTION = 3'd5;
+
+  reg [8:0] lf_count; // how many *bytes* of font data have been processed
+  reg [2:0] lf_state; // current state
+  reg [7:0] lf_firstbyte; // first byte of pair of font bytes
+
+  always @(posedge clk)
+    begin
+      if (nrst == 1'b0)
+        begin
+          lfreg_rd <= 1'b0;
+          lf_count <= 9'd0;
+          lf_state <= LF_RECV_BYTE1;
+          lf_firstbyte <= 8'd0;
 
           debug_led[0] <= 1'b0;
           debug_led[1] <= 1'b0;
-          debug_led[2] <= 1'b0;
         end
+
       else
         begin
-          case (cmdproc_state)
+          case (lf_state)
 
-            CMDPROC_READY:
-              if (cmdreg_data_avail == 1'b1)
-                begin
-                  // signal to the shared reg that we're
-                  // reading the data (the data should already be available
-                  // in the receive register)
-                  cmdreg_rd <= 1'b1;
-                  cmdproc_state <= CMDPROC_PROCESS;
-                  cmd_input_val <= cmdreg_data_recv;
-                end
+            LF_RECV_BYTE1:
+              begin
+                // Note that we should not try to put data in the font buffer
+                // if its count is non-zero, since that would imply that the
+                // character generator is using it. But i the font buffer
+                // count *is* 0, then it should be safe to proceed.
+                if (lfreg_data_avail & fontbuf_count_value == 9'd0)
+                  begin
+                    // start to read first byte
+                    lfreg_rd <= 1'b1;
+                    lf_state <= LF_READ_BYTE1;
+                    debug_led[0] <= 1'b1;
+                  end
+              end // LF_RECV_BYTE1
 
-             CMDPROC_PROCESS:
-               begin
-                 cmdreg_rd <= 1'b0; // finish read
+            LF_READ_BYTE1:
+              begin
+                // grab data
+                lf_firstbyte <= lfreg_data_recv;
 
-                 // process the byte, based on which command is currently active (if any)
-                 case (active_cmd)
-                   CMD_NONE:
-                     begin
-                       // if the input value was a valid command, make
-                       // it the active command, otherwise ignore it
-                       if (cmd_input_val == CMD_LOAD_FONT ||
-                           cmd_input_val == CMD_LOAD_CHDATA)
-                         begin
-                           // Valid command, so enter sub-state machine for that command
-                           active_cmd <= cmd_input_val;
-                           //debug_led[0] <= 1'b0;
-                           //debug_led[1] <= 1'b0;
-                           //debug_led[2] <= 1'b1;
-                           data_addr <= 12'd0;
-                         end
-                       else
-                         begin
-                           // Invalid command, ignore
-                           active_cmd <= CMD_NONE;
-                           debug_led[0] <= 1'b1;
-                           //debug_led[1] <= 1'b0;
-                         end
+                // end read of the data byte
+                lfreg_rd <= 1'b0;
 
-                       // ready to get another byte from FIFO
-                       cmdproc_state <= CMDPROC_READY;
-                     end
+                // one more byte has been received
+                lf_count <= lf_count + 1;
 
-                   CMD_LOAD_FONT:
-                     begin
-                       debug_led[1] <= 1'b1;
+                // wait for second byte
+                lf_state <= LF_RECV_BYTE2;
+              end // LF_READ_BYTE1
 
-                       if (font_load_nchunks == 3'b111)
-                         // this is the 8th chunk of 512 bytes, meaning a complete
-                         // font will in theory have been received when all of the
-                         // data in this chunk arrives and is loaded into SPRAM
-                         // by the character generator
-                         debug_led[2] <= 1'b1;
+            LF_RECV_BYTE2:
+              begin
+                if (lfreg_data_avail)
+                  begin
+                    // start to read second byte
+                    lfreg_rd <= 1'b1;
+                    lf_state <= LF_READ_BYTE2;
+                  end
+              end // LF_RECV_BYTE2
 
-                       if (data_addr[0] == 1'b0)
-                         font_word_byte1 <= cmd_input_val;
-                       else
-                         begin
-                           font_word_byte2 <= cmd_input_val;
-                           // now that the second byte of the font word
-                           // has been received, we can put the word in the
-                           // font load buffer
-                           cmdproc_state <= CMDPROC_FONT_STORE_BEGIN;
-                         end
+            LF_READ_BYTE2:
+              begin
+                // now we can initiate a write to the font buffer
+                fontbuf_wr_addr <= lf_count[8:1];
+                fontbuf_wr_data <= { lf_firstbyte, lfreg_data_recv };
+                fontbuf_wr <= 1'b1;
 
-                       data_addr <= data_addr + 1;
-/*
-                       // put the byte in the next location in the font data memory
-                       font_data_wr_addr <= data_addr;
-                       font_data_wr_data <= cmd_input_val;
-                       font_data_wr <= 1'b1;
+                // end read of the data byte
+                lfreg_rd <= 1'b0;
 
-                       // advance to next address in the font data memory
-                       data_addr <= data_addr + 1;
+                // one more byte has been received
+                lf_count <= lf_count + 1;
 
-                       // write will finish on next clock cycle
-                       cmdproc_state <= CMDPROC_END_FONT_WR;
+                // go to next state
+                lf_state <= LF_END_WRITE;
+              end // LF_READ_BYTE2
 
-                       // check whether all font data has been loaded,
-                       // if so, we can continue processing other commands
-                       if (data_addr == 12'd4095)
-                         active_cmd <= CMD_NONE;
-*/
-                     end
+            LF_END_WRITE:
+              begin
+                // end write to fontbuf
+                fontbuf_wr <= 1'b0;
 
-                   CMD_LOAD_CHDATA:
-                     begin
-                       // put the byte in the next location in the character memory
-                       ch_data_wr_addr <= data_addr[8:0];
-                       ch_data_wr_data <= cmd_input_val;
-                       ch_data_wr <= 1'b1;
+                // if we haven't yet received all of the data in this chunk,
+                // expect more data (note that lf_count will wrap around to 0
+                // when 512 bytes of data have been received)
+                if (lf_count != 9'd0)
+                  begin
+                    // get ready to receive more data
+                    lf_state <= LF_RECV_BYTE1;
+                  end
+                else
+                  begin
+                    // write the the count of how many 16-bit font words
+                    // are now in the font buffer
+                    fontbuf_count_wrdata1 <= 9'd256;
+                    fontbuf_count_wr1 <= 1'b1;
+                    lf_state <= LF_END_TRANSACTION;
+                  end
+              end // LF_END_WRITE
 
-                       // advance to next address in the character data memory
-                       data_addr <= data_addr + 1;
+            LF_END_TRANSACTION:
+              begin
+                // end write to the shared counter: this will let the
+                // character generator know that data is available in
+                // the font buffer
+                fontbuf_count_wr1 <= 1'b0;
 
-                       // write will finish on next clock cycle
-                       cmdproc_state <= CMDPROC_CHDATA_END;
+                // now we are ready to receive byte 1 of a new chunk
+                // of font data
+                lf_state <= LF_RECV_BYTE1;
 
-                       // check whether all character data has been loaded
-                       if (data_addr[8:0] == 9'd511)
-                         active_cmd <= CMD_NONE;
-                     end
+                debug_led[1] <= 1'b1;
+              end // LF_END_TRANSACTION
 
-                 endcase
+          endcase // lf_state
+        end
+    end
 
-               end
+  //----------------------------------------------------------------------
+  // process to handle data from CMD_LOAD_CHDATA commands
+  //----------------------------------------------------------------------
 
-             CMDPROC_FONT_STORE_BEGIN:
-               begin
-                 // Only write to the font load buffer if we're sure that the
-                 // character generator is not reading from it! The character
-                 // generator will only check the font buffer if it's *not* in
-                 // the vertical visible region, so if we *are* in the vertical visible
-                 // region but not on the last line, we should be completely safe.
-                 if (vcount < V_VISIBLE_END - 1)
-                   begin
-                     // begin writing the word of font data into the font load buffer
-                     fontbuf_wr <= 1'b1;
-                     fontbuf_wr_addr <= data_addr[7:1];
-                     fontbuf_wr_data <= {font_word_byte1, font_word_byte2};
-                     cmdproc_state <= CMDPROC_FONT_STORE_END;
-                   end
-               end
+  reg [8:0] chd_count; // how many *bytes* of character data have been processed
+  reg [1:0] chd_state; // current state
 
-             CMDPROC_FONT_STORE_END:
-               begin
-                 // finish writing font data word to font load buffer
-                 fontbuf_wr <= 1'b0;
+  // states
+  parameter CHD_RECV_BYTE  = 2'd0;
+  parameter CHD_READ_BYTE  = 2'd1;
+  parameter CHD_WRITE_BYTE = 2'd2;
 
-                 // ready to receive another byte from FIFO
-                 cmdproc_state <= CMDPROC_READY;
+  always @(posedge clk)
+    begin
+      if (nrst == 1'b0)
+        begin
+          chd_count <= 9'd0;
+          chd_state <= CHD_RECV_BYTE;
+        end
 
-                 // if we've received 512 bytes of font data, then we're
-                 // done with the CMD_LOAD_FONT command; note that we need
-                 // to let the character generator know that there is data
-                 // in the font load buffer
-                 if (data_addr == 12'd512)
-                   begin
-                     // let the character generator know that there is font
-                     // data available
-                     fontbuf_count_wr1 <= 1'b1;
-                     fontbuf_count_wrdata1 <= 9'd256;
+      else
+        begin
 
-                     debug_led[1] <= 1'b1;
+          case (chd_state)
 
-                     // we stil need one additional clock cycle to finish the
-                     // write to the shared counter
-                     cmdproc_state <= CMDPROC_FONT_STORE_FINISH;
-                   end
-               end
+            CHD_RECV_BYTE:
+              begin
+                if (chdreg_data_avail)
+                  begin
+                    // grab the data byte
+                    chdreg_rd <= 1'b1;
+                    chd_state <= CHD_READ_BYTE;
+                  end
+              end
 
-             CMDPROC_FONT_STORE_FINISH:
-               begin
-                 // finish write to share counter
-                 fontbuf_count_wr1 <= 1'b0;
+            CHD_READ_BYTE:
+              begin
+                // initiate write to character data memory
+                ch_data_wr_addr <= chd_count;
+                ch_data_wr_data <= chdreg_data_recv;
+                ch_data_wr <= 1'b1;
 
-                 // done with the CMD_LOAD_FONT command; can now process the
-                 // next command
-                 active_cmd <= CMD_NONE;
-                 cmdproc_state <= CMDPROC_READY;
+                // end read from chdreg
+                chdreg_rd <= 1'b0;
 
-                 font_load_nchunks <= font_load_nchunks + 1;
-               end
+                // one more byte of character data has been received
+                chd_count <= chd_count + 1;
 
+                // go to next state
+                chd_state <= CHD_WRITE_BYTE;
+              end
 
-             CMDPROC_CHDATA_END:
-               begin
-                 // finsh writing byte of character data
-                 ch_data_wr <= 1'b0;
+            CHD_WRITE_BYTE:
+              begin
+                // end write to character data memory
+                ch_data_wr <= 1'b0;
 
-                 // ready to get another byte from FIFO
-                 cmdproc_state <= CMDPROC_READY;
-               end
+                // prepare to receive more data
+                chd_state <= CHD_READ_BYTE;
+              end
 
-          endcase
+          endcase // chd_state
+
         end
     end
 
