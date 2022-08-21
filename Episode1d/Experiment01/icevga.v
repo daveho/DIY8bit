@@ -138,6 +138,21 @@ module icevga (input wire nrst_in,
 
                                      .value(fontbuf_count_value));
 
+/*
+  // use a shared_flag to indicate whether or not the font load buffer
+  // has data waiting to be loaded
+
+  reg fontbuf_data_avail_set;
+  reg fontbuf_data_avail_clear;
+  wire fontbuf_data_avail_value;
+
+  shared_flag fontbuf_data_avail(.clk(clk),
+                                 .nrst(nrst),
+                                 .set(fontbuf_data_avail_set),
+                                 .clear(fontbuf_data_avail_clear),
+                                 .value(fontbuf_data_avail_value));
+*/
+
   // control signals for the font load buffer memory
 
   reg fontbuf_rd;
@@ -233,11 +248,12 @@ module icevga (input wire nrst_in,
   parameter CMD_LOAD_CHDATA = 8'b10000010; // the next 512 bytes are character data
 
   // states receiving and processing bytes (stored in cmdproc_state)
-  parameter CMDPROC_READY            = 3'd0; // ready to receive another data byte from command FIFO
-  parameter CMDPROC_PROCESS          = 3'd1; // process data byte for current command
-  parameter CMDPROC_FONT_STORE_BEGIN = 3'd2; // begin storing word in font load buffer
-  parameter CMDPROC_FONT_STORE_END   = 3'd3; // end storing word in font load buffer
-  parameter CMDPROC_CHDATA_END       = 3'd4; // end processing of received character data
+  parameter CMDPROC_READY             = 3'd0; // ready to receive another data byte from command FIFO
+  parameter CMDPROC_PROCESS           = 3'd1; // process data byte for current command
+  parameter CMDPROC_FONT_STORE_BEGIN  = 3'd2; // begin storing word in font load buffer
+  parameter CMDPROC_FONT_STORE_END    = 3'd3; // end storing word in font load buffer
+  parameter CMDPROC_FONT_STORE_FINISH = 3'd4; // finish storing data in font buffer
+  parameter CMDPROC_CHDATA_END        = 3'd5; // end processing of received character data
 
   reg [7:0] cmd_input_val; // most recent byte of input data from FIFO
   reg [7:0] active_cmd;    // what the active command is
@@ -249,6 +265,8 @@ module icevga (input wire nrst_in,
   // font bytes are received in pairs
   reg [7:0] font_word_byte1;
   reg [7:0] font_word_byte2;
+
+  reg [2:0] font_load_nchunks;
 
   always @(posedge clk)
     begin
@@ -268,6 +286,8 @@ module icevga (input wire nrst_in,
           ch_data_wr_addr <= 9'd0;
           ch_data_wr <= 1'b0;
           ch_data_wr_data <= 8'd0;
+
+          font_load_nchunks <= 3'd0;
 
           debug_led[0] <= 1'b0;
           debug_led[1] <= 1'b0;
@@ -303,8 +323,8 @@ module icevga (input wire nrst_in,
                          begin
                            // Valid command, so enter sub-state machine for that command
                            active_cmd <= cmd_input_val;
-                           debug_led[0] <= 1'b0;
-                           debug_led[1] <= 1'b0;
+                           //debug_led[0] <= 1'b0;
+                           //debug_led[1] <= 1'b0;
                            //debug_led[2] <= 1'b1;
                            data_addr <= 12'd0;
                          end
@@ -313,7 +333,7 @@ module icevga (input wire nrst_in,
                            // Invalid command, ignore
                            active_cmd <= CMD_NONE;
                            debug_led[0] <= 1'b1;
-                           debug_led[1] <= 1'b0;
+                           //debug_led[1] <= 1'b0;
                          end
 
                        // ready to get another byte from FIFO
@@ -323,6 +343,13 @@ module icevga (input wire nrst_in,
                    CMD_LOAD_FONT:
                      begin
                        debug_led[1] <= 1'b1;
+
+                       if (font_load_nchunks == 3'b111)
+                         // this is the 8th chunk of 512 bytes, meaning a complete
+                         // font will in theory have been received when all of the
+                         // data in this chunk arrives and is loaded into SPRAM
+                         // by the character generator
+                         debug_led[2] <= 1'b1;
 
                        if (data_addr[0] == 1'b0)
                          font_word_byte1 <= cmd_input_val;
@@ -408,17 +435,32 @@ module icevga (input wire nrst_in,
                  // in the font load buffer
                  if (data_addr == 12'd512)
                    begin
-                     // done with the CMD_LOAD_FONT command
-                     active_cmd <= CMD_NONE;
-
                      // let the character generator know that there is font
                      // data available
                      fontbuf_count_wr1 <= 1'b1;
                      fontbuf_count_wrdata1 <= 9'd256;
 
                      debug_led[1] <= 1'b1;
+
+                     // we stil need one additional clock cycle to finish the
+                     // write to the shared counter
+                     cmdproc_state <= CMDPROC_FONT_STORE_FINISH;
                    end
                end
+
+             CMDPROC_FONT_STORE_FINISH:
+               begin
+                 // finish write to share counter
+                 fontbuf_count_wr1 <= 1'b0;
+
+                 // done with the CMD_LOAD_FONT command; can now process the
+                 // next command
+                 active_cmd <= CMD_NONE;
+                 cmdproc_state <= CMDPROC_READY;
+
+                 font_load_nchunks <= font_load_nchunks + 1;
+               end
+
 
              CMDPROC_CHDATA_END:
                begin
@@ -686,8 +728,8 @@ module icevga (input wire nrst_in,
 
                     FONT_LOAD_FINISH:
                       begin
-                        // end write to the font buffer counter
-                        fontbuf_count_wrdata2 <= 1'b0;
+                        // end write to the shared font buffer counter
+                        fontbuf_count_wr2 <= 1'b0;
 
                         // it should now be safe to set font_load_active to 0
                         // (since in theory we've set the load buffer count to 0)
