@@ -67,18 +67,18 @@ void onReset() {
     writeToFIFO(CMD_LOAD_FONT);
     delayMicroseconds(10);
     
-/*    for (uint16_t i = 0; i < 512; i++, font_count++) {
+    for (uint16_t i = 0; i < 512; i++, font_count++) {
       delayMicroseconds(10);
       uint8_t val = pgm_read_byte_near(font_data + font_count);
       writeToFIFO(val);
-    }*/
+    }
 
     // the display controller only processes 512 bytes per frame,
     // so to be very safe, wait until at least the next frame
     delay(17);
   //}
 
-/*
+
   writeToFIFO(CMD_LOAD_CHDATA);
 
   for (uint16_t i = 0; i < 256; i++) {
@@ -95,7 +95,6 @@ void onReset() {
     else
       count++;
   }
-  */
 }
 
 void setup() {
