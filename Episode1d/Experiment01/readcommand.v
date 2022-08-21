@@ -1,12 +1,18 @@
-// State machine for reading commands from the command FIFO.
-// Commands are placed in a shared register.
+// State machine for reading data bytes from the command FIFO.
+// The bytes read are placed in a shared register, for processing
+// by the command processing state machines.
+
+// It is assumed that the clock frequency is 40 MHz, so each clock
+// cycle is 25ns. We are also assuming a 25ns rated FIFO, so
+// when reading data, it should be available within 50ns (2 clock
+// cycles.)
 
 module readcommand(input clk,
                    input nrst,
 
                    // Active-low empty flag from FIFO
                    input nef,
-                   // FIFO read strobe
+                   // FIFO read strobe (active low)
                    output reg disp_cmd_rd,
                    // command data from FIFO
                    input [7:0] disp_cmd_in,
@@ -25,91 +31,68 @@ module readcommand(input clk,
   localparam FIFO_EMPTY      = 1'b0;
   localparam FIFO_NOT_EMPTY  = 1'b1;
 
-  reg [15:0] read_tick;
+  reg [2:0] state;
 
-  localparam READ_MIN_TICK        = 16'd0;
-  localparam READ_TICK_WAIT_END   = 16'd3; // at 25 ns
-  localparam READ_TICK_LATCH_DATA = 16'd5; // at 41.66 ns
-  localparam READ_TICK_END_READ   = 16'd6; // at 50 ns
-
-  reg [1:0] read_state;
-
-  // states for data read state machine
-  localparam RD_READY           = 2'd0;
-  localparam RD_WAIT_FOR_DATA   = 2'd1;
-  localparam RD_DATA_READY      = 2'd2;
-  localparam RD_DONE_WITH_READ  = 2'd3;
+  localparam READY            = 3'd0;
+  localparam READ_DELAY       = 3'd1;
+  localparam READ_LATCH_DATA  = 3'd2;
+  localparam WRITE_REG        = 3'd3;
+  localparam WRITE_REG_FINISH = 3'd4;
 
   always @(posedge clk)
     begin
       if (nrst == RESET_ASSERTED)
         begin
-          // In reset
-          read_tick <= READ_MIN_TICK;
-          read_state <= RD_READY;
-          cmdreg_wr <= 1'b0;
-          cmdreg_data_send <= 8'd0;
           disp_cmd_rd <= 1'b1;
+          state <= READY;
         end
       else
         begin
-          case (read_state)
-            RD_READY:
+          case (state)
+
+            READY:
+              if (nef == FIFO_NOT_EMPTY & cmdreg_data_avail == 1'b0)
+                begin
+                  // initiate read from FIFO
+                  disp_cmd_rd <= 1'b0;
+                  state <= READ_DELAY;
+                end
+
+            READ_DELAY:
               begin
-                if (nef == FIFO_NOT_EMPTY & cmdreg_data_avail == 1'b0)
-                  begin
-                    // data is available, assert FIFO -RD signal
-                    // and go to RD_WAIT_FOR_DATA state
-                    disp_cmd_rd <= 1'b0;
-                    read_state <= RD_WAIT_FOR_DATA;
-                    read_tick <= READ_MIN_TICK; // start tick counter for timing
-                  end
+                // this state is just a way to give the data a little bit
+                // of extra time to be valid
+                state <= READ_LATCH_DATA;
               end
 
-            RD_WAIT_FOR_DATA:
+            READ_LATCH_DATA:
               begin
-                if (read_tick == READ_TICK_WAIT_END)
-                  begin
-                    // 25ns have elapsed since FIFO -RD signal was asserted;
-                    // go to RD_DATA_READY state (in which we will actually grab
-                    // the data when the tick counter has advanced a bit more)
-                    read_state <= RD_DATA_READY;
-                  end
-                read_tick <= read_tick + 1; // advance tick counter
+                // latch the data from the FIFO
+                cmdreg_data_send <= disp_cmd_in;
+
+                // end the read
+                disp_cmd_rd <= 1'b1;
+
+                // advance to next state
+                state <= WRITE_REG;
               end
 
-            RD_DATA_READY:
+            WRITE_REG:
               begin
-                if (read_tick == READ_TICK_LATCH_DATA)
-                  begin
-                    // It's now been 37.5ns, which should be fine for a
-                    // FIFO with 25ns access time, so latch the data,
-                    // end the read and go to the RD_DONE_WITH_READ state
-                    cmdreg_wr <= 1'b1;               // begin write to shared reg
-                    cmdreg_data_send <= disp_cmd_in; // put FIFO data in shared reg
-                    read_state <= RD_DONE_WITH_READ;
-                  end
-                read_tick <= read_tick + 1; // advance tick counter
+                // initiate write to shared reg (we've already verified
+                // that it is empty)
+                cmdreg_wr <= 1'b1;
+                state <= WRITE_REG_FINISH;
               end
 
-            RD_DONE_WITH_READ:
+            WRITE_REG_FINISH:
               begin
-                if (read_tick == READ_TICK_END_READ)
-                  begin
-                    // We can now de-assert the FIFO -RD signal and
-                    // return to the RD_READY
-                    disp_cmd_rd <= 1'b1;
-                    read_state <= RD_READY;
-
-                    // let the shared reg know that the write is done
-                    cmdreg_wr <= 1'b0;
-                  end
-                else
-                  begin
-                    read_tick <= read_tick + 1; // advance tick counter
-                  end
+                // finish write to the shared reg
+                cmdreg_wr <= 1'b0;
+                state <= READY;
               end
-          endcase
+
+          endcase // state
         end
     end
 

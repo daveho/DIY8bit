@@ -19,7 +19,12 @@ module shared_reg (input clk,
                    input wr,                 // when register is "full" and wr=1,
                    input [7:0] wr_data);     // wr_data is copied to internal register
 
-  reg [7:0] data;
+  reg [1:0] state;
+
+  parameter EMPTY        = 2'd0;
+  parameter FINISH_WRITE = 2'd1;
+  parameter FULL         = 2'd2;
+  parameter FINISH_READ  = 2'd3;
 
   always @(posedge clk)
     begin
@@ -28,21 +33,40 @@ module shared_reg (input clk,
           // register starts out empty
           has_data <= 1'b0;
           rd_data <= 8'd0;
-          data <= 8'd0;
+          state <= EMPTY;
         end
       else
         begin
-          if (has_data == 1'b0 & wr)
-            begin
-              data <= wr_data;
-              has_data <= 1'b1;
-            end
+          case (state)
 
-          if (has_data == 1'b1 & rd)
-            begin
-              rd_data <= data;
-              has_data <= 1'b0;
-            end
+            EMPTY:
+              if (wr == 1'b1)
+                begin
+                  rd_data <= wr_data;
+                  state <= FINISH_WRITE;
+                end
+
+            FINISH_WRITE:
+              if (wr == 1'b0)
+                begin
+                  has_data <= 1'b1;
+                  state <= FULL;
+                end
+
+            FULL:
+              if (rd == 1'b1)
+                begin
+                  state <= FINISH_READ;
+                end
+
+            FINISH_READ:
+              if (rd == 1'b0)
+                begin
+                  has_data <= 1'b0;
+                  state <= EMPTY;
+                end
+
+          endcase // state
         end
     end
 

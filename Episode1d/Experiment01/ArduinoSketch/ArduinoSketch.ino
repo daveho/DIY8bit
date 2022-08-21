@@ -66,8 +66,6 @@ void onReset() {
   //while (font_count < 4096) {
     writeToFIFO(CMD_LOAD_FONT);
     delayMicroseconds(10);
-    writeToFIFO(0x69);
-    delayMicroseconds(10);
     
 /*    for (uint16_t i = 0; i < 512; i++, font_count++) {
       delayMicroseconds(10);

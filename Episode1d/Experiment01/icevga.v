@@ -314,8 +314,7 @@ module icevga (input wire nrst_in,
           cmdreader_active_cmd <= CMD_NONE;
           cmdreader_data_count <= 16'd0;
 
-          debug_led[2] <= 1'b0;
-          debug_led[3] <= 1'b0;
+          debug_led <= 4'b0000;
         end
 
       else
@@ -331,6 +330,8 @@ module icevga (input wire nrst_in,
 
                     // next state will read the byte
                     cmdreader_state <= CMDREADER_RECV_BYTE;
+
+                    debug_led[0] <= 1'b1;
                   end
               end // CMDREADER_READY
 
@@ -346,6 +347,8 @@ module icevga (input wire nrst_in,
                 // with the byte (which could involve an delay
                 // depending on what needs to be done with the byte)
                 cmdreader_state <= CMDREADER_HANDLE_BYTE;
+
+                debug_led[1] <= 1'b1;
               end // CMDREADER_RECV_BYTE
 
             CMDREADER_HANDLE_BYTE:
@@ -458,8 +461,8 @@ module icevga (input wire nrst_in,
           lf_state <= LF_RECV_BYTE1;
           lf_firstbyte <= 8'd0;
 
-          debug_led[0] <= 1'b0;
-          debug_led[1] <= 1'b0;
+          //debug_led[0] <= 1'b0;
+          //debug_led[1] <= 1'b0;
         end
 
       else
@@ -477,7 +480,7 @@ module icevga (input wire nrst_in,
                     // start to read first byte
                     lfreg_rd <= 1'b1;
                     lf_state <= LF_READ_BYTE1;
-                    debug_led[0] <= 1'b1;
+                    //debug_led[0] <= 1'b1;
                   end
               end // LF_RECV_BYTE1
 
@@ -557,7 +560,7 @@ module icevga (input wire nrst_in,
                 // of font data
                 lf_state <= LF_RECV_BYTE1;
 
-                debug_led[1] <= 1'b1;
+                //debug_led[1] <= 1'b1;
               end // LF_END_TRANSACTION
 
           endcase // lf_state
