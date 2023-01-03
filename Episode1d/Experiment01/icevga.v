@@ -458,6 +458,9 @@ module icevga (input wire nrst_in,
           lf_state <= LF_RECV_BYTE1;
           lf_firstbyte <= 8'd0;
 
+          fontbuf_count_wrdata1 <= 8'd0;
+          fontbuf_count_wr1 <= 1'b0;
+
           debug_led[0] <= 1'b0;
           debug_led[1] <= 1'b0;
         end
@@ -804,6 +807,9 @@ module icevga (input wire nrst_in,
           font_load_addr <= 11'd0;
           font_load_count <= 9'd0;
           font_load_state <= FONT_LOAD_READ_WORD;
+
+          fontbuf_count_wrdata2 <= 8'd0;
+          fontbuf_count_wr2 <= 1'b0;
 
           debug_led[4] <= 1'b0;
           debug_led[5] <= 1'b0;
