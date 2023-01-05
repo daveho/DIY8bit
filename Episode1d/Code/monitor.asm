@@ -130,6 +130,9 @@ entry
 	;; Initialize keyboard handling
 	jsr kbd_init
 
+	; Initialize TMS9918A VDP
+	jsr tms9918a_init
+
 	;; Initialize monitor I/O routines
 	jsr mon_init
 
@@ -989,6 +992,41 @@ kbd_check_mod_keys
 
 99
 	puls B                        ; restore original B value
+	rts
+
+;;**********************************************************************
+;; TMS9918A VDP routines
+;;**********************************************************************
+
+;; Initialize the VDP.
+;; For now, go into text mode.
+tms9918a_init
+	; Write initial values to VDP register
+
+	lda #TMS9918A_TEXTMODE_R0_INIT
+	ldb #0
+	jsr tms9918a_write_reg
+
+	lda #TMS9918A_TEXTMODE_R1_INIT
+	ldb #1
+	jsr tms9918a_write_reg
+
+	lda #TMS9918A_TEXTMODE_R2_INIT
+	ldb #2
+	jsr tms9918a_write_reg
+
+	lda #TMS9918A_TEXTMODE_R4_INIT
+	ldb #4
+	jsr tms9918a_write_reg
+
+	rts
+
+;; Write a byte to a TMS9918A register.
+;; A=data byte, B=which register to write
+tms9918a_write_reg
+	sta PORT_TMS9918A_CTRL        ; value to write
+	orb #80                       ; set MSB of byte containing reg num
+	stb PORT_TMS9918A_CTRL        ; write register number
 	rts
 
 ;;**********************************************************************
