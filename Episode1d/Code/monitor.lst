@@ -1,0 +1,1475 @@
+                      ;;**********************************************************************
+                      ;; ROM monitor for DIY 6809 computer
+                      ;;**********************************************************************
+                      
+0000                          INCLUDE "iodev.asm"
+                      ;; Definitions for I/O devices
+                      
+                      ;; Constant values for register offsets, control/status bits, etc.
+                      
+0000                          INCLUDE "i82c55a.asm"
+                      ;; Definitions for 82C55A peripheral interface
+                      
+                      ;; 82C55A registers
+0000                  I82C55A_REG_PORTA                   EQU 0
+0001                  I82C55A_REG_PORTB                   EQU 1
+0002                  I82C55A_REG_PORTC                   EQU 2
+0003                  I82C55A_REG_CTRL                    EQU 3
+                      
+                      ;; Control word bits
+                      ;; Note that "group A" is port A and port C upper,
+                      ;; and "group B" is port B and port C lower
+                      
+0080                  I82C55A_CTRL_MODESET                EQU $80     ; set mode, if clear set/reset bit
+                      
+0000                  I82C55A_CTRL_GROUPA_MODE0           EQU 0       ; group A: set mode 0
+0020                  I82C55A_CTRL_GROUPA_MODE1           EQU $20     ; group A: set mode 1
+0040                  I82C55A_CTRL_GROUPA_MODE2           EQU $40     ; group A: set mode 2
+0010                  I82C55A_CTRL_GROUPA_PORTA_IN        EQU $10     ; group A: configure port A for input
+0000                  I82C55A_CTRL_GROUPA_PORTA_OUT       EQU 0       ; group A: configure port A for output
+0008                  I82C55A_CTRL_GROUPA_PORTC_UPPER_IN  EQU $08     ; group A: configure port C upper for input
+0000                  I82C55A_CTRL_GROUPA_PORTC_UPPER_OUT EQU 0       ; group A: configure port C upper for output
+                      
+0000                  I82C55A_CTRL_GROUPB_MODE0           EQU 0       ; group B: set mode 0
+0004                  I82C55A_CTRL_GROUPB_MODE1           EQU $04     ; group B: set mode 1
+0002                  I82C55A_CTRL_GROUPB_PORTB_IN        EQU $02     ; group B: configure port B for input
+0000                  I82C55A_CTRL_GROUPB_PORTB_OUT       EQU 0       ; group B: configure port B for output
+0001                  I82C55A_CTRL_GROUPB_PORTC_LOWER_IN  EQU $01     ; group B: configure port C lower for input
+0000                  I82C55A_CTRL_GROUPB_PORTC_LOWER_OUT EQU 0       ; group B: configure port C lower for output
+                      
+                      ;; vim:ft=asm6809:
+                      ;; vim:ts=4:
+0000                          INCLUDE "i82c54.asm"
+                      ;; Definitions for 82C54 counter/timer
+                      
+                      ;; Registers
+0000                  I82C54_REG_CNT0                   EQU 0
+0001                  I82C54_REG_CNT1                   EQU 1
+0002                  I82C54_REG_CNT2                   EQU 2
+0003                  I82C54_REG_CTRL                   EQU 3
+                      
+                      ;; Control register bits
+                      
+                      ;; Select counter
+0000                  I82C54_CTRL_SEL_CNT0              EQU 0b00000000
+0040                  I82C54_CTRL_SEL_CNT1              EQU 0b01000000
+0080                  I82C54_CTRL_SEL_CNT2              EQU 0b10000000
+00C0                  I82C54_CTRL_SEL_READ_BACK         EQU 0b11000000
+                      
+                      ;; Read/write
+0000                  I82C54_CTRL_RW_CNT_LATCH          EQU 0b00000000 ; latch counter
+0010                  I82C54_CTRL_RW_LSB                EQU 0b00010000 ; r/w LSB only
+0020                  I82C54_CTRL_RW_MSB                EQU 0b00100000 ; r/w MSB only
+0030                  I82C54_CTRL_RW_LSB_MSB            EQU 0b00110000 ; r/w LSB, then MSB
+                      
+                      ;; Mode
+0000                  I82C54_CTRL_MODE_0                EQU 0b00000000
+0002                  I82C54_CTRL_MODE_1                EQU 0b00000010
+0004                  I82C54_CTRL_MODE_2                EQU 0b00000100
+0006                  I82C54_CTRL_MODE_3                EQU 0b00000110
+0008                  I82C54_CTRL_MODE_4                EQU 0b00001000
+000A                  I82C54_CTRL_MODE_5                EQU 0b00001010
+                      
+                      ;; BCD
+0000                  I82C54_CTRL_BCD_DIS               EQU 0b00000000 ; disable BCD
+0001                  I82C54_CTRL_BCD_EN                EQU 0b00000001 ; enable BCD
+                      
+                      ;; vim:ft=asm6809:
+                      ;; vim:ts=4:
+0000                          INCLUDE "acia.asm"
+                      ;; MC6850 Asynchronous Communications Interface Adapter (ACIA)
+                      
+                      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      ;; Constants for the control register:
+                      ;; in general, these can be combined using bitwise OR
+                      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      
+                      ;; Counter divide select bits (0..1): reset and clock divisor
+0003                  ACIA_CTRL_RESET                         EQU 0b00000011
+0000                  ACIA_CTRL_CLKDIV_1                      EQU 0b00000000
+0001                  ACIA_CTRL_CLKDIV_16                     EQU 0b00000001
+0002                  ACIA_CTRL_CLKDIV_64                     EQU 0b00000010
+                      
+                      ;; Word select bits (2..4): number of data bits, parity,
+                      ;; and number of stop bits.  The chance of using a setting
+                      ;; other than 8N1 is approximately 0%, but all of the possible
+                      ;; settings are included here for completeness.
+0000                  ACIA_CTRL_SEL_7E2                       EQU 0b00000000
+0004                  ACIA_CTRL_SEL_7O2                       EQU 0b00000100
+0008                  ACIA_CTRL_SEL_7E1                       EQU 0b00001000
+000C                  ACIA_CTRL_SEL_7O1                       EQU 0b00001100
+0010                  ACIA_CTRL_SEL_8N2                       EQU 0b00010000
+0014                  ACIA_CTRL_SEL_8N1                       EQU 0b00010100
+0018                  ACIA_CTRL_SEL_8E1                       EQU 0b00011000
+001C                  ACIA_CTRL_SEL_8O1                       EQU 0b00011100
+                      
+                      ;; Transmitter control bits (5..6): transmit data register empty interrupt
+                      ;; configuration, control -RTS output, break transmission.
+0000                  ACIA_CTRL_XMIT_RTS_LOW_TX_INT_DIS       EQU 0b00000000
+0020                  ACIA_CTRL_XMIT_RTS_LOW_TX_INT_EN        EQU 0b00100000
+0040                  ACIA_CTRL_XMIT_RTS_HIGH_TX_INT_DIS      EQU 0b01000000
+0060                  ACIA_CTRL_XMIT_RTS_LOW_BREAK_TX_INT_DIS EQU 0b01100000
+                      
+                      ;; Receive interrupt enable bit (7): if 1, interrupts are
+                      ;; generated on receive data register full, overrun, or
+                      ;; de-assertion of the -DCD input.
+0080                  ACIA_CTRL_RX_INT_EN                     EQU 0b10000000
+0000                  ACIA_CTRL_RX_INT_DIS                    EQU 0b00000000
+                      
+                      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      ;; Constants for status register
+                      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      
+                      ;; Receive data register full (bit 0)
+0001                  ACIA_STATUS_RDRF                        EQU 0b00000001
+                      
+                      ;; Transmit data register empty (bit 1)
+0002                  ACIA_STATUS_TDRE                        EQU 0b00000010
+                      
+                      ;; Data carrier detect (bit 2)
+0004                  ACIA_STATUS_DCD                         EQU 0b00000100
+                      
+                      ;; Clear to send (bit 3)
+0008                  ACIA_STATUS_CTS                         EQU 0b00001000
+                      
+                      ;; Framing error (bit 4)
+0010                  ACIA_STATUS_FE                          EQU 0b00010000
+                      
+                      ;; Receiver overrun (bit 5)
+0020                  ACIA_STATUS_OVRN                        EQU 0b00100000
+                      
+                      ;; Parity error (bit 6)
+0040                  ACIA_STATUS_PE                          EQU 0b01000000
+                      
+                      ;; Interrupt request (bit 7)
+0080                  ACIA_STATUS_IRQ                         EQU 0b10000000
+                      
+                      ;; vim:ft=asm6809:
+0000                          INCLUDE "kbd.asm"
+                      ;; Definitions for working with the C16 keyboard
+                      
+                      ;; Bits 0 and 1 in the keyboard controller status register are
+                      ;; the FIFO empty and full flags (both are active low, so 0=true, 1=false)
+                      
+0001                  KBD_STATUS_FIFO_NOT_EMPTY       EQU $01
+0002                  KBD_STATUS_FIFO_NOT_FULL        EQU $02
+                      
+                      ;; Interpreting scan codes
+                      
+0040                  KBD_SCAN_PRESS                  EQU $40  ; if bit 6 is set, scan code is a press
+0038                  KBD_SCAN_COL_MASK               EQU $38  ; bits 3-5 contain the column number
+0007                  KBD_SCAN_ROW_MASK               EQU $07  ; bits 0-2 contain the row number
+                      
+                      ;; Bits for key modifiers (shift and control), stored in the vmodkey variable.
+                      ;; When set, the modifier is pressed, when unset, the modifier is not pressed.
+0001                  KBD_SHIFT_MOD                   EQU $01
+0002                  KBD_CTRL_MOD                    EQU $02
+                      
+                      ;; Scan codes
+                      ;; Shift is column 3, row 1
+                      ;; Control is column 2, row 0
+0019                  KBD_SCAN_SHIFT_RELEASE          EQU ((3 << 3) | 1)
+0059                  KBD_SCAN_SHIFT_PRESS            EQU (KBD_SCAN_PRESS | KBD_SCAN_SHIFT_RELEASE)
+0010                  KBD_SCAN_CTRL_RELEASE           EQU ((2 << 3) | 0)
+0050                  KBD_SCAN_CTRL_PRESS             EQU (KBD_SCAN_PRESS | KBD_SCAN_CTRL_RELEASE)
+                      
+                      ;; vim:ft=asm6809:
+                      ;; vim:ts=4:
+                      
+                      ;; Addresses of hardware device registers
+                      
+                      ;; 82C55A peripheral interface (uses ~IODEV0)
+8000                  PORT_I82C55A_BASE EQU $8000
+8000                  PORT_I82C55A_A    EQU (PORT_I82C55A_BASE + I82C55A_REG_PORTA)
+8001                  PORT_I82C55A_B    EQU (PORT_I82C55A_BASE + I82C55A_REG_PORTB)
+8002                  PORT_I82C55A_C    EQU (PORT_I82C55A_BASE + I82C55A_REG_PORTC)
+8003                  PORT_I82C55A_CTRL EQU (PORT_I82C55A_BASE + I82C55A_REG_CTRL)
+                      
+                      ;; 82C54 timer/counter (uses ~IODEV1)
+8020                  PORT_I82C54_BASE EQU $8020
+8020                  PORT_I82C54_CNT0 EQU (PORT_I82C54_BASE + I82C54_REG_CNT0)
+8021                  PORT_I82C54_CNT1 EQU (PORT_I82C54_BASE + I82C54_REG_CNT1)
+8022                  PORT_I82C54_CNT2 EQU (PORT_I82C54_BASE + I82C54_REG_CNT2)
+8023                  PORT_I82C54_CTRL EQU (PORT_I82C54_BASE + I82C54_REG_CTRL)
+                      
+                      ;; MC6850 ACIA (UART) (uses ~IODEV2)
+8040                  PORT_ACIA_BASE   EQU $8040
+8040                  PORT_ACIA_CTRL   EQU (PORT_ACIA_BASE + 0)
+8040                  PORT_ACIA_STATUS EQU (PORT_ACIA_BASE + 0)
+8041                  PORT_ACIA_SEND   EQU (PORT_ACIA_BASE + 1)
+8041                  PORT_ACIA_RECV   EQU (PORT_ACIA_BASE + 1)
+                      
+                      ;; Interrupt controller (uses ~IODEV3)
+                      ;; A read gets the number of the highest priority interrupt, 0 if
+                      ;; there are no active interrupt requests.
+                      ;; A write sets the bits of the mask register.
+                      ;; Each mask bit controls the same-numbered IRQ, with a 1 bit
+                      ;; masking (disabling) the IRQ, and a 0 bit unmasking (enabling)
+                      ;; the IRQ.  Bit 0 is ignored because there is no IRQ0.
+8060                  PORT_IRQCTRL     EQU $8060
+                      
+                      ;; Keyboard controller (uses ~IODEV4)
+                      ;; There are two ports, one to read data, one to read FIFO status.
+                      ;; Bit 0 of status is the empty flag (0=empty, 1=not empty),
+                      ;; bit 1 of status is the full flag (0=full, 1=not full).
+8080                  PORT_KBCTRL_BASE   EQU $8080
+8080                  PORT_KBCTRL_DATA   EQU (PORT_KBCTRL_BASE + 0)
+8081                  PORT_KBCTRL_STATUS EQU (PORT_KBCTRL_BASE + 1)
+                      
+                      ;; vim:ft=asm6809:
+                      ;; vim:ts=4:
+                      
+                      ;;**********************************************************************
+                      ;; Constants
+                      ;;**********************************************************************
+                      
+                      ;; Character values
+000D                  CR EQU $0D
+000A                  NL EQU $0A
+0020                  SPACE EQU $20
+0009                  TAB EQU $09
+003A                  COLON EQU $3A
+                      
+                      ;; 3.6864 MHz crystal: E clock is 921.6 kHz, divide by 96 to get 9600 bps
+0006                  ACIA_CLKDIV EQU 6
+                      
+                      ;; Compute initial value for ACIA control register
+                      ;; Note that even though the rx/tx clock is generated by
+                      ;; the 82C54 counter/timer, the ACIA /16 divisor is used,
+                      ;; because with the /1 divisor, there is no automatic
+                      ;; synchronization of the rx/tx data and clocks.
+0015                  ACIA_INIT EQU (ACIA_CTRL_CLKDIV_16 | ACIA_CTRL_SEL_8N1 | ACIA_CTRL_XMIT_RTS_LOW_TX_INT_DIS | ACIA_CTRL_RX_INT_DIS)
+                      
+                      ;; Number of characters that can be stored in the command buffer
+                      ;; (actual buffer is 1 larger to allow room for the nul terminator.)
+                      ;; This size is chosen to allow ihex records with 32 data bytes to
+                      ;; be read (these will be 75 bytes).
+0063                  MONTIOR_MAXCMDLEN equ 99
+                      
+                      ;; Intel hex record types.
+0000                  IHEX_DATA EQU 0
+0001                  IHEX_EOF EQU 1
+0063                  IHEX_ERROR EQU 99
+                      
+                      ;; Clearing bit 4 of the condition code register enables
+                      ;; regular (IRQ) interrupts.
+00EF                  ENABLE_IRQ EQU 0b11101111
+                      
+                      ;; Setting bit 4 of the condition code register disables
+                      ;; regular (IRQ) interrupts.
+0010                  DISABLE_IRQ EQU 0b00010000
+                      
+                      ;; Special values which can be written to the i82c55a control port
+                      ;; in order to set and clear bits 0 and 1, which drive the -SET
+                      ;; inputs used for detecting edge-triggered interrupts.
+                      ;; (When a byte where the high bit is 0 is written to the control port,
+                      ;; it sets or resets a single bit in port C. See 82C55A datasheet.)
+0000                  IRQ3_FF_SET_ASSERT    EQU 0b00000000
+0001                  IRQ3_FF_SET_DEASSERT  EQU 0b00000001
+0002                  IRQ6_FF_SET_ASSERT    EQU 0b00000010
+0003                  IRQ6_FF_SET_DEASSERT  EQU 0b00000011
+                      
+                      ;;**********************************************************************
+                      ;; Variables (RAM area)
+                      ;;
+                      ;; Since the goal is to generate a ROM image, this
+                      ;; part is discarded.  It's very useful, however, to have
+                      ;; the assembler determine the addresses of variables
+                      ;; and determine the overall amount of memory needed for
+                      ;; them.
+                      ;;**********************************************************************
+                      
+0000                          ORG $0000
+                      
+                      ;; Leave the first 16 bytes unused
+0000  00000000000000000000000000000000 vunused RZB 16
+                      
+                      ;; IRQ handler table (8 two-byte code addresses)
+                      ;; The first entry (index 0) is not used.
+                      ;; The other entries (indices 1-7) are the addresses of
+                      ;; the handler functions for IRQs 1-7.
+0010  00000000000000000000000000000000 virqtab RZB 16
+                      
+                      ;; Command buffer used by the monitor
+0020  00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 vmonbuf RZB (MONTIOR_MAXCMDLEN+1)
+                      
+                      ;; Stores the length of the command read into the command
+                      ;; buffer most recently (not including nul terminator)
+0084  00              vmoncmdlen RZB 1
+                      
+                      ;; Current address used in the monitor
+0085  0000            vmonaddr RZB 2
+                      
+                      ;; Current interrupt mask register value.
+                      ;; We store this in RAM because there is no way to read
+                      ;; the actual mask register.
+0087  00              vmaskreg RZB 1
+                      
+                      ;; Modifier key states
+0088  00              vmodkey RZB 1
+                      
+                      ;; Set to 1 if the last character read by mon_recv
+                      ;; was either \n or \r
+0089  00              vlasteol RZB 1
+                      
+                      ;;**********************************************************************
+                      ;; Code
+                      ;;
+                      ;; Everything from $8000 onward is part of the ROM image.
+                      ;;**********************************************************************
+                      
+                              ;; The first 4K of the upper 32K is not used because it
+                              ;; is reserved for I/O devices.
+8000                          ORG $8000
+8000  FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF         FILL $FF, 4096
+                      
+                              ;; The actual code begins at $9000
+9000                          ORG $9000
+                      
+9000                  entry
+                              ;; put system stack at top of RAM
+9000  10CE7FFE                lds #$7FFE
+                      
+                              ;; Initialize the i82c55a device
+9004  BD927F                  jsr i82c55a_init
+                      
+                              ;; Initialize the i82c54 device
+9007  BD9285                  jsr i82c54_init
+                      
+                              ;; Initialize the ACIA
+900A  BD92B3                  jsr acia_init
+                      
+                              ;; Initialize the interrupt controller and IRQ handling
+900D  BD92EC                  jsr irqctrl_init
+                      
+                              ;; Initialize keyboard handling
+9010  BD9335                  jsr kbd_init
+                      
+                              ;; Initialize monitor I/O routines
+9013  BD9037                  jsr mon_init
+                      
+                              ;; Welcome message
+9016  8E93B6                  ldx #ALL_YOUR_BASE
+9019  BD92C9                  jsr acia_send_string
+                      
+                              ; Set initial monitor address to 0
+901C  CC0000                  ldd #0
+901F  FD0085                  std vmonaddr
+                      
+9022                  main_loop
+                              ; Print current address as part of prompt
+9022  FC0085                  ldd vmonaddr
+9025  BD90F1                  jsr mon_print_hex_d
+9028  8E93EA                  ldx #MONITOR_PROMPT
+902B  BD92C9                  jsr acia_send_string
+                      
+902E  BD904F                  jsr mon_read_command          ; read user command
+9031  BD909B                  jsr mon_exec_command          ; attempt to execute the command
+                      
+9034  7E9022                  jmp main_loop                 ; repeat main loop
+                      
+                      ;;------------------------------------------------------------------
+                      ;; Monitor routines
+                      ;;------------------------------------------------------------------
+                      
+                      ;; Initialize monitor I/O routines.
+9037                  mon_init
+                              ; Initialize the global variable which keeps track of whether
+                              ; the last character read was an end of line (eol) character.
+                              ; This helps us accept any of \n, \r, and \r\n as valid end
+                              ; of line inputs in mon_read_command.
+9037  8600                    lda #0
+9039  B70089                  sta vlasteol
+903C  39                      rts
+                      
+                      ;; Routine to read a single character from either the ACIA or the keyboard.
+                      ;; Returns character read in A. Clobbers B.
+903D                  mon_recv
+903D  BD92DF                  jsr acia_poll                 ; poll the ACIA
+9040  C100                    cmpb #0                       ; check whether B=0
+9042  260A                    bne 99f                       ; if B != 0, character was read, we're done
+9044  BD933B                  jsr kbd_poll                  ; poll the keyboard
+9047  C100                    cmpb #0                       ; check whether B=0
+9049  2603                    bne 99f                       ; if B != 0, character was read, we're done
+904B  7E903D                  jmp mon_recv                  ; no character was available, continue loop
+                      
+904E                  99
+904E  39                      rts
+                      
+                      ;; Read a line of text into the monitor command buffer.
+                      ;; Any of \r, \n, or \r\n may be used to delimit the end of the command.
+                      ;; Clobbers A, B, and X.
+904F                  mon_read_command
+                              ; X points to where next character will be stored
+904F  8E0020                  ldx #vmonbuf
+                      
+9052                  1
+9052  BD903D                  jsr mon_recv                     ; read a character
+9055  810A                    cmpa #NL                         ; was it a newline?
+9057  2716                    beq 20F                          ; handle end of line character
+9059  810D                    cmpa #CR                         ; was it a carriage return?
+905B  2712                    beq 20F                          ; handle end of line character
+                      
+905D  BD92BE                  jsr acia_send                    ; echo the character
+                      
+9060  8C0083                  cmpx #(vmonbuf+MONTIOR_MAXCMDLEN) ; buf size exceeded?
+9063  2707                    beq 2F
+                      
+9065  A780                    sta ,X+                          ; store the character in the buffer
+9067  8600                    lda #0                           ; character read was not eol character
+9069  B70089                  sta vlasteol
+                      
+906C                  2
+906C  7E9052                  jmp 1B                           ; continue reading characters
+                      
+906F                  20
+906F  B60089                  lda vlasteol                     ; most recent input char was \n or \r?
+9072  2603                    bne 30F                          ; if so, we just ignore it
+9074  7E907F                  jmp 40F                          ; end of line reached
+                      
+9077                  30
+                              ; Two "end of line" characters (\r or \n) were read in a row.
+                              ; Most likely, this is because a \r\n sequence was sent.
+                              ; The most recent eol character is ignored, and we continue
+                              ; reading input.
+9077  8600                    lda #0
+9079  B70089                  sta vlasteol
+907C  7E9052                  jmp 1B
+                      
+907F                  40
+                              ; Most recent character read was an end of line character
+907F  8601                    lda #1
+9081  B70089                  sta vlasteol
+                      
+                              ; Send cursor to beginning of next line
+9084  860D                    lda #CR
+9086  BD92BE                  jsr acia_send
+9089  860A                    lda #NL
+908B  BD92BE                  jsr acia_send
+                      
+                              ; Compute command length
+908E  1F10                    tfr X, D
+9090  830020                  subd #vmonbuf
+9093  F70084                  stb vmoncmdlen
+                      
+                      ;       ; Just for debugging, print the command length
+                      ;       tfr b, a
+                      ;       jsr mon_print_hex
+                      
+                              ; Store nul terminator
+9096  8600                    lda #0
+9098  A780                    sta ,X+
+                      
+                              ; Done
+909A  39                      rts
+                      
+                      ;; Execute the command currently stored in the command buffer.
+                      ;; Clobbers A, B, X, and Y.
+909B                  mon_exec_command
+909B  8E0020                  ldx #vmonbuf
+                      
+909E  BD90D1                  jsr mon_skip_ws            ; Seach for first non-WS byte
+                      
+                              ; Dispatch logic
+90A1  108E941F                ldy #MONITOR_COMMANDS
+90A5                  1
+90A5  E6A0                    ldb ,Y+                    ; get next defined command byte
+                      
+90A7  C100                    cmpb #0                    ; reached end of defined commands?
+90A9  271F                    beq 66F                    ; display error message and return
+                      
+90AB  E184                    cmpb ,X                    ; entered command matches? (X points to command)
+90AD  2703                    beq 20F                    ; get ready to dispatch
+90AF  7E90A5                  jmp 1B                     ; continue matching against defined commands
+                      
+90B2                  20
+                              ; Increment X to advance past the command character,
+                              ; and skip whitespace again.  This will position X at
+                              ; the address of the first non-WS character after
+                              ; the command.
+90B2  3001                    leax 1,X
+90B4  BD90D1                  jsr mon_skip_ws
+                      
+                              ; At this point, Y is the address of the matched command
+                              ; character in the MONITOR_COMMANDS string.
+                              ; Subtract the base address of MONITOR_COMMANDS+1 from it to
+                              ; recover the index of the command.  (The +1 is because there
+                              ; was one extra increment to Y that needs to be undone.)
+90B7  1F20                    tfr Y, D                   ; copy Y to D
+90B9  839420                  subd #(MONITOR_COMMANDS + 1)
+                              ; B (the LSB of D) now contains the index.
+                              ; Shift it left (to multiply it by 2.)
+90BC  58                      lslb
+                      
+                              ; Compute the address of the handler routine.
+90BD  C3942B                  addd #MONITOR_DISPATCH_TABLE
+                      
+                              ; Fetch address of handler.
+                              ; Note that this is an indirect reference because
+                              ; D contains the address of the memory location containing
+                              ; the address we want to dispatch to.
+90C0  1F02                    tfr D, Y
+90C2  10AEA4                  ldy ,Y
+                      
+                              ; Dispatch to the handler!
+90C5  ADA4                    jsr ,Y
+                      
+90C7  7E90D0                  jmp 99F                    ; done
+                      
+90CA                  66
+90CA  8E93ED                  ldx #MONITOR_ERR_MSG
+90CD  BD92C9                  jsr acia_send_string
+                      
+90D0                  99
+90D0  39                      rts
+                      
+                      ;; In nul-terminated string pointed to by X, skip leading
+                      ;; whitespace (space and tab) characters.  X is updated
+                      ;; to point to the first non-WS character, and the value
+                      ;; of the first non-WS character is stored in A.
+90D1                  mon_skip_ws
+90D1                  1
+90D1  A680                    lda ,X+                   ; get character from buffer (advancing X)
+90D3  8120                    cmpa #SPACE               ; is a space?
+90D5  27FA                    beq 1B                    ; continue searching
+90D7  8109                    cmpa #TAB                 ; is a tab?
+90D9  27F6                    beq 1B                    ; continue searching
+                      
+90DB  301F                    leax -1,X                 ; adjust X to point to first non-WS character
+90DD  39                      rts
+                      
+                      ;; Print the hex representation of byte in A.
+                      ;; Clobbers B and X, modifies A.
+90DE                  mon_print_hex
+90DE  327D                    leas -3,S                ; reserve 3 bytes on stack
+90E0  1F41                    tfr S, X                 ; put buffer address in X
+90E2  BD9104                  jsr mon_fmt_hex          ; format byte as hex
+90E5  1F41                    tfr S, X                 ; restore buffer address to X
+90E7  8600                    lda #0                   ; nul terminator
+90E9  A762                    sta 2,S                  ; store nul terminator
+90EB  BD92C9                  jsr acia_send_string     ; print the string
+90EE  3263                    leas 3,S                 ; restore stack
+90F0  39                      rts
+                      
+                      ;; Print the hex representation of the 16 bit value in D.
+                      ;; Modifies A and B (i.e., modifies D), clobbers X.
+90F1                  mon_print_hex_d
+90F1  327B                    leas -5,S                ; reserve 5 bytes on stack
+90F3  1F41                    tfr S, X                 ; put buffer address in X
+90F5  BD9119                  jsr mon_fmt_hex_d        ; format value as hex
+90F8  1F41                    tfr S, X                 ; restore buffer address to X
+90FA  8600                    lda #0                   ; nul terminator
+90FC  A764                    sta 4,S                  ; store the nul terminator
+90FE  BD92C9                  jsr acia_send_string     ; print the string
+9101  3265                    leas 5,S                 ; restore stack
+9103  39                      rts
+                      
+                      ;; Format the hex representation of byte in A, storing
+                      ;; the (2 byte) representation at the address specified by X.
+                      ;; Clobbers A, B, and Y.
+9104                  mon_fmt_hex
+9104  108E93D7                ldy #HEX_DIGITS
+9108  1F89                    tfr A, B                 ; copy A to B
+910A  C40F                    andb #$0F                ; get low 4 bits
+910C  E6A5                    ldb B,Y                  ; convert to hex
+910E  E701                    stb 1,X                  ; store in second byte of dest buffer
+9110  44                      lsra                     ; get high 4 bits by shifting right
+9111  44                      lsra
+9112  44                      lsra
+9113  44                      lsra
+9114  A6A6                    lda A,Y                  ; convert to hex
+9116  A784                    sta ,X                   ; store in first byte of dest buffer
+9118  39                      rts
+                      
+                      ;; Format the hex representation of the 2-byte value in D,
+                      ;; storing the (4 byte) representation at the address specified
+                      ;; by X.  Clobbers A, B, and Y, modifies X.
+9119                  mon_fmt_hex_d
+9119  3404                    pshs B                   ; save B (mon_fmt_hex clobbers it)
+911B  BD9104                  jsr mon_fmt_hex          ; format MSB of value (in A)
+911E  3504                    puls B                   ; restore B
+9120  1F98                    tfr B, A                 ; copy B (LSB) in A
+9122  3002                    leax 2,X                 ; advance X to correct position in dest buffer
+9124  BD9104                  jsr mon_fmt_hex          ; format LSB of value
+9127  39                      rts
+                      
+                      ;; Convert the single hex digit in A to a numeric value.
+                      ;; Result is returned in A.  Clobbers B and Y.  Does NOT touch X.
+9128                  mon_hex_convert
+                              ; If character is lower case, convert it to upper case.
+9128  8161                    cmpa #97                 ; compare to 'a'
+912A  2502                    blo 50F                  ; not lower case, no conversion needed
+912C  8020                    suba #(97-65)            ; convert to upper case
+                      
+912E                  50
+912E  108E93D7                ldy #HEX_DIGITS          ; load Y with base addr of hex digits string
+9132  C600                    ldb #0                   ; use B as index
+9134                  51
+9134  C110                    cmpb #16                 ; at end of hex digits string?
+9136  2708                    beq 66F                  ; if at end, fail (input digit is invalid)
+9138  A1A5                    cmpa B,Y                 ; compare hex digit to table entry
+913A  2707                    beq 70F                  ; if equal, we found a valid entry
+913C  5C                      incb                     ; advance to next entry
+913D  7E9134                  jmp 51B                  ; continue loop
+                      
+9140                  66
+9140  8600                    lda #0                   ; return 0 for invalid input
+9142  39                      rts                      ; unsuccessful return
+                      
+9143                  70
+9143  1F98                    tfr B, A                 ; B is the correct value, transfer to A
+9145  39                      rts                      ; successful return
+                      
+                      ;; Parse the 2 digit hex value whose address
+                      ;; is specified by X, putting the result in A.
+                      ;; Clobbers B and Y.  Increments X by 2.
+9146                  mon_parse_hex
+                              ; One byte is reserved on stack for a local variable
+                              ; (the high nybble of the parsed hex value)
+                      
+9146  327F                    leas -1,S                ; reserve 1 byte for local variable
+                      
+9148  A680                    lda ,X+                  ; get first hex digit (high nybble)
+914A  BD9128                  jsr mon_hex_convert      ; convert it
+914D  48                      lsla                     ; left shift the value into position
+914E  48                      lsla
+914F  48                      lsla
+9150  48                      lsla
+9151  A7E4                    sta ,S                   ; preserve high nybble
+9153  A680                    lda ,X+                  ; get second hex digit (low nybble)
+9155  BD9128                  jsr mon_hex_convert      ; convert it
+9158  AAE4                    ora ,S                   ; combine high and low nybbles
+                      
+915A  3261                    leas 1,S                 ; deallocate space reserved for local variable
+                      
+915C  39                      rts
+                      
+                      ;; Parse the 4 digit hex value whose address is specified by X,
+                      ;; putting the result in D.  Increments X by 4.  Clobbers Y.
+915D                  mon_parse_hex_d
+915D  BD9146                  jsr mon_parse_hex        ; convert first two (most significant) hex digits
+9160  3402                    pshs A                   ; preserve MSB
+9162  BD9146                  jsr mon_parse_hex        ; convert second two (least significant) hex digits
+9165  1F89                    tfr A, B                 ; put LSB in B (which is the LSB of D)
+9167  3502                    puls A                   ; restore MSB (in A, which is the MSB of D)
+9169  39                      rts                      ; done!
+                      
+                      ;; Parse the ihex record in the command buffer.
+                      ;; If it is a data record, load the data into memory
+                      ;; at the specified address.
+                      ;; Returns the record type in A.
+916A                  mon_parse_ihex
+                              ; Reserve room for 4 bytes of local variables
+                              ; Variables are:
+                              ;    0,S    data len
+                              ;    1,S    record type
+                              ;    2,S    address (two bytes)
+916A  327C                    leas -4,S
+                      
+                              ; Verify that the command buffer has enough data to be a valid
+                              ; Intel hex record.  There must be at least 11 bytes.
+916C  B60084                  lda vmoncmdlen
+916F  810B                    cmpa #11
+9171  2545                    blo 66f
+                      
+                              ; Load address of command buffer into X
+9173  8E0020                  ldx #vmonbuf
+                      
+                              ; Verify that ihex record starts with a colon
+9176  A680                    lda ,X+
+9178  813A                    cmpa #COLON
+917A  263C                    bne 66f
+                      
+                              ; Read byte count
+917C  BD9146                  jsr mon_parse_hex
+917F  A7E4                    sta 0,S
+                      
+                              ; Read address
+9181  BD915D                  jsr mon_parse_hex_d
+9184  ED62                    std 2,S
+                      
+                              ; Read record type
+9186  BD9146                  jsr mon_parse_hex
+9189  A761                    sta 1,S
+                      
+                              ; Record type is EOF?
+918B  8101                    cmpa #IHEX_EOF
+918D  272B                    beq 99f
+                      
+                              ; Record type is data?
+918F  8100                    cmpa #IHEX_DATA
+9191  2625                    bne 66f                       ; record types other than data aren't supported
+                      
+                              ; Determine how many characters are needed in the command buffer
+                              ; in order to parse the correct amount of data
+9193  A6E4                    lda 0,S                       ; retrieve the data length
+9195  48                      lsla                          ; multiply by 2 (2 hex digits per data byte)
+9196  8B09                    adda #9                       ; colon, data len, address, and rec type
+9198  B10084                  cmpa vmoncmdlen               ; compare min required to command length
+919B  221B                    bhi 66f                       ; error if min required > command length
+                      
+                              ; Load data into memory!
+919D  E6E4                    ldb 0,S                       ; use B as byte count
+919F  10AE62                  ldy 2,S                       ; use Y as destination address
+91A2                  44
+91A2  C100                    cmpb #0                       ; has byte count reached 0?
+91A4  270D                    beq 80f                       ; if so, done
+91A6  3424                    pshs B, Y                     ; preserve B and Y
+91A8  BD9146                  jsr mon_parse_hex             ; parse one byte of hex data
+91AB  3524                    puls B, Y                     ; restore B and Y
+91AD  A7A0                    sta ,Y+                       ; store byte value and increment Y
+91AF  5A                      decb                          ; decrement byte count
+91B0  7E91A2                  jmp 44b                       ; continue loop
+                      
+91B3                  80
+91B3  8600                    lda #IHEX_DATA
+91B5  7E91BA                  jmp 99f
+                      
+91B8                  66
+91B8  8663                    lda #IHEX_ERROR
+                      
+91BA                  99
+91BA  3264                    leas 4,S                      ; restore stack pointer
+                      
+91BC  39                      rts
+                      
+                      ;;------------------------------------------------------------------
+                      ;; Monitor command routines
+                      ;;
+                      ;; For all monitor command handler routines, the X register
+                      ;; is set to point to the first character of the argument
+                      ;; to the command.  For example, if the command was
+                      ;;
+                      ;;    w cafe
+                      ;;
+                      ;; then X will be pointing to the 'c' character.
+                      ;;------------------------------------------------------------------
+                      
+                      ;; Question command: prints an identification string
+91BD                  mon_ques_cmd
+91BD  8E93F1                  ldx #MONITOR_IDENT_MSG
+91C0  BD92C9                  jsr acia_send_string
+91C3  39                      rts
+                      
+                      ;; 'e' (echo) command: just prints back the portion of the command
+                      ;; following the command character
+91C4                  mon_e_cmd
+91C4  BD92C9                  jsr acia_send_string
+91C7  8E93E7                  ldx #CRLF
+91CA  BD92C9                  jsr acia_send_string
+91CD  39                      rts
+                      
+                      ;; Command handler for 'a' (set address) command.
+91CE                  mon_a_cmd
+91CE  BD915D                  jsr mon_parse_hex_d
+91D1  FD0085                  std vmonaddr
+91D4  39                      rts
+                      
+                      ;; Command handler for 'r' (read) command.
+                      ;; Parses two hex digits and prints out the hex representation
+                      ;; of that many values from memory at the current address.
+                      ;; Updates the current address by the number of bytes read.
+91D5                  mon_r_cmd
+91D5  BD9146                  jsr mon_parse_hex             ; get number of bytes to read
+91D8  1F89                    tfr A, B                      ; put # bytes to read in B
+91DA  BE0085                  ldx vmonaddr                  ; put current monitor addr in X
+                      
+                              ; loop to print bytes
+91DD                  10
+91DD  C100                    cmpb #0                       ; more bytes to read?
+91DF  270F                    beq 99f                       ; if not, we're done
+                      
+91E1  3414                    pshs B, X                     ; save B and X
+91E3  A684                    lda ,X                        ; get next byte
+91E5  BD90DE                  jsr mon_print_hex             ; print hex representation of byte
+91E8  3514                    puls B, X                     ; restore B and X
+91EA  3001                    leax 1,X                      ; advance to next byte
+91EC  5A                      decb                          ; one less byte to read
+91ED  7E91DD                  jmp 10b
+                      
+91F0                  99
+91F0  BF0085                  stx vmonaddr                  ; store updated address
+                      
+91F3  8E93E7                  ldx #CRLF
+91F6  BD92C9                  jsr acia_send_string
+                      
+91F9  39                      rts
+                      
+                      ;; Command handler for 'w' (write) command.
+                      ;; Parses hex byte values from the command string and
+                      ;; writes them to memory at current monitor address.
+                      ;; Current monitor address is incremented by number of
+                      ;; byte values succesfully parsed.
+91FA                  mon_w_cmd
+91FA  10BE0085                ldy vmonaddr                  ; load monitor address into Y
+                      
+91FE                  10
+                              ; check whether either of the next two bytes is the NUL terminator
+91FE  A684                    lda ,X                        ; check first byte
+9200  2710                    beq 99f                       ; if NUL, we're done
+9202  A601                    lda 1,X                       ; check second byte
+9204  270C                    beq 99f                       ; if NUL, we're done
+                      
+                              ; next two bytes aren't NUL, so convert to hex
+9206  3420                    pshs Y                        ; save Y
+9208  BD9146                  jsr mon_parse_hex             ; convert two hex digits to int
+920B  3520                    puls Y                        ; restore Y
+920D  A7A0                    sta ,Y+                       ; save byte value and increment Y
+920F  7E91FE                  jmp 10b
+                      
+9212                  99
+9212  10BF0085                sty vmonaddr                  ; save updated Y back to monitor addr
+9216  39                      rts
+                      
+                      ;; Command handler for 'd' (Download Intel hex) command.
+                      ;; Intel hex records are read until either an EOF record is
+                      ;; read, or an invalid record is read.  Only DATA and EOF
+                      ;; records are supported.
+9217                  mon_d_cmd
+9217                  1
+                              ; Just keep parsing ihex records until an EOF
+                              ; record or an invalid record is encountered
+9217  BD904F                  jsr mon_read_command
+921A  BD916A                  jsr mon_parse_ihex
+                      
+                              ; Record was invalid?
+921D  8163                    cmpa #IHEX_ERROR
+921F  2707                    beq 66f
+                      
+                              ; Reached the EOF record?
+9221  8101                    cmpa #IHEX_EOF
+9223  270C                    beq 80f
+                      
+9225  7E9217                  jmp 1B
+                      
+9228                  66
+9228  8E9451                  ldx #INVALID_RECORD
+922B  BD92C9                  jsr acia_send_string
+922E  7E9237                  jmp 99f
+                      
+9231                  80
+9231  8E9462                  ldx #UPLOAD_COMPLETE
+9234  BD92C9                  jsr acia_send_string
+                      
+9237                  99
+9237  39                      rts
+                      
+                      ;; Command handler for 'x' (eXecute) command.
+                      ;; It just starts executing code at the current monitor address.
+9238                  mon_x_cmd
+9238  10BE0085                ldy vmonaddr
+923C  6EA4                    jmp ,Y
+                      
+                      ;; Command handler for 's' (Subroutine) command.
+                      ;; It calls a subroutine at the current monitor address.
+923E                  mon_s_cmd
+923E  10BE0085                ldy vmonaddr
+9242  ADA4                    jsr ,Y
+9244  39                      rts
+                      
+                      ;; Command handler for 'm' (Mask) command.
+                      ;; It sets the interrupt controller mask register to a
+                      ;; specified byte value.
+9245                  mon_m_cmd
+                              ;; Make sure neither of the first to argument bytes are NUL.
+9245  A684                    lda ,X                        ; check first byte
+9247  270D                    beq 99f                       ; if NUL, we're done
+9249  A601                    lda 1,X                       ; check second byte
+924B  2709                    beq 99f                       ; if NUL, we're done
+                      
+924D  BD9146                  jsr mon_parse_hex             ; parse hex value
+9250  B70087                  sta vmaskreg                  ; store mask value to vmaskreg variable
+9253  B78060                  sta PORT_IRQCTRL              ; store mask value to mask register
+                      
+9256                  99
+9256  39                      rts
+                      
+                      ;; Toggle bit 4 in the condition code register to enable or
+                      ;; disable handling of normal (-IRQ) interrupts.
+9257                  mon_q_cmd
+9257  1FA8                    tfr CC, A                     ; copy condition codes to A
+9259  8410                    anda #0b00010000              ; check whether bit 4 is set
+925B  2705                    beq 66F
+                      
+                              ;; Bit 4 is currently set, meaning that -IRQ is disabled.
+                              ;; Enable it by clearing bit 4.
+925D  1CEF                    andcc #ENABLE_IRQ
+925F  7E9264                  jmp 99F
+                      
+9262                  66
+                              ;; Bit 4 is currently clear, meaning that -IRQ is enabled.
+                              ;; Disable it by setting bit 4.
+9262  1A10                    orcc #DISABLE_IRQ
+                      
+9264                  99
+9264  39                      rts
+                      
+                      ;; This is just for fun
+9265                  mon_k_cmd
+9265  BD93AF                  jsr display_cat_picture
+9268  39                      rts
+                      
+                      ;;------------------------------------------------------------------
+                      ;; Delay subroutines
+                      ;;------------------------------------------------------------------
+                      
+                      ;; Delay routine: clobbers A and X.
+9269                  delay
+9269  8600                    lda #0
+926B                  1
+926B  BD9274                  jsr delay_inner
+926E  4A                      deca
+926F  81FF                    cmpa #$ff
+9271  25F8                    blo 1B
+9273  39                      rts
+                      
+                      ;; Inner delay subroutine: clobbers X.
+9274                  delay_inner
+9274  8E0000                  ldx #0
+9277                  1
+9277  3001                    leax 1,X
+9279  8C0FFF                  cmpx #$fff
+927C  25F9                    blo 1B
+927E  39                      rts
+                      
+                      ;;------------------------------------------------------------------
+                      ;; Hardware device routines
+                      ;;------------------------------------------------------------------
+                      
+927F                  i82c55a_init
+                              ; For now, set both groups to mode 0, and configure all ports
+                              ; as output.
+927F  8680                    lda #(I82C55A_CTRL_MODESET|I82C55A_CTRL_GROUPA_MODE0|I82C55A_CTRL_GROUPA_PORTA_OUT|I82C55A_CTRL_GROUPA_PORTC_UPPER_OUT|I82C55A_CTRL_GROUPB_MODE0|I82C55A_CTRL_GROUPB_PORTB_OUT|I82C55A_CTRL_GROUPB_PORTC_LOWER_OUT)
+9281  B78003                  sta PORT_I82C55A_CTRL
+9284  39                      rts
+                      
+9285                  i82c54_init
+                              ; Counter 0 generates the rx/tx clock signal for the ACIA.
+9285  8636                    lda #(I82C54_CTRL_SEL_CNT0|I82C54_CTRL_RW_LSB_MSB|I82C54_CTRL_MODE_3|I82C54_CTRL_BCD_DIS)
+9287  B78023                  sta PORT_I82C54_CTRL
+928A  8606                    lda #ACIA_CLKDIV
+928C  B78020                  sta PORT_I82C54_CNT0
+928F  8600                    lda #0
+9291  B78020                  sta PORT_I82C54_CNT0
+                      
+                              ; Counter 1 is used to generate a timer interrupt.
+                              ; We use mode 2 (rate generator), using a count of 0, which
+                              ; is effectively 65536, thus the timer interrupt occurs as
+                              ; infrequently as possible.
+9294  8674                    lda #(I82C54_CTRL_SEL_CNT1|I82C54_CTRL_RW_LSB_MSB|I82C54_CTRL_MODE_2|I82C54_CTRL_BCD_DIS)
+9296  B78023                  sta PORT_I82C54_CTRL
+9299  8600                    lda #0
+929B  B78021                  sta PORT_I82C54_CNT1
+929E  8600                    lda #0
+92A0  B78021                  sta PORT_I82C54_CNT1
+                      
+                              ; Counter 2: mode 3, arbitrarily divide by 6
+92A3  86B6                    lda #(I82C54_CTRL_SEL_CNT2|I82C54_CTRL_RW_LSB_MSB|I82C54_CTRL_MODE_3|I82C54_CTRL_BCD_DIS)
+92A5  B78023                  sta PORT_I82C54_CTRL
+92A8  8606                    lda #6
+92AA  B78022                  sta PORT_I82C54_CNT2
+92AD  8600                    lda #0
+92AF  B78022                  sta PORT_I82C54_CNT2
+                      
+92B2  39                      rts
+                      
+                      ;; Initialize the ACIA.  Clobbers A.
+92B3                  acia_init
+                              ; reset ACIA
+92B3  8603                    lda #ACIA_CTRL_RESET
+92B5  B78040                  sta PORT_ACIA_CTRL
+                      
+                              ; initialize ACIA
+92B8  8615                    lda #ACIA_INIT
+92BA  B78040                  sta PORT_ACIA_CTRL
+                      
+92BD  39                      rts
+                      
+                      ;; Send the data byte in A.
+                      ;; Note: clobbers the B register.
+92BE                  acia_send
+                              ; Busy wait until TRDE bit is set
+92BE                  1
+92BE  F68040                  ldb PORT_ACIA_STATUS
+92C1  C402                    andb #ACIA_STATUS_TDRE
+92C3  27F9                    beq 1B
+                      
+                              ; Write the data byte
+92C5  B78041                  sta PORT_ACIA_SEND
+92C8  39                      rts
+                      
+                      ;; Send a string of characters.
+                      ;; Address of (nul-terminated) string is in X.
+                      ;; Note: clobbers A and B, and modifies X.
+92C9                  acia_send_string
+92C9                  1
+92C9  A680                    lda ,X+          ; load next byte and advance pointer
+92CB  2706                    beq 2F           ; if nul terminator reached, done
+92CD  BD92BE                  jsr acia_send    ; send the byte
+92D0  7E92C9                  jmp 1B           ; continue loop
+92D3                  2
+92D3  39                      rts
+                      
+                      ;; Wait to receive a character from the ACIA, returning
+                      ;; the result in A.  Note: clobbers B.
+92D4                  acia_recv
+                              ; Busy wait until RDRF is set
+92D4                  1
+92D4  F68040                  ldb PORT_ACIA_STATUS
+92D7  C401                    andb #ACIA_STATUS_RDRF
+92D9  27F9                    beq 1B
+                      
+                              ; Read the data byte
+92DB  B68041                  lda PORT_ACIA_RECV
+                      
+92DE  39                      rts
+                      
+                      ;; Poll to receive a character from the ACIA.
+                      ;; If a character is not available, B is set to 0.
+                      ;; If a character is available, B is set to 1, and A
+                      ;; will contain the character read.
+92DF                  acia_poll
+92DF  F68040                  ldb PORT_ACIA_STATUS     ; check ACIA status
+92E2  C401                    andb #ACIA_STATUS_RDRF   ; byte is ready?
+92E4  2705                    beq 99f                  ; if not, we're done (B is 0)
+                      
+                              ; character is available, read it and set B to 1
+92E6  B68041                  lda PORT_ACIA_RECV       ; read the character
+92E9  C601                    ldb #1                   ; set B to 1
+                      
+92EB                  99
+92EB  39                      rts
+                      
+                      ;;**********************************************************************
+                      ;; Interrupt handling
+                      ;;**********************************************************************
+                      
+                      ;; Initialize the interrupt controller.
+92EC                  irqctrl_init
+92EC  86FF                    lda #$FF         ; all IRQs are masked initially
+92EE  B78060                  sta PORT_IRQCTRL ; store initial mask value in mask register
+92F1  B70087                  sta vmaskreg     ; store initial mask value in vmaskreg variable
+                      
+                              ;; Set the flip-flops handling the edge-triggered interrupts
+                              ;; (IRQ3 and IRQ6) to a high (non-asserted) output.
+92F4  BD931F                  jsr reset_irq3_ff
+92F7  BD932A                  jsr reset_irq6_ff
+                      
+                              ;; Fill in all entries in virqtab by copying entries
+                              ;; from DEFAULT_IRQ_HANDLER_TABLE
+92FA  8610                    lda #16          ; table has 8 entries (16 bytes total)
+92FC  8E0010                  ldx #virqtab     ; X is the destination address
+92FF  108E9441                ldy #DEFAULT_IRQ_HANDLER_TABLE ; Y is the source address
+9303                  1
+9303  E6A0                    ldb ,Y+          ; retrieve byte
+9305  E780                    stb ,X+          ; store byte
+9307  4A                      deca             ; decrease count
+9308  26F9                    bne 1B           ; if count != 0, continue loop
+                      
+930A                  99
+930A  39                      rts
+                      
+                      ;; Main interrupt handler, called automatically in response to
+                      ;; CPU's ~IRQ input being asserted.  Determines highest-priority
+                      ;; IRQ and dispatches to appropriate handler.
+930B                  irq_dispatch
+930B  B68060                  lda PORT_IRQCTRL ; read irq priority
+930E  270D                    beq 99F          ; if irq priority=0, there is no interrupt
+9310  8107                    cmpa #$07        ; sanity check irq priority is in valid range
+9312  2209                    bhi 99F          ; if not, done
+9314  48                      lsla             ; multiply irq priority by 2 (addresses are 2 bytes)
+9315  8E0010                  ldx #virqtab     ; get IRQ handler table base address
+9318  10AE86                  ldy A,X          ; load IRQ handler address
+931B  ADA4                    jsr ,Y           ; dispatch to handler
+931D                  99
+931D  3B                      rti              ; return to main program
+                      
+                      ;; Default IRQ handler for level-triggered interrupts (does nothing)
+931E                  noop_irq_handler
+931E  39                      rts
+                      
+                      ;; Reset IRQ3 flip flop.
+                      ;; This should be called after handling IRQ3.
+931F                  reset_irq3_ff
+931F  8600                    lda #IRQ3_FF_SET_ASSERT
+9321  B78003                  sta PORT_I82C55A_CTRL
+9324  8601                    lda #IRQ3_FF_SET_DEASSERT
+9326  B78003                  sta PORT_I82C55A_CTRL
+9329  39                      rts
+                      
+                      ;; Reset IRQ6 flip flop.
+                      ;; This should be called after handling IRQ6.
+932A                  reset_irq6_ff
+932A  8602                    lda #IRQ6_FF_SET_ASSERT
+932C  B78003                  sta PORT_I82C55A_CTRL
+932F  8603                    lda #IRQ6_FF_SET_DEASSERT
+9331  B78003                  sta PORT_I82C55A_CTRL
+9334  39                      rts
+                      
+                      ;;**********************************************************************
+                      ;; Keyboard routines
+                      ;;**********************************************************************
+                      
+                      ;; Initialize keyboard. No hardware initialize is needed,
+                      ;; but variables used by the keyboard routines are initialized.
+9335                  kbd_init
+9335  8600                    lda #0                         ; clear key modifiers
+9337  B70088                  sta vmodkey                    ; store in vmodkey
+933A  39                      rts
+                      
+                      ;; Return an ASCII value read from the keyboard.
+                      ;; If no key is available, the B register is set to 0.
+                      ;; If a key is available, the B register is set to 1, and
+                      ;; the A register will contain the character code.
+933B                  kbd_poll
+933B  C600                    ldb #$00                      ; assume no keypress available
+933D  B68081                  lda PORT_KBCTRL_STATUS        ; read status
+9340  8401                    anda #KBD_STATUS_FIFO_NOT_EMPTY ; check not empty flag
+9342  8100                    cmpa #$00                     ; FIFO is empty?
+9344  2728                    beq 99f                       ; if empty, done
+                      
+9346  B68080                  lda PORT_KBCTRL_DATA          ; read scan code
+                      
+                              ; Check whether shift or control were pressed or released
+9349  BD936F                  jsr kbd_check_mod_keys
+                      
+934C  1F89                    tfr A, B                      ; copy scan code to B
+934E  C440                    andb #KBD_SCAN_PRESS          ; check whether press
+                      
+9350  C100                    cmpb #$00                     ; is not press?
+9352  27E7                    beq kbd_poll                  ; if not press, try to get next scan code
+                      
+9354  3410                    pshs X                        ; preserve value of X register
+                      
+                              ; Unset the press bit
+9356  84BF                    anda #~KBD_SCAN_PRESS         ; unset the "pressed" bit
+                      
+9358  F60088                  ldb vmodkey                   ; check key modifiers
+935B  C401                    andb #KBD_SHIFT_MOD           ; is shift pressed?
+935D  2606                    bne 70f                       ; jump to "shift pressed" case if appropriate
+                      
+                              ; Shift is not pressed, use keycode_not_shifted table
+935F  8E98B0                  ldx #keycode_not_shifted
+9362  7E9368                  jmp 80f
+                      
+9365                  70
+                              ; Shift is pressed, use keycode_shifted table
+9365  8E98F0                  ldx #keycode_shifted
+                      
+9368                  80
+9368  A686                    lda A,X                       ; translate scan code to character code
+936A  C601                    ldb #1                        ; character code is available
+                      
+936C  3510                    puls X                        ; restore value of X register
+                      
+936E                  99
+936E  39                      rts
+                      
+                      ;; Check whether the scan code in the A register is a press or a release
+                      ;; of a modifier key (shift or control), and if so, update vmodkey.
+                      ;; Preserves register values.
+936F                  kbd_check_mod_keys
+936F  3404                    pshs B                        ; save original B value
+9371  1F89                    tfr A, B                      ; copy scancode to B
+                      
+9373  C159                    cmpb #KBD_SCAN_SHIFT_PRESS    ; is shift press?
+9375  260B                    bne 2f                        ; if not, next case
+9377  F60088                  ldb vmodkey                   ; get current key mod state
+937A  CA01                    orb #KBD_SHIFT_MOD            ; set shift mod bit
+937C  F70088                  stb vmodkey                   ; store in vmodkey
+937F  7E93AC                  jmp 99f                       ; done
+                      
+9382                  2
+9382  C150                    cmpb #KBD_SCAN_CTRL_PRESS     ; is control press?
+9384  260B                    bne 3f                        ; if not, next case
+9386  F60088                  ldb vmodkey                   ; get current key mod state
+9389  CA02                    orb #KBD_CTRL_MOD             ; set control mod bit
+938B  F70088                  stb vmodkey                   ; store in vmodkey
+938E  7E93AC                  jmp 99f                       ; done
+                      
+9391                  3
+9391  C119                    cmpb #KBD_SCAN_SHIFT_RELEASE  ; is shift release?
+9393  260B                    bne 4f                        ; if not, next case
+9395  F60088                  ldb vmodkey                   ; get current key mode state
+9398  C4FE                    andb #~KBD_SHIFT_MOD          ; clear shift mod bit
+939A  F70088                  stb vmodkey                   ; store in vmodkey
+939D  7E93AC                  jmp 99f                       ; done
+                      
+93A0                  4
+93A0  C110                    cmpb #KBD_SCAN_CTRL_RELEASE   ; is shift release?
+93A2  2608                    bne 99f                       ; if not, done
+93A4  F60088                  ldb vmodkey                   ; get current key mode state
+93A7  C4FD                    andb #~KBD_CTRL_MOD           ; clear control mod bit
+93A9  F70088                  stb vmodkey                   ; store in vmodkey
+                      
+93AC                  99
+93AC  3504                    puls B                        ; restore original B value
+93AE  39                      rts
+                      
+                      ;;**********************************************************************
+                      ;; A routine to display something fun in the terminal
+                      ;;**********************************************************************
+                      
+93AF                  display_cat_picture
+93AF  8E9474                  ldx #CAT_PICTURE
+93B2  BD92C9                  jsr acia_send_string
+93B5  39                      rts
+                      
+                      ;;**********************************************************************
+                      ;; Constant data
+                      ;;**********************************************************************
+                      
+                      ;; This is printed on startup
+93B6  416C6C20796F75722062617365206172652062656C6F6E6720746F2075730D0A00 ALL_YOUR_BASE FCB "All your base are belong to us",CR,NL,0
+                      
+93D7  30313233343536373839414243444546 HEX_DIGITS FCB "0123456789ABCDEF"
+                      
+                      ;; CRLF string
+93E7  0D0A00          CRLF FCB CR,NL,0
+                      
+                      ;; ROM monitor prompt
+93EA  3E2000          MONITOR_PROMPT FCB "> ",0
+                      
+                      ;; Monitor error message
+93ED  3F0D0A00        MONITOR_ERR_MSG FCB "?",CR,NL,0
+                      
+                      ;; Monitor identification message (printed when '?' command is entered)
+93F1  3638303920524F4D206D6F6E69746F722C20323031392D323032312062792064617665686F206861636B730D0A00 MONITOR_IDENT_MSG FCB "6809 ROM monitor, 2019-2021 by daveho hacks",CR,NL,0
+                      
+                      ;; Monitor command codes.
+                      ;; This must be NUL-terminated.
+941F  3F656172776478736D716B00 MONITOR_COMMANDS FCB "?earwdxsmqk",0
+                      
+                      ;; Handler routines for monitor commands.
+                      ;; Order should match MONITOR_COMMANDS.
+942B                  MONITOR_DISPATCH_TABLE
+942B  91BD                    FDB mon_ques_cmd
+942D  91C4                    FDB mon_e_cmd
+942F  91CE                    FDB mon_a_cmd
+9431  91D5                    FDB mon_r_cmd
+9433  91FA                    FDB mon_w_cmd
+9435  9217                    FDB mon_d_cmd
+9437  9238                    FDB mon_x_cmd
+9439  923E                    FDB mon_s_cmd
+943B  9245                    FDB mon_m_cmd
+943D  9257                    FDB mon_q_cmd
+943F  9265                    FDB mon_k_cmd
+                      
+                      ;; Default interrupt handler routines.
+                      ;; This table will be copied into virqtab (in RAM) to allow
+                      ;; new interrupt handler routines to be installed.
+9441                  DEFAULT_IRQ_HANDLER_TABLE
+9441  931E                    FDB noop_irq_handler          ; not used
+9443  931E                    FDB noop_irq_handler          ; IRQ1
+9445  931E                    FDB noop_irq_handler          ; IRQ2
+9447  931F                    FDB reset_irq3_ff             ; IRQ3 (edge triggered, must reset FF)
+9449  931E                    FDB noop_irq_handler          ; IRQ4
+944B  931E                    FDB noop_irq_handler          ; IRQ5
+944D  932A                    FDB reset_irq6_ff             ; IRQ6 (edge triggered, must reset FF)
+944F  931E                    FDB noop_irq_handler          ; IRQ7
+                      
+9451  496E76616C6964207265636F72640D0A00 INVALID_RECORD FCB "Invalid record",CR,NL,0
+                      
+9462  55706C6F616420636F6D706C6574650D0A00 UPLOAD_COMPLETE FCB "Upload complete",CR,NL,0
+                      
+9474                  CAT_PICTURE
+9474  0D0A                    FCB CR,NL
+9476  2020202020202020202020202020202020202020202020202020202020202020202020202020202020205F0D0A         FCB 32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,95,CR,NL
+94A3  2020202020202020202020202020202020202020202020202020202020202020202020202020202020205C602A2D2E0D0A         FCB 32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,92,96,42,45,46,CR,NL
+94D4  2020202A2A2A2A202020202A2A2A2A202020202A2A2A2A202020202A2A2A2A2020202020202020202020202920205F602D2E0D0A         FCB 32,32,32,42,42,42,42,32,32,32,32,42,42,42,42,32,32,32,32,42,42,42,42,32,32,32,32,42,42,42,42,32,32,32,32,32,32,32,32,32,32,32,32,41,32,32,95,96,45,46,CR,NL
+9508  20202A202020202A20202A202020202A20202A202020202A20202A202020202A202020202020202020202E20203A20602E202E0D0A         FCB 32,32,42,32,32,32,32,42,32,32,42,32,32,32,32,42,32,32,42,32,32,32,32,42,32,32,42,32,32,32,32,42,32,32,32,32,32,32,32,32,32,32,46,32,32,58,32,96,46,32,46,CR,NL
+953D  20202A202020202020202A202020202A20202A202020202A20202A202020202A202020202020202020203A205F2020202720205C0D0A         FCB 32,32,42,32,32,32,32,32,32,32,42,32,32,32,32,42,32,32,42,32,32,32,32,42,32,32,42,32,32,32,32,42,32,32,32,32,32,32,32,32,32,32,58,32,95,32,32,32,39,32,32,92,CR,NL
+9573  20202A202020202020202A202020202A20202A202020202A20202A202020202A202020202020202020203B202A60205F2E202020602A2D2E5F0D0A         FCB 32,32,42,32,32,32,32,32,32,32,42,32,32,32,32,42,32,32,42,32,32,32,32,42,32,32,42,32,32,32,32,42,32,32,32,32,32,32,32,32,32,32,59,32,42,96,32,95,46,32,32,32,96,42,45,46,95,CR,NL
+95AE  20202A2A2A2A2A202020202A2A2A2A2020202A202020202A2020202A2A2A2A2A20202020202020202020602D2E2D2720202020202020202020602D2E0D0A         FCB 32,32,42,42,42,42,42,32,32,32,32,42,42,42,42,32,32,32,42,32,32,32,32,42,32,32,32,42,42,42,42,42,32,32,32,32,32,32,32,32,32,32,96,45,46,45,39,32,32,32,32,32,32,32,32,32,32,96,45,46,CR,NL
+95EC  20202A202020202A20202A202020202A20202A202020202A202020202020202A2020202020202020202020203B202020202020206020202020202020602E0D0A         FCB 32,32,42,32,32,32,32,42,32,32,42,32,32,32,32,42,32,32,42,32,32,32,32,42,32,32,32,32,32,32,32,42,32,32,32,32,32,32,32,32,32,32,32,32,59,32,32,32,32,32,32,32,96,32,32,32,32,32,32,32,96,46,CR,NL
+962C  20202A202020202A20202A202020202A20202A202020202A202020202020202A2020202020202020202020203A2E202020202020202E20202020202020205C0D0A         FCB 32,32,42,32,32,32,32,42,32,32,42,32,32,32,32,42,32,32,42,32,32,32,32,42,32,32,32,32,32,32,32,42,32,32,32,32,32,32,32,32,32,32,32,32,58,46,32,32,32,32,32,32,32,46,32,32,32,32,32,32,32,32,92,CR,NL
+966D  20202A202020202A20202A202020202A20202A202020202A202020202020202A2020202020202020202020202E205C20202E2020203A2020202E2D272020202E0D0A         FCB 32,32,42,32,32,32,32,42,32,32,42,32,32,32,32,42,32,32,42,32,32,32,32,42,32,32,32,32,32,32,32,42,32,32,32,32,32,32,32,32,32,32,32,32,46,32,92,32,32,46,32,32,32,58,32,32,32,46,45,39,32,32,32,46,CR,NL
+96AF  2020202A2A2A2A202020202A2A2A2A202020202A2A2A2A202020202A2A2A2A20202020202020202020202020272020602B2E3B20203B2020272020202020203A0D0A         FCB 32,32,32,42,42,42,42,32,32,32,32,42,42,42,42,32,32,32,32,42,42,42,42,32,32,32,32,42,42,42,42,32,32,32,32,32,32,32,32,32,32,32,32,32,39,32,32,96,43,46,59,32,32,59,32,32,39,32,32,32,32,32,32,58,CR,NL
+96F1  20202020202020202020202020202020202020202020202020202020202020202020202020202020202020203A20202720207C202020203B202020202020203B2D2E0D0A         FCB 32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,58,32,32,39,32,32,124,32,32,32,32,59,32,32,32,32,32,32,32,59,45,46,CR,NL
+9735  20202020202020202020202020202020202023232020202020202020202020202020202020202020202020203B20272020203A203A602D3A20202020205F2E602A203B0D0A         FCB 32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,35,35,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,59,32,39,32,32,32,58,32,58,96,45,58,32,32,32,32,32,95,46,96,42,32,59,CR,NL
+977A  20202020202020202020202020202020202020202320202020202020202020202020202020202020202E2A27202F20202E2A27203B202E2A602D202B272020602A270D0A         FCB 32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,35,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,46,42,39,32,47,32,32,46,42,39,32,59,32,46,42,96,45,32,43,39,32,32,96,42,39,CR,NL
+97BE  2020202020202020202020202020202020202020232020202020202020202020202020202020202020602A2D2A202020602A2D2A2020602A2D2A270D0A         FCB 32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,35,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,96,42,45,42,32,32,32,96,42,45,42,32,32,96,42,45,42,39,CR,NL
+97FB  202020202320232323202023202020202320202023202020232323202020202323230D0A         FCB 32,32,32,32,35,32,35,35,35,32,32,35,32,32,32,32,35,32,32,32,35,32,32,32,35,35,35,32,32,32,32,35,35,35,CR,NL
+981F  202020202323202020202023202020202320202023202023202020232020230D0A         FCB 32,32,32,32,35,35,32,32,32,32,32,35,32,32,32,32,35,32,32,32,35,32,32,35,32,32,32,35,32,32,35,CR,NL
+9840  202020202320202020202023202020202320202023202023232323232020202323230D0A         FCB 32,32,32,32,35,32,32,32,32,32,32,35,32,32,32,32,35,32,32,32,35,32,32,35,35,35,35,35,32,32,32,35,35,35,CR,NL
+9864  20202020232020202020202320202023232020202320202320202020202020202020230D0A         FCB 32,32,32,32,35,32,32,32,32,32,32,35,32,32,32,35,35,32,32,32,35,32,32,35,32,32,32,32,32,32,32,32,32,32,35,CR,NL
+9889  202020202320202020202020232323202320202023202020232323202020202323230D0A         FCB 32,32,32,32,35,32,32,32,32,32,32,32,35,35,35,32,35,32,32,32,35,32,32,32,35,35,35,32,32,32,32,35,35,35,CR,NL
+98AD  0D0A                    FCB CR,NL
+98AF  00                      FCB 0
+                      
+                      ;;**********************************************************************
+                      ;; Scancode to ASCII code translation table: defines
+                      ;; keycode_not_shifted and keycode_shifted tables, which map
+                      ;; scancodes (without bit 6, the "pressed" bit) to ASCII
+                      ;; codes.
+                      ;;**********************************************************************
+                      
+98B0                          INCLUDE "kbd_translate.asm"
+98B0                  keycode_not_shifted
+98B0  31                      FCB 49
+98B1  33                      FCB 51
+98B2  35                      FCB 53
+98B3  37                      FCB 55
+98B4  39                      FCB 57
+98B5  3F                      FCB 63
+98B6  3F                      FCB 63
+98B7  3F                      FCB 63
+98B8  3F                      FCB 63
+98B9  77                      FCB 119
+98BA  72                      FCB 114
+98BB  79                      FCB 121
+98BC  69                      FCB 105
+98BD  70                      FCB 112
+98BE  2A                      FCB 42
+98BF  0A                      FCB 10
+98C0  3F                      FCB 63
+98C1  61                      FCB 97
+98C2  64                      FCB 100
+98C3  67                      FCB 103
+98C4  6A                      FCB 106
+98C5  6C                      FCB 108
+98C6  3B                      FCB 59
+98C7  3F                      FCB 63
+98C8  3F                      FCB 63
+98C9  3F                      FCB 63
+98CA  78                      FCB 120
+98CB  76                      FCB 118
+98CC  6E                      FCB 110
+98CD  2C                      FCB 44
+98CE  2F                      FCB 47
+98CF  40                      FCB 64
+98D0  20                      FCB 32
+98D1  7A                      FCB 122
+98D2  63                      FCB 99
+98D3  62                      FCB 98
+98D4  6D                      FCB 109
+98D5  2E                      FCB 46
+98D6  3F                      FCB 63
+98D7  3F                      FCB 63
+98D8  3F                      FCB 63
+98D9  73                      FCB 115
+98DA  66                      FCB 102
+98DB  68                      FCB 104
+98DC  6B                      FCB 107
+98DD  3A                      FCB 58
+98DE  3D                      FCB 61
+98DF  3F                      FCB 63
+98E0  71                      FCB 113
+98E1  65                      FCB 101
+98E2  74                      FCB 116
+98E3  75                      FCB 117
+98E4  6F                      FCB 111
+98E5  2D                      FCB 45
+98E6  2B                      FCB 43
+98E7  3F                      FCB 63
+98E8  32                      FCB 50
+98E9  34                      FCB 52
+98EA  36                      FCB 54
+98EB  38                      FCB 56
+98EC  30                      FCB 48
+98ED  3F                      FCB 63
+98EE  3F                      FCB 63
+98EF  3F                      FCB 63
+                      
+98F0                  keycode_shifted
+98F0  21                      FCB 33
+98F1  23                      FCB 35
+98F2  25                      FCB 37
+98F3  27                      FCB 39
+98F4  28                      FCB 40
+98F5  3F                      FCB 63
+98F6  3F                      FCB 63
+98F7  3F                      FCB 63
+98F8  3F                      FCB 63
+98F9  57                      FCB 87
+98FA  52                      FCB 82
+98FB  59                      FCB 89
+98FC  49                      FCB 73
+98FD  50                      FCB 80
+98FE  2A                      FCB 42
+98FF  0A                      FCB 10
+9900  3F                      FCB 63
+9901  41                      FCB 65
+9902  44                      FCB 68
+9903  47                      FCB 71
+9904  4A                      FCB 74
+9905  4C                      FCB 76
+9906  5D                      FCB 93
+9907  3F                      FCB 63
+9908  3F                      FCB 63
+9909  3F                      FCB 63
+990A  58                      FCB 88
+990B  56                      FCB 86
+990C  4E                      FCB 78
+990D  3C                      FCB 60
+990E  3F                      FCB 63
+990F  40                      FCB 64
+9910  20                      FCB 32
+9911  5A                      FCB 90
+9912  43                      FCB 67
+9913  42                      FCB 66
+9914  4D                      FCB 77
+9915  3E                      FCB 62
+9916  3F                      FCB 63
+9917  3F                      FCB 63
+9918  3F                      FCB 63
+9919  53                      FCB 83
+991A  46                      FCB 70
+991B  48                      FCB 72
+991C  4B                      FCB 75
+991D  5B                      FCB 91
+991E  3D                      FCB 61
+991F  3F                      FCB 63
+9920  51                      FCB 81
+9921  45                      FCB 69
+9922  54                      FCB 84
+9923  55                      FCB 85
+9924  4F                      FCB 79
+9925  2D                      FCB 45
+9926  2B                      FCB 43
+9927  3F                      FCB 63
+9928  22                      FCB 34
+9929  24                      FCB 36
+992A  26                      FCB 38
+992B  28                      FCB 40
+992C  5E                      FCB 94
+992D  3F                      FCB 63
+992E  3F                      FCB 63
+992F  3F                      FCB 63
+                      
+                      ;;**********************************************************************
+                      ;; System address table
+                      ;;
+                      ;; Programs loaded into RAM can use this table to locate addresses
+                      ;; of monitor functions and data.  There is no significance to the
+                      ;; order of the entries.  New entries should be added to the end.
+                      ;;
+                      ;; The include file "offtab.asm" contains symbolic names for the
+                      ;; addresses of each entry, and is the preferred way to (indirectly)
+                      ;; refer to monitor routines from other programs.
+                      ;;**********************************************************************
+                      
+FE00                          ORG $FE00
+FE00  931F                    FDB reset_irq3_ff
+FE02  932A                    FDB reset_irq6_ff
+FE04  90DE                    FDB mon_print_hex
+FE06  90F1                    FDB mon_print_hex_d
+FE08  92BE                    FDB acia_send
+FE0A  92C9                    FDB acia_send_string
+FE0C  92D4                    FDB acia_recv
+FE0E  9269                    FDB delay
+                      
+                      ;;**********************************************************************
+                      ;; Interrupt vectors
+                      ;;**********************************************************************
+                      
+                              ;; IRQ vector
+FFF8                          ORG $FFF8
+FFF8  930B                    FDB irq_dispatch
+                      
+                              ;; reset vector
+FFFE                          ORG $FFFE
+FFFE  9000                    FDB entry
+                      
+                      ;; vim:ft=asm6809:
+                      ;; vim:ts=4:
