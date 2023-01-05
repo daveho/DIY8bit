@@ -1019,7 +1019,7 @@ MONITOR_PROMPT FCB "> ",0
 MONITOR_ERR_MSG FCB "?",CR,NL,0
 
 ;; Monitor identification message (printed when '?' command is entered)
-MONITOR_IDENT_MSG FCB "6809 ROM monitor, 2019-2021 by daveho hacks",CR,NL,0
+MONITOR_IDENT_MSG FCB "6809 ROM monitor, 2019-2023 by daveho hacks",CR,NL,0
 
 ;; Monitor command codes.
 ;; This must be NUL-terminated.
@@ -1090,6 +1090,12 @@ CAT_PICTURE
 ;;**********************************************************************
 
 	INCLUDE "kbd_translate.asm"
+
+;;**********************************************************************
+;; TMS9918A text font
+;;**********************************************************************
+
+	INCLUDE "tms9918a_font.asm"
 
 ;;**********************************************************************
 ;; System address table

@@ -6,6 +6,7 @@
 	INCLUDE "i82c54.asm"
 	INCLUDE "acia.asm"
 	INCLUDE "kbd.asm"
+	;;INCLUDE "tms9918a.asm"
 
 ;; Addresses of hardware device registers
 
@@ -46,6 +47,14 @@ PORT_IRQCTRL     EQU $8060
 PORT_KBCTRL_BASE   EQU $8080
 PORT_KBCTRL_DATA   EQU (PORT_KBCTRL_BASE + 0)
 PORT_KBCTRL_STATUS EQU (PORT_KBCTRL_BASE + 1)
+
+;; TMS9918A Video Display Processor (uses -IODEV5)
+;; Note that A0 is connected to the MODE input, and should be
+;; 0 when reading or writing VRAM, and 1 when accessing registers
+;; or writing VRAM address information.
+PORT_TMS9918A_BASE EQU $80A0
+PORT_TMS9918A_DATA EQU (PORT_TMS9918A_BASE + 0)
+PORT_TMS9918A_CTRL EQU (PORT_TMS9918A_BASE + 1)
 
 ;; vim:ft=asm6809:
 ;; vim:ts=4:
