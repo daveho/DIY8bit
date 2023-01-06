@@ -1019,8 +1019,13 @@ tms9918a_init
 	ldb #4
 	jsr tms9918a_write_reg
 
+	;lda #((TMS9918A_COLOR_WHITE<<4) | TMS9918A_COLOR_BLACK)
+	lda #$F1 ; white foreground, black background
+	ldb #7
+	jsr tms9918a_write_reg
+
 	; Clear the VRAM
-	jsr tms9918a_clear_vram
+	;jsr tms9918a_clear_vram
 
 	; Load text font into the pattern area (starting at $0000 in VRAM)
 	jsr tms9918a_load_font
