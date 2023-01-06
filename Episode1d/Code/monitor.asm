@@ -1001,28 +1001,35 @@ kbd_check_mod_keys
 ;; Initialize the VDP.
 ;; For now, go into text mode.
 tms9918a_init
+	; Give the VDP some time to come out of reset
+
 	; Write initial values to VDP register
 
 	lda #TMS9918A_TEXTMODE_R0_INIT
 	ldb #0
 	jsr tms9918a_write_reg
+	jsr delay
 
 	lda #TMS9918A_TEXTMODE_R1_INIT
 	ldb #1
 	jsr tms9918a_write_reg
+	jsr delay
 
 	lda #TMS9918A_TEXTMODE_R2_INIT
 	ldb #2
 	jsr tms9918a_write_reg
+	jsr delay
 
 	lda #TMS9918A_TEXTMODE_R4_INIT
 	ldb #4
 	jsr tms9918a_write_reg
+	jsr delay
 
-	;lda #((TMS9918A_COLOR_WHITE<<4) | TMS9918A_COLOR_BLACK)
-	lda #$F1 ; white foreground, black background
+	lda #((TMS9918A_COLOR_WHITE<<4) | TMS9918A_COLOR_BLACK)
+	;lda #$F1 ; white foreground, black background
 	ldb #7
 	jsr tms9918a_write_reg
+	jsr delay
 
 	; Clear the VRAM
 	jsr tms9918a_clear_vram
