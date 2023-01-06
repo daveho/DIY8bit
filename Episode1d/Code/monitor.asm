@@ -1025,10 +1025,16 @@ tms9918a_init
 	jsr tms9918a_write_reg
 
 	; Clear the VRAM
-	;jsr tms9918a_clear_vram
+	jsr tms9918a_clear_vram
 
 	; Load text font into the pattern area (starting at $0000 in VRAM)
 	jsr tms9918a_load_font
+
+	; can we display some text?
+	ldx #$800
+	jsr tms9918a_set_addr
+	ldx #ALL_YOUR_BASE
+	jsr tms9918a_write_str
 
 	rts
 
@@ -1036,8 +1042,10 @@ tms9918a_init
 ;; A=data byte, B=which register to write
 tms9918a_write_reg
 	sta PORT_TMS9918A_CTRL        ; value to write
+	jsr tms9918a_delay
 	orb #$80                      ; set MSB of byte containing reg num
 	stb PORT_TMS9918A_CTRL        ; write register number
+	jsr tms9918a_delay
 	rts
 
 ;; Set 14-bit VRAM to access.
@@ -1047,8 +1055,10 @@ tms9918a_set_addr
 	puls B                        ; pop VRAM addr MSB to B
 	puls A                        ; pop VRAM addr LSB to A
 	sta PORT_TMS9918A_CTRL        ; write LSB of address
+	jsr tms9918a_delay
 	orb #$40                      ; two most significant bits should be 01
 	stb PORT_TMS9918A_CTRL        ; write MSB of address
+	jsr tms9918a_delay
 	rts
 
 ;; Clear VRAM
@@ -1062,6 +1072,7 @@ tms9918a_clear_vram
 1
 	lda #0
 	sta PORT_TMS9918A_DATA        ; write 0 to VRAM
+	jsr tms9918a_delay
 	leax -1,X                     ; decrement X
 	cmpx #0                       ; X is 0?
 	bne 1b                        ; if not, continue loop
@@ -1080,9 +1091,45 @@ tms9918a_load_font
 1
 	lda ,X+                       ; get next byte of font data, incr pointer
 	sta PORT_TMS9918A_DATA        ; write font byte to VRAM
+	jsr tms9918a_delay
 	cmpx ,S                       ; has pointer reached end of font data?
 	bne 1b                        ; if not, continue loop
 	leas 2,S                      ; clear stack
+	rts
+
+;; Write a NUL-terminated string to VDP memory.
+;; Assumes that the VRAM address has already been set to
+;; the desired destination.
+;; X=ptr to string to write
+;; Clobbers A
+tms9918a_write_str
+1
+	lda ,X+                       ; get next byte from string
+	cmpa #0                       ; is NUL terminator?
+	beq 99f                       ; if so, done copying the string
+	sta PORT_TMS9918A_DATA        ; write byte to VRAM
+	jsr tms9918a_delay            ; delay
+	jmp 1b                        ; continue loop
+99
+	rts
+
+tms9918a_delay
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
 	rts
 
 ;;**********************************************************************
