@@ -1019,6 +1019,9 @@ tms9918a_init
 	ldb #4
 	jsr tms9918a_write_reg
 
+	; Clear the VRAM
+	jsr tms9918a_clear_vram
+
 	; Load text font into the pattern area (starting at $0000 in VRAM)
 	jsr tms9918a_load_font
 
@@ -1041,6 +1044,23 @@ tms9918a_set_addr
 	sta PORT_TMS9918A_CTRL        ; write LSB of address
 	orb #$40                      ; two most significant bits should be 01
 	stb PORT_TMS9918A_CTRL        ; write MSB of address
+	rts
+
+;; Clear VRAM
+;; Clobbers X and A
+tms9918a_clear_vram
+	; Set VRAM address to 0
+	ldx #0
+	jsr tms9918a_set_addr
+
+	ldx #16384                    ; X is count of # bytes to write
+1
+	lda #0
+	sta PORT_TMS9918A_DATA        ; write 0 to VRAM
+	leax -1,X                     ; decrement X
+	cmpx #0                       ; X is 0?
+	bne 1b                        ; if not, continue loop
+
 	rts
 
 ;; Load font data into VRAM.
