@@ -38,7 +38,7 @@ File.open('tms9918a_font.asm', 'w') do |outf|
   outf.puts ";; Shamelessly stolen from Dr. Volt:"
   outf.puts ";;   https://github.com/michalin/TMS9918_Arduino/blob/main/src/patterns.h"
   outf.puts ""
-  outf.puts "tms9918_font"
+  outf.puts "tms9918a_font"
 
   i = 0
   while i < 1024
@@ -51,5 +51,6 @@ File.open('tms9918a_font.asm', 'w') do |outf|
   end
 
   outf.puts ""
-  outf.puts ";; vim:ft=asm6809:"
+  colon = ':'
+  outf.puts ";; vim#{colon}ft=asm6809#{colon}"
 end

@@ -1019,14 +1019,45 @@ tms9918a_init
 	ldb #4
 	jsr tms9918a_write_reg
 
+	; Load text font into the pattern area (starting at $0000 in VRAM)
+	jsr tms9918a_load_font
+
 	rts
 
 ;; Write a byte to a TMS9918A register.
 ;; A=data byte, B=which register to write
 tms9918a_write_reg
 	sta PORT_TMS9918A_CTRL        ; value to write
-	orb #80                       ; set MSB of byte containing reg num
+	orb #$80                      ; set MSB of byte containing reg num
 	stb PORT_TMS9918A_CTRL        ; write register number
+	rts
+
+;; Set 14-bit VRAM to access.
+;; X=address, clobbers A
+tms9918a_set_addr
+	pshs X                        ; push MSB and LSB of VRAM address
+	puls B                        ; pop VRAM addr MSB to B
+	puls A                        ; pop VRAM addr LSB to A
+	sta PORT_TMS9918A_CTRL        ; write LSB of address
+	orb #$40                      ; two most significant bits should be 01
+	stb PORT_TMS9918A_CTRL        ; write MSB of address
+	rts
+
+;; Load font data into VRAM.
+;; Clobbers X/A.
+tms9918a_load_font
+	leas -2,S                     ; reserve 2 bytes on stack
+	ldx #$0000                    ; load font data to address $0000 in VRAM
+	jsr tms9918a_set_addr         ; set address
+	ldx #(tms9918a_font+1024)     ; address at end of font data
+	stx ,S                        ; store end address on stack
+	ldx #tms9918a_font            ; get address of font
+1
+	lda ,X+                       ; get next byte of font data, incr pointer
+	sta PORT_TMS9918A_DATA        ; write font byte to VRAM
+	cmpx ,S                       ; has pointer reached end of font data?
+	bne 1b                        ; if not, continue loop
+	leas 2,S                      ; clear stack
 	rts
 
 ;;**********************************************************************
