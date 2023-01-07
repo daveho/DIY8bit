@@ -1,6 +1,6 @@
 # Episode 1D
 
-Link to video: coming soon
+Link to video: <https://youtu.be/MCGEp9laRh4>
 
 ![Cute cat picture](img/Thumbnail.png)
 
