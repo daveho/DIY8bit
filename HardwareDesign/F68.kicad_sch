@@ -1014,6 +1014,10 @@
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid 2d61a69c-d4b5-42cb-ac63-dc01651aedb6)
   )
+  (wire (pts (xy 195.58 220.98) (xy 203.2 220.98))
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid 2ddfaf18-0784-4534-8a77-b70f4fcf1228)
+  )
   (wire (pts (xy 226.06 119.38) (xy 240.03 119.38))
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid 2e84476f-d865-4353-bbaa-444710ad27ee)
@@ -2083,6 +2087,10 @@
   (label "A9" (at 120.65 81.28 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 21cecc67-36b8-4cce-85ff-dd45b7108083)
+  )
+  (label "~{IRQ2}" (at 196.85 220.98 0)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid 22451445-594d-4d77-9811-035b6df88590)
   )
   (label "PC1" (at 196.85 73.66 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
@@ -3695,6 +3703,10 @@
       (effects (font (size 1.27 1.27)) (justify right))
       (uuid f7b2398f-0dfc-498b-b86a-45c6a1a9f7f8)
     )
+    (pin "~{VDPINT}" output (at 195.58 220.98 0)
+      (effects (font (size 1.27 1.27)) (justify right))
+      (uuid d1d3b541-a88a-4d06-af32-c8bc22887da9)
+    )
   )
 
   (sheet_instances
@@ -4311,6 +4323,9 @@
     )
     (path "/d3704385-6c80-4c06-a060-a58a9dd421b5/7362eec1-a588-4778-8454-b2921c9f01a3"
       (reference "J701") (unit 1) (value "RCJ-044") (footprint "CUI_RCJ-044:CUI_RCJ-044")
+    )
+    (path "/d3704385-6c80-4c06-a060-a58a9dd421b5/231558bc-7ecb-46bf-95c0-8a93f50742c4"
+      (reference "J702") (unit 1) (value "Conn_01x02") (footprint "")
     )
     (path "/d3704385-6c80-4c06-a060-a58a9dd421b5/330d5956-7999-4236-90df-a660f38e22eb"
       (reference "Q701") (unit 1) (value "2N4401") (footprint "Package_TO_SOT_THT:TO-92_HandSolder")
