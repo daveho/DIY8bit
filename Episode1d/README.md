@@ -2,6 +2,8 @@
 
 Link to video: coming soon
 
+![Cute cat picture](img/Thumbnail.png)
+
 The goal of this episode is to experiment with a
 [TMS9918A Video Display Processor](https://en.wikipedia.org/wiki/TMS9918)
 and to attempt to use it as a display for the 6809 8-bit computer system.
