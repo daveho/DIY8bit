@@ -1,8 +1,5 @@
-# Hardware design
+# Hardware design for Episode 1D
 
-This directory is intended to be a running up-to-date version
-of the hardware design.
-
-The system is named "F68".  There is no particular significance
-to this name other than it's short, and the "68" signifies the
-6809 CPU.
+This is the hardware design for Episode 1D. See the
+[top-level HardwareDesign directory](../../HardwareDesign)
+for the most up-to-date hardware design.
