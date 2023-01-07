@@ -1,0 +1,77 @@
+
+(kicad_symbol_lib (version 20211014) (generator kicad_symbol_editor)
+  (symbol "RCJ-044" (pin_names (offset 1.016)) (in_bom yes) (on_board yes)
+    (property "Reference" "J" (id 0) (at -7.62 6.35 0)
+      (effects (font (size 1.27 1.27)) (justify bottom left))
+    )
+    (property "Value" "RCJ-044" (id 1) (at -7.62 -6.35 0.0)
+      (effects (font (size 1.27 1.27)) (justify top left))
+    )
+    (property "Footprint" "CUI_RCJ-044" (id 2) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) (justify bottom) hide)
+    )
+    (property "MANUFACTURER" "CUI Devices" (id 4) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) (justify bottom) hide)
+    )
+    (property "PARTREV" "1.02" (id 5) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) (justify bottom) hide)
+    )
+    (property "STANDARD" "Manufacturer Recommendations" (id 6) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) (justify bottom) hide)
+    )
+    (property "MAXIMUM_PACKAGE_HEIGHT" "11.6 mm" (id 7) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) (justify bottom) hide)
+    )
+    (symbol "RCJ-044_0_0"
+      (polyline
+        (pts (xy -5.08 -2.54) (xy -5.08 -0.254)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy -5.08 -0.254) (xy -4.445 -0.254)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy -4.445 -0.254) (xy -4.445 2.54)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy -4.445 2.54) (xy -5.715 2.54)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy -5.715 2.54) (xy -5.715 -0.254)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy -5.715 -0.254) (xy -5.08 -0.254)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy -0.635 2.54) (xy -1.905 1.27)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy -1.905 1.27) (xy -3.175 2.54)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy -0.635 2.54) (xy 7.62 2.54)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy -5.08 -2.54) (xy 7.62 -2.54)) (stroke (width 0.1524))
+      )
+      (rectangle (start -7.62 -5.08) (end 7.62 5.08)
+        (stroke (width 0.254)) (fill (type background))
+      )
+      (pin passive line (at 12.7 -2.54 180.0) (length 5.08)
+        (name "~"
+          (effects (font (size 1.016 1.016)))
+        )
+        (number "1"
+          (effects (font (size 1.016 1.016)))
+        )
+      )
+      (pin passive line (at 12.7 2.54 180.0) (length 5.08)
+        (name "~"
+          (effects (font (size 1.016 1.016)))
+        )
+        (number "2"
+          (effects (font (size 1.016 1.016)))
+        )
+      )
+    )
+  )
+)
