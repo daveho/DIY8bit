@@ -4154,6 +4154,9 @@
     (path "/00000000-0000-0000-0000-000060b8196b/00000000-0000-0000-0000-000062d67c00"
       (reference "#PWR0213") (unit 1) (value "GND") (footprint "")
     )
+    (path "/f2bcf6a4-53c5-4e82-b949-c75327180f38/6de6b370-eb4d-48d3-a500-e8610773aad0"
+      (reference "#PWR?") (unit 1) (value "VCC") (footprint "")
+    )
     (path "/00000000-0000-0000-0000-0000619f2ece"
       (reference "C001") (unit 1) (value "22μF") (footprint "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm")
     )
@@ -4655,14 +4658,29 @@
     (path "/d3704385-6c80-4c06-a060-a58a9dd421b5/07db03f7-9032-4d06-99ff-1aee565cc424"
       (reference "U702") (unit 1) (value "74HCT04") (footprint "Package_DIP:DIP-14_W7.62mm_Socket")
     )
+    (path "/f2bcf6a4-53c5-4e82-b949-c75327180f38/b063e1c0-13fc-4b83-b9ca-8d8d76f9f5af"
+      (reference "U702") (unit 1) (value "74HCT02") (footprint "")
+    )
+    (path "/f2bcf6a4-53c5-4e82-b949-c75327180f38/9694340e-5566-4ec0-9877-bdf44a7ab2a4"
+      (reference "U702") (unit 2) (value "74HCT02") (footprint "")
+    )
     (path "/d3704385-6c80-4c06-a060-a58a9dd421b5/defc6410-57e7-4f8b-8bc8-0c1463b04302"
       (reference "U702") (unit 2) (value "74HCT04") (footprint "Package_DIP:DIP-14_W7.62mm_Socket")
     )
     (path "/d3704385-6c80-4c06-a060-a58a9dd421b5/8a7c7808-4d4f-45c1-b333-802d7610f1c9"
       (reference "U702") (unit 3) (value "74HCT04") (footprint "Package_DIP:DIP-14_W7.62mm_Socket")
     )
+    (path "/f2bcf6a4-53c5-4e82-b949-c75327180f38/fba200ae-696c-43a3-afbc-86425da41cb5"
+      (reference "U702") (unit 3) (value "74HCT02") (footprint "")
+    )
     (path "/d3704385-6c80-4c06-a060-a58a9dd421b5/d4f99aa5-2a5c-40d4-af68-c9b0470a2a9c"
       (reference "U702") (unit 4) (value "74HCT04") (footprint "Package_DIP:DIP-14_W7.62mm_Socket")
+    )
+    (path "/f2bcf6a4-53c5-4e82-b949-c75327180f38/ff74f518-ff6b-4e6b-b487-84fd091cd356"
+      (reference "U702") (unit 4) (value "74HCT02") (footprint "")
+    )
+    (path "/f2bcf6a4-53c5-4e82-b949-c75327180f38/3c5b52fe-60b0-4c79-89fa-bf3be0dec46c"
+      (reference "U702") (unit 5) (value "74HCT02") (footprint "")
     )
     (path "/d3704385-6c80-4c06-a060-a58a9dd421b5/93b94026-4650-4718-a13d-1572ed8d0c3b"
       (reference "U702") (unit 5) (value "74HCT04") (footprint "Package_DIP:DIP-14_W7.62mm_Socket")
@@ -4676,17 +4694,38 @@
     (path "/d3704385-6c80-4c06-a060-a58a9dd421b5/815eb640-6a2c-4a04-b913-d261c2245175"
       (reference "U703") (unit 1) (value "74HCT00") (footprint "Package_DIP:DIP-14_W7.62mm_Socket")
     )
+    (path "/f2bcf6a4-53c5-4e82-b949-c75327180f38/c82b22ac-ccd1-4404-84e3-4583c8faafd3"
+      (reference "U703") (unit 1) (value "74HCT04") (footprint "")
+    )
     (path "/d3704385-6c80-4c06-a060-a58a9dd421b5/2dcd6bbf-b099-40e9-9720-4adc23075d68"
       (reference "U703") (unit 2) (value "74HCT00") (footprint "Package_DIP:DIP-14_W7.62mm_Socket")
+    )
+    (path "/f2bcf6a4-53c5-4e82-b949-c75327180f38/ec99e54f-f346-40c5-b496-e3c01f7d3514"
+      (reference "U703") (unit 2) (value "74HCT04") (footprint "")
     )
     (path "/d3704385-6c80-4c06-a060-a58a9dd421b5/2527b777-b368-4104-8122-739f03cf3dda"
       (reference "U703") (unit 3) (value "74HCT00") (footprint "Package_DIP:DIP-14_W7.62mm_Socket")
     )
+    (path "/f2bcf6a4-53c5-4e82-b949-c75327180f38/26bf4418-252d-45f2-813c-963d296b4493"
+      (reference "U703") (unit 3) (value "74HCT04") (footprint "")
+    )
     (path "/d3704385-6c80-4c06-a060-a58a9dd421b5/4d42dce4-2a9e-476b-92c8-a2d5485bd715"
       (reference "U703") (unit 4) (value "74HCT00") (footprint "Package_DIP:DIP-14_W7.62mm_Socket")
     )
+    (path "/f2bcf6a4-53c5-4e82-b949-c75327180f38/b559ac81-d07a-4a2d-9c70-296f22d3e7d8"
+      (reference "U703") (unit 4) (value "74HCT04") (footprint "")
+    )
     (path "/d3704385-6c80-4c06-a060-a58a9dd421b5/316587ca-de3f-45dc-96b2-701c0ad4bab9"
       (reference "U703") (unit 5) (value "74HCT00") (footprint "Package_DIP:DIP-14_W7.62mm_Socket")
+    )
+    (path "/f2bcf6a4-53c5-4e82-b949-c75327180f38/e6c4ec21-84c5-483d-a4f2-1db1ccc44766"
+      (reference "U703") (unit 5) (value "74HCT04") (footprint "")
+    )
+    (path "/f2bcf6a4-53c5-4e82-b949-c75327180f38/504ec975-77ec-407f-b0f5-0c8cb946cd43"
+      (reference "U703") (unit 6) (value "74HCT04") (footprint "")
+    )
+    (path "/f2bcf6a4-53c5-4e82-b949-c75327180f38/e72d0292-4636-4e9f-92d6-bb4a864e4aad"
+      (reference "U703") (unit 7) (value "74HCT04") (footprint "")
     )
     (path "/d3704385-6c80-4c06-a060-a58a9dd421b5/ca1ae103-316f-44a0-86cd-2fe4cb94980c"
       (reference "U704") (unit 1) (value "74HCT574") (footprint "Package_DIP:DIP-20_W7.62mm_Socket")
