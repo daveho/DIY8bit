@@ -4325,7 +4325,7 @@
       (reference "J701") (unit 1) (value "RCJ-044") (footprint "CUI_RCJ-044:CUI_RCJ-044")
     )
     (path "/d3704385-6c80-4c06-a060-a58a9dd421b5/231558bc-7ecb-46bf-95c0-8a93f50742c4"
-      (reference "J702") (unit 1) (value "Conn_01x02") (footprint "")
+      (reference "J702") (unit 1) (value "Conn_01x02") (footprint "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical")
     )
     (path "/d3704385-6c80-4c06-a060-a58a9dd421b5/330d5956-7999-4236-90df-a660f38e22eb"
       (reference "Q701") (unit 1) (value "2N4401") (footprint "Package_TO_SOT_THT:TO-92_HandSolder")
