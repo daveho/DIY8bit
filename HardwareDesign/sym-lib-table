@@ -19,4 +19,5 @@
   (lib (name "ARDUINO_NANO")(type "Legacy")(uri "${KIPRJMOD}/ARDUINO_NANO.lib")(options "")(descr ""))
   (lib (name "TMS9918")(type "Legacy")(uri "${KIPRJMOD}/TMS9918.lib")(options "")(descr ""))
   (lib (name "RCJ-044")(type "KiCad")(uri "${KIPRJMOD}/RCJ-044.kicad_sym")(options "")(descr ""))
+  (lib (name "YM2149")(type "Legacy")(uri "${KIPRJMOD}/YM2149.lib")(options "")(descr ""))
 )

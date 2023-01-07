@@ -347,6 +347,10 @@
     [
       "d3704385-6c80-4c06-a060-a58a9dd421b5",
       "TMS9918ADisplay"
+    ],
+    [
+      "f2bcf6a4-53c5-4e82-b949-c75327180f38",
+      "YM2149_Sound"
     ]
   ],
   "text_variables": {}
