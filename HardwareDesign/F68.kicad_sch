@@ -4349,11 +4349,11 @@
     (path "/f2bcf6a4-53c5-4e82-b949-c75327180f38/cd43c11f-553b-47a1-9106-bd8bf4ccf094"
       (reference "C804") (unit 1) (value "100 nF") (footprint "")
     )
-    (path "/f2bcf6a4-53c5-4e82-b949-c75327180f38/01650c5b-773e-4c8b-ad2a-26db3524583a"
-      (reference "C805") (unit 1) (value "C") (footprint "")
+    (path "/f2bcf6a4-53c5-4e82-b949-c75327180f38/696bd1f5-3c15-43ba-86b7-a66e549c97ff"
+      (reference "C805") (unit 1) (value "4.7 uF") (footprint "")
     )
-    (path "/f2bcf6a4-53c5-4e82-b949-c75327180f38/5ed3fde6-89b6-4562-bcb2-96a32f1163a5"
-      (reference "C806") (unit 1) (value "C") (footprint "")
+    (path "/f2bcf6a4-53c5-4e82-b949-c75327180f38/f0221057-96ee-4894-9e8f-8da751a2cf7d"
+      (reference "C806") (unit 1) (value "4.7 uF") (footprint "")
     )
     (path "/00000000-0000-0000-0000-00005cfa6aaa/00000000-0000-0000-0000-00005cfa9178"
       (reference "D100") (unit 1) (value "LED") (footprint "LED_THT:LED_D5.0mm")
