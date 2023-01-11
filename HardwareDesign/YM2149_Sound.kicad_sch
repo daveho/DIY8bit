@@ -2429,7 +2429,7 @@
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 470a07cd-d25c-42bc-abfe-4e485d9baf16)
   )
-  (text "Write address when A0=0, read/write data when A1=1\n\nInactive (BC1=0, BDIR=0) if either\n- ~{SSCCS} is not asserted, or\n- neither ~{RMEM} or ~{WMEM} is asserted"
+  (text "Write address when A0=0, read/write data when A0=1\n\nInactive (BC1=0, BDIR=0) if either\n- ~{SSCCS} is not asserted, or\n- neither ~{RMEM} or ~{WMEM} is asserted"
     (at 99.695 200.025 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 4ef21359-59f9-4085-9346-8222afbe7246)
