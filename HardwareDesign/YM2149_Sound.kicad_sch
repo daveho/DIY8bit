@@ -3386,7 +3386,7 @@
     (property "Value" "SJ1-3525N" (id 1) (at 66.675 176.53 0)
       (effects (font (size 1.27 1.27)) (justify right))
     )
-    (property "Footprint" "CUI_SJ1-3525N" (id 2) (at 75.565 166.37 0)
+    (property "Footprint" "CUI_SJ1-3525N:CUI_SJ1-3525N" (id 2) (at 75.565 166.37 0)
       (effects (font (size 1.27 1.27)) (justify bottom) hide)
     )
     (property "Datasheet" "" (id 3) (at 75.565 166.37 0)

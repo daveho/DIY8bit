@@ -4562,7 +4562,7 @@
       (reference "J802") (unit 1) (value "Conn_02x09_Odd_Even") (footprint "Connector_PinHeader_2.54mm:PinHeader_2x09_P2.54mm_Vertical")
     )
     (path "/f2bcf6a4-53c5-4e82-b949-c75327180f38/a5c4072d-01ed-43ab-a85f-348e40336b51"
-      (reference "J803") (unit 1) (value "SJ1-3525N") (footprint "CUI_SJ1-3525N")
+      (reference "J803") (unit 1) (value "SJ1-3525N") (footprint "CUI_SJ1-3525N:CUI_SJ1-3525N")
     )
     (path "/d3704385-6c80-4c06-a060-a58a9dd421b5/330d5956-7999-4236-90df-a660f38e22eb"
       (reference "Q701") (unit 1) (value "2N4401") (footprint "Package_TO_SOT_THT:TO-92_HandSolder")
@@ -4895,7 +4895,7 @@
       (reference "U604") (unit 1) (value "74LVC245") (footprint "Package_DIP:DIP-20_W7.62mm_Socket")
     )
     (path "/d3704385-6c80-4c06-a060-a58a9dd421b5/60f05ab8-f607-4380-a34e-63b1cc67b4a9"
-      (reference "U701") (unit 1) (value "TMS9918A") (footprint "Package_DIP:DIP-40_W25.4mm_Socket")
+      (reference "U701") (unit 1) (value "TMS9918A") (footprint "Package_DIP:DIP-40_W15.24mm_Socket")
     )
     (path "/d3704385-6c80-4c06-a060-a58a9dd421b5/8a1def3a-17c7-4767-b037-92ff22730c43"
       (reference "U702") (unit 1) (value "74HCT04") (footprint "Package_DIP:DIP-14_W7.62mm_Socket")

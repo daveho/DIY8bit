@@ -4180,7 +4180,7 @@
     (property "Value" "TMS9918A" (id 1) (at 71.8694 34.29 0)
       (effects (font (size 1.524 1.524)) (justify left))
     )
-    (property "Footprint" "Package_DIP:DIP-40_W25.4mm_Socket" (id 2) (at 71.12 66.04 0)
+    (property "Footprint" "Package_DIP:DIP-40_W15.24mm_Socket" (id 2) (at 71.12 66.04 0)
       (effects (font (size 1.524 1.524)) hide)
     )
     (property "Datasheet" "" (id 3) (at 71.12 66.04 0)

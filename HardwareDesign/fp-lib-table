@@ -3,4 +3,5 @@
   (lib (name "SW_1-1825027-2")(type "KiCad")(uri "${KIPRJMOD}/SW_1-1825027-2.pretty")(options "")(descr ""))
   (lib (name "HardwareDesign")(type "KiCad")(uri "${KIPRJMOD}/HardwareDesign.pretty")(options "")(descr ""))
   (lib (name "CUI_RCJ-044")(type "KiCad")(uri "${KIPRJMOD}/CUI_RCJ-044.pretty")(options "")(descr ""))
+  (lib (name "CUI_SJ1-3525N")(type "KiCad")(uri "${KIPRJMOD}/CUI_SJ1-3525N.pretty")(options "")(descr ""))
 )
