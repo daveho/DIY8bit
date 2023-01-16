@@ -3019,7 +3019,7 @@
     (property "Sheetname" "YM2149_Sound")
     (path "/f2bcf6a4-53c5-4e82-b949-c75327180f38/a5c4072d-01ed-43ab-a85f-348e40336b51")
     (attr through_hole)
-    (fp_text reference "J803" (at -0.32516 -7.93865) (layer "F.SilkS")
+    (fp_text reference "J803" (at -2.04 7.5415) (layer "F.SilkS")
       (effects (font (size 1.000457 1.000457) (thickness 0.15)))
       (tstamp af37b8dc-100e-4642-954f-1589f20ee258)
     )
