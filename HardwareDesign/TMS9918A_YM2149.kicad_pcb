@@ -3239,7 +3239,7 @@
   (gr_text "VCC" (at 75.692 116.84 90) (layer "F.SilkS") (tstamp 97b6c03b-e5ee-4942-a6f8-5ab91216514e)
     (effects (font (size 0.8 0.8) (thickness 0.2)))
   )
-  (gr_text "YMS9918A\nIRQ2 en" (at 120.396 129.032) (layer "F.SilkS") (tstamp ad96d17b-bba8-44f3-9b6b-daaad4621983)
+  (gr_text "TMS9918A\nIRQ2 en" (at 120.396 129.032) (layer "F.SilkS") (tstamp ad96d17b-bba8-44f3-9b6b-daaad4621983)
     (effects (font (size 1 1) (thickness 0.25)))
   )
   (gr_text "B0" (at 68.326 137.16) (layer "F.SilkS") (tstamp aec509ba-70b0-44e0-a5fa-f7d9643d4cab)
