@@ -1,0 +1,101 @@
+# This file defines the keyboard matrix columns and rows for
+# the synth keys, treating the top two rows of the keyboard
+# as two octaves of a piano keyboard. The "CTRL" key is C3
+# (the lowest note directly mapped). The "black" keys are
+# in the top row, between the respective "white" keys
+# in the second-to-top row. E.g., the "1" key is the C#
+# between C1 and D1.
+
+# Each active key is assigned an integer code, with 0 meaning
+# C3. From these integer codes, a Ruby script will generate
+# a table of fine and rough channel frequency register values
+# to generate the closest approximation of the note frequency.
+
+# The format of the records in this file is
+#
+#    column,row,note
+#
+# where "column" and "row" are the 0-indexed keyboard matrix column
+# and row, and "note" is the integer code described above.
+
+# Blank lines and lines beginning with "#" are ignored.
+
+##############################################
+# First octave
+##############################################
+
+# CTRL
+2,0,0
+
+# 1
+0,0,1
+
+# Q
+6,0,2
+
+# 2
+7,0,3
+
+# W
+1,1,4
+
+# E
+6,1,5
+
+# R
+1,2,6
+
+# 5
+0,2,7
+
+# T
+6,2,8
+
+# 6
+7,2,9
+
+# Y
+1,3,10
+
+# 7
+0,3,11
+
+##############################################
+# Second octave
+##############################################
+
+# U
+6,3,12
+
+# 8
+7,3,13
+
+# I
+1,4,14
+
+# 9
+0,4,15
+
+# O
+6,4,16
+
+# P
+1,5,17
+
+# LEFT
+0,6,18
+
+# @
+3,7,19
+
+# RIGHT
+7,6,20
+
+# +
+6,6,21
+
+# UP
+7,5,22
+
+# -
+6,5,23
