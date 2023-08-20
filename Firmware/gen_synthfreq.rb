@@ -36,9 +36,6 @@ STDIN.each_line do |line|
 
   freq = note_freq(note)
 
-  # TODO: compute actual YM2149F frequency register values
-  #puts "scancode=#{scancode}, column=#{column}, row=#{row}, freq=#{freq}"
-
   # Compute TP (to nearest integer)
   tp = (F_MASTER / (16.0 * freq)).round
 
@@ -49,5 +46,15 @@ STDIN.each_line do |line|
   fine = tp & 0xFF
 
   regvals[scancode] = [rough, fine]
-  puts "scancode=#{scancode}, column=#{column}, row=#{row}, freq=#{freq}, rough=#{rough}, fine=#{fine}"
+  #puts "scancode=#{scancode}, column=#{column}, row=#{row}, freq=#{freq}, rough=#{rough}, fine=#{fine}"
+end
+
+# Output table of frequency register values (array of byte pairs,
+# indexed by scancode)
+
+index = 0
+regvals.each do |pair|
+	puts "\t; scancode #{index}"
+	puts "\tFCB #{pair.join(', ')}"
+	index += 1
 end
