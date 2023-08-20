@@ -1264,6 +1264,7 @@ CAT_PICTURE
 	FDB acia_send_string
 	FDB acia_recv
 	FDB delay
+	FDB kbd_poll
 
 ;;**********************************************************************
 ;; Interrupt vectors
