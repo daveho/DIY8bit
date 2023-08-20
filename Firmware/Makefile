@@ -34,5 +34,10 @@ kbd_translate.asm : translate.txt build_kbd_table.rb
 tms9918a_font.asm : tms9918a_font.txt
 	./mk_tms9918a_font.rb
 
+# synth program
+synth.ihx : synth.asm synthkeys.txt gen_synthfreq.rb
+	./gen_synthfreq.rb < synthkeys.txt > freqreg_vals.asm
+	asm6809 -H synth.asm -o $@
+
 clean:
 	rm -rf *.ihx *.bin *.lst
