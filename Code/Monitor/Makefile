@@ -1,7 +1,14 @@
 # Makefile for ROM monitor
 
-INCLUDES = iodev.asm i82c55a.asm i82c54.asm acia.asm kbd_translate.asm \
-	tms9918a_font.asm
+# Common includes shared by the ROM monitor and the programs
+COMMON_INCLUDES_BARE = iodev.asm i82c55a.asm i82c54.asm acia.asm
+	
+COMMON_INCLUDES = $(COMMON_INCLUDES_BARE:%=../Include/%)
+
+# Local includes used only by the monitor
+LOCAL_INCLUDES = kbd_translate.asm tms9918a_font.asm
+
+INCLUDES = $(COMMON_INCLUDES) $(LOCAL_INCLUDES)
 
 %.bin : %.asm
 	asm6809 -l $*.lst -B $< -o $*.bin
