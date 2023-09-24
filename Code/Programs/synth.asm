@@ -41,10 +41,22 @@ entry
 	; are pressed and released, play notes on channel A
 main_loop
 	; read scan code from keyboard
-	ldy OFFTAB_KBD_POLL           ; index of kbd_poll in offset table
-	jsr ,Y                        ; call kbd_poll
-	cmpb #0                       ; B is 0?
-	beq main_loop                 ; if so, no key event, so continue main loop
+;	ldy OFFTAB_KBD_POLL           ; index of kbd_poll in offset table
+;	jsr ,Y                        ; call kbd_poll
+;	cmpb #0                       ; B is 0?
+;	beq main_loop                 ; if so, no key event, so continue main loop
+	lda PORT_KBCTRL_STATUS        ; read keyboard FIFO status
+	anda #KBD_STATUS_FIFO_NOT_EMPTY ; check not empty flag
+	cmpa #$00                     ; FIFO is empty?
+	beq main_loop                 ; if FIFO empty, continue main loop
+
+	; debugging: print 'x' (just to indicate that a scan code was read)
+	lda #120
+	ldy OFFTAB_ACIA_SEND
+	jsr ,Y
+
+	; read scan code from keyboard FIFO data
+	lda PORT_KBCTRL_DATA
 
 	; scan code is in A, copy it to B
 	; (we'll keep the unmodified scan code in B)
@@ -86,6 +98,11 @@ main_loop
 	andb #$3F                     ; clear bit 6 (so that we have just the keycode)
 	stb cur_note                  ; store keycode of current note
 
+	; debugging: output 'd' (down)
+	lda #117
+	ldy OFFTAB_ACIA_SEND
+	jsr ,Y
+
 	jmp main_loop                 ; continue main loop
 
 maybe_end_note
@@ -95,6 +112,11 @@ maybe_end_note
 	ldb #$FF                      ; disable all noise and tone outputs
 	jsr ym2149f_write             ; update outputs
 
+	; debugging: output 'u' (up)
+	lda #100
+	ldy OFFTAB_ACIA_SEND
+	jsr ,Y
+
 	jmp main_loop                 ; continue main loop
 
 ;; Write a value to a YM2149F register.
@@ -103,7 +125,15 @@ maybe_end_note
 ;;   B - data value to write to the register
 ym2149f_write
 	sta PORT_YM2149_ADDR
+	nop
+	nop
+	nop
+	nop
 	stb PORT_YM2149_DATA
+	nop
+	nop
+	nop
+	nop
 	rts
 
 ;; Data
