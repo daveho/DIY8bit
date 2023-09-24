@@ -1,12 +1,17 @@
 ;; Definitions for I/O devices
 
 ;; Constant values for register offsets, control/status bits, etc.
+;; Note that all assembly files in the Include directory
+;; (including this one) are included from a "sibling" directory
+;; (Monitor or Programs), so "../Include/" is the correct way
+;; to reference them. (Unfortunately, asm6809 has no concept of
+;; include paths.)
 
-	INCLUDE "i82c55a.asm"
-	INCLUDE "i82c54.asm"
-	INCLUDE "acia.asm"
-	INCLUDE "kbd.asm"
-	INCLUDE "tms9918a.asm"
+	INCLUDE "../Include/i82c55a.asm"
+	INCLUDE "../Include/i82c54.asm"
+	INCLUDE "../Include/acia.asm"
+	INCLUDE "../Include/kbd.asm"
+	INCLUDE "../Include/tms9918a.asm"
 
 ;; Addresses of hardware device registers
 

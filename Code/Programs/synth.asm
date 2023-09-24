@@ -2,8 +2,8 @@
 ;; Idea is to allow the keyboard to be used
 ;; to play notes
 
-	INCLUDE "iodev.asm"
-	INCLUDE "offtab.asm"
+	INCLUDE "../Include/iodev.asm"
+	INCLUDE "../Include/offtab.asm"
 
 ;; Variables (placed at address $0800, just above
 ;; monitor variables)

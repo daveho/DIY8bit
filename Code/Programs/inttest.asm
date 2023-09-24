@@ -1,6 +1,6 @@
 ;; Test program for interrupt handling.
 
-	INCLUDE "offtab.asm"
+	INCLUDE "../Include/offtab.asm"
 
 ;; Address of virqtab in the monitor program
 virqtab EQU $0010

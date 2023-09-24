@@ -1,7 +1,7 @@
 ;; Keyboard test program: just reads scan codes from the FIFO
 ;; and prints their values
 
-	INCLUDE "offtab.asm"
+	INCLUDE "../Include/offtab.asm"
 
 PORT_KBCTRL_DATA     EQU $8080
 PORT_KBCTRL_STATUS   EQU $8081
