@@ -66,5 +66,21 @@ PORT_YM2149_BASE   EQU $80C0
 PORT_YM2149_ADDR   EQU (PORT_YM2149_BASE + 0)
 PORT_YM2149_DATA   EQU (PORT_YM2149_BASE + 1)
 
+;; Experimental VGA text display implemented using GALs, 74ACT logic,
+;; and IDT7134 dual-port static RAM.
+;;
+;; The memory range $8800-$8FFF maps a 2K block of the overall 8K VRAM.
+;;
+;; The bank register at address $80C0 works as follows:
+;;
+;;     bits 0..1: selects which 2K bank of the overall 8K VRAM
+;;                is accessible in the VRAM window $8800-$8FFF
+;;     bits 2..3: unused
+;;     bits 4..7: selects which font is in use (note that depending
+;;                on how large the font ROM is, there could be
+;;                either 8 or 16 fonts)
+HWVGA_VRAM         EQU $8800
+HWVGA_BANKREG      EQU $80E0
+
 ;; vim:ft=asm6809:
 ;; vim:ts=4:
