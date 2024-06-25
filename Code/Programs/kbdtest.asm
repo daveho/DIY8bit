@@ -2,9 +2,7 @@
 ;; and prints their values
 
 	INCLUDE "../Include/offtab.asm"
-
-PORT_KBCTRL_DATA     EQU $8080
-PORT_KBCTRL_STATUS   EQU $8081
+	INCLUDE "../Include/iodev.asm"
 
 CR EQU $0D
 NL EQU $0A
