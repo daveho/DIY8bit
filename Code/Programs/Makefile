@@ -4,30 +4,27 @@
 # and can be loaded by the ROM monitor into RAM
 # using the "d" (download) command.
 
-# offtab.asm provides meaningful for index values into
-# the offset table containing addresses of useful
-# monitor routines
-OFFTAB_ASM = ../Include/offtab.asm
-IODEV_ASM = ../Include/iodev.asm
+# These are the usual includes needed by programs
+INCLUDES = ../Include/offtab.asm ../Include/iodev.asm
 
-%.bin : %.asm
-	asm6809 -l $*.lst -B $< -o $*.bin
+%.ihx : %.asm
+	asm6809 -H $*.asm -o $*.ihx
 
-all : testprog.ihx inttest.ihx kbdtest.ihx synth.ihx
+all : testprog.ihx inttest.ihx kbdtest.ihx synth.ihx vram_test.ihx
 
-testprog.ihx : testprog.asm $(OFFTAB_ASM)
-	asm6809 -H testprog.asm -o $@
+testprog.ihx : testprog.asm $(INCLUDES)
 
-inttest.ihx : inttest.asm $(OFFTAB_ASM)
-	asm6809 -H inttest.asm -o $@
+inttest.ihx : inttest.asm $(INCLUDES)
 
-kbdtest.ihx : kbdtest.asm $(OFFTAB_ASM)
-	asm6809 -H kbdtest.asm -o $@
+kbdtest.ihx : kbdtest.asm $(INCLUDES)
 
 # synth program
-synth.ihx : synth.asm synthkeys.txt gen_synthfreq.rb $(OFFTAB_ASM) $(IODEV_ASM)
+synth.ihx : synth.asm freqreg_vals.asm $(INCLUDES)
+
+freqreg_vals.asm : gen_synthfreq.rb synthkeys.txt
 	./gen_synthfreq.rb < synthkeys.txt > freqreg_vals.asm
-	asm6809 -H synth.asm -o $@
+
+vram_test.ihx : vram_test.asm $(INCLUDES)
 
 clean:
-	rm -rf *.ihx *.bin *.lst
+	rm -rf *.ihx *.bin *.lst freqreg_vals.asm

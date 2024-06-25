@@ -79,8 +79,9 @@ PORT_YM2149_DATA   EQU (PORT_YM2149_BASE + 1)
 ;;     bits 4..7: selects which font is in use (note that depending
 ;;                on how large the font ROM is, there could be
 ;;                either 8 or 16 fonts)
-HWVGA_VRAM         EQU $8800
-HWVGA_BANKREG      EQU $80E0
+HWVGA_VRAM         EQU $8800   ; start of VRAM window (inclusive)
+HWVGA_VRAM_END     EQU $9000   ; end of VRAM window (exclusive)
+HWVGA_BANKREG      EQU $80E0   ; address of VRAM bank register
 
 ;; vim:ft=asm6809:
 ;; vim:ts=4:
