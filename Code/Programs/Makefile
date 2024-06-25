@@ -8,7 +8,7 @@
 INCLUDES = ../Include/offtab.asm ../Include/iodev.asm
 
 %.ihx : %.asm
-	asm6809 -H $*.asm -o $*.ihx
+	asm6809 -H $*.asm -s $*.lst -o $*.ihx
 
 all : testprog.ihx inttest.ihx kbdtest.ihx synth.ihx vram_test.ihx
 
