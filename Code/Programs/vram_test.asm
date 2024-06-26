@@ -41,22 +41,31 @@ entry
 	jsr fill_bank
 
 	;; Check banks 0-3 to make sure data was stored correctly
+
 	lda #0                     ; which bank to check
 	ldb #$2d                   ; expected initial data value
 	jsr check_bank             ; check the bank data
 	cmpa #1                    ; check succeeded?
 	bne 98f                    ; if not, jump to failure case
 
-;	lda #1
-;	ldb #$01
-;	jsr check_bank
-;	lda #2
-;	ldb #$8x
-;	jsr check_bank
-;	lda #3
-;	ldb #$27
-;	jsr check_bank
-;
+	lda #1                     ; which bank to check
+	ldb #$01                   ; expected initial data value
+	jsr check_bank             ; check the bank data
+	cmpa #1                    ; check succeeded?
+	bne 98f                    ; if not, jump to failure case
+
+	lda #2                     ; which bank to check
+	ldb #$8x                   ; expected initial data value
+	jsr check_bank             ; check the bank data
+	cmpa #1                    ; check succeeded?
+	bne 98f                    ; if not, jump to failure case
+
+	lda #3                     ; which bank to check
+	ldb #$27                   ; expected initial data value
+	jsr check_bank             ; check the bank data
+	cmpa #1                    ; check succeeded?
+	bne 98f                    ; if not, jump to failure case
+
 	;; If we got here, test was successful
 	ldx #successmsg
 	ldy OFFTAB_ACIA_SEND_STRING
@@ -117,12 +126,11 @@ fill_bank
 ;;
 ;; Returns (in A register): 0 on failure, 1 on success
 check_bank
-	;; Set the VRAM bank
-	sta HWVGA_BANKREG
-	sta testbank               ; record which bank is being checked
-	stb testval                ; save initial test value
+	;; save bank number and test value
+	sta testbank
+	stb testval
 
-	;; Print message to indicate which bank is being checked
+	;; print message about which bank is being verified
 	ldx #verifybankmsg
 	ldy OFFTAB_ACIA_SEND_STRING
 	jsr ,y
@@ -133,33 +141,33 @@ check_bank
 	ldy OFFTAB_ACIA_SEND_STRING
 	jsr ,y
 
-	;; Restore test value to B
-	ldb testval
+	;; switch to correct bank
+	lda testbank
+	sta HWVGA_BANKREG
 
-	;; Use X register as pointer
-	ldx #HWVGA_VRAM
+	ldx #HWVGA_VRAM               ; X is pointer to bank memory
 1
-	cmpx #HWVGA_VRAM_END       ; reached end of bank?
-	beq 97f                    ; if so, success! (and we're done)
-	stx testaddr               ; record which address is being checked
-	lda ,x+                    ; load next data value from VRAM
-	cmpa B                     ; compare to expected value
-	beq 4f                     ; if they're equal, continue
-	jmp 98f                    ; failed: testbank and testaddr have info
-	                           ;   about the failure
-4
-	incb                       ; increment expected byte value
-	jmp 1b                     ; continue loop
+	cmpx #HWVGA_VRAM_END          ; reached end of bank?
+	beq 97f                       ; if so, success
 
-	;; Success case
+	stx testaddr                  ; store test address
+	lda ,x+                       ; fetch next byte from bank into A
+	cmpa testval                  ; compare fetched byte with expected byte
+	bne 98f                       ; if they're different, fail
+	inca                          ; increment expected byte value
+	sta testval                   ; store next expected byte value
+	jmp 1b                        ; continue loop
+
 97
+	;; success
 	lda #1
 	jmp 99f
 
-	;; Failure case
 98
+	;; failure
+	sta actualval
+	stb testval
 	lda #0
-	jmp 99f
 
 99
 	rts
@@ -192,13 +200,30 @@ test_failed
 	ldy OFFTAB_ACIA_SEND_STRING
 	jsr ,y
 
-1
-	jmp 1b
+	;; Indicate expected and actual value
+	ldx #expectedmsg
+	ldy OFFTAB_ACIA_SEND_STRING
+	jsr ,y
+	lda testval
+	ldy OFFTAB_MON_PRINT_HEX
+	jsr ,y
+	ldx #actualmsg
+	ldy OFFTAB_ACIA_SEND_STRING
+	jsr ,y
+	lda actualval
+	ldy OFFTAB_MON_PRINT_HEX
+	jsr ,y
+	ldx #eol
+	ldy OFFTAB_ACIA_SEND_STRING
+	jsr ,y
+
+	rts
 
 ;; Variables for in-progress test
 testbank FCB 0                 ; which bank is being checked
 testval  FCB 0                 ; initial byte value
 testaddr FDB 0                 ; which address is being checked
+actualval FCB 0                ; incorrect value read from VRAM
 
 ;foobar FCB "foobar",CR,NL,0
 startmsg FCB "Testing VRAM...",CR,NL,0
@@ -208,6 +233,8 @@ successmsg FCB "All VRAM tests passed!",CR,NL,0
 failmsg FCB "VRAM test failed",CR,NL,0
 failbankmsg FCB "Bank=",0
 failaddrmsg FCB "Address=",0
+expectedmsg FCB "Expected=",0
+actualmsg FCB ", Actual=",0
 eol FCB CR,NL,0
 
 ;; vim:ft=asm6809:
