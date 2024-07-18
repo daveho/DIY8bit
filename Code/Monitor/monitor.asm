@@ -105,6 +105,23 @@ vlasteol RZB 1
 ;; into the value that is written to the bank register.
 hwvga_cur_font RZB 1
 
+;; Current cursor row (should be in range 0-29)
+hwvga_cursor_row RZB 1
+
+;; Current cursor column (should be in range 0-79)
+hwvga_cursor_col RZB 1
+
+;; Saved attribute of the character cell where the cursor is currently
+;; positioned. Will be restored if the cursor is moved.
+;; (The cursor is rendered in software, so the current attribute
+;; of the character cell might not be "correct" if the cursor is in
+;; its inverted display state.)
+hwvga_cursor_saved_attr RZB 1
+
+;; Count of how many times the vertical refresh interrupt has
+;; occurred, for animating the cursor
+hwvga_irq_count RZB 1
+
 ;;**********************************************************************
 ;; Code
 ;;
@@ -1156,23 +1173,93 @@ hwvga_init
 	lda #0
 	sta hwvga_cur_font            ; default to font 0
 
+	; Clear bank 0
 	lda #0
 	jsr hwvga_set_bank
 	lda #$20                      ; space
 	ldb #HWVGA_DEFAULT_ATTR       ; default attribute
 	jsr hwvga_fill_bank
 
+	; Clear bank 1
 	lda #1
 	jsr hwvga_set_bank
 	lda #$20                      ; space
 	ldb #HWVGA_DEFAULT_ATTR       ; default attribute
 	jsr hwvga_fill_bank
 
+	; Clear bank 2
 	lda #2
 	jsr hwvga_set_bank
 	lda #$20                      ; space
 	ldb #HWVGA_DEFAULT_ATTR       ; default attribute
 	jsr hwvga_fill_bank
+
+	; Initialize cursor
+	lda #HWVGA_DEFAULT_ATTR
+	sta hwvga_cursor_saved_attr
+	lda #0
+	sta hwvga_cursor_row
+	sta hwvga_cursor_col
+	sta hwvga_irq_count
+
+	; Install cursor interrupt handler, which is invoked 60 times/sec
+	; when vertical refresh interrupts occur
+	ldx #hwvga_irq_handler
+	ldy #virqtab
+	stx 12,y
+
+	; Unmask IRQ6 so that the cursor animation routine can run
+	; FIXME: need a variable to store current IRQ mask, since we can't read it
+	lda #$BF
+	sta PORT_IRQCTRL
+
+	rts
+
+hwvga_irq_handler
+	lda hwvga_irq_count           ; how many vrefresh irqs have occurred?
+	cmpa #30                      ; less than 30?
+	blt 98f                       ; if so, just incr count, and done
+
+	; count reached 30, so invert attribute at cursor position
+	lda hwvga_cursor_row          ; get cursor row
+	ldb hwvga_cursor_col          ; get cursol column
+	jsr hwvga_compute_addr        ; compute VRAM address
+	jsr hwvga_map_bank            ; access address within bank (and switch to that bank)
+	lda 1,X                       ; get attribute
+	rora                          ; swap fg and bg
+	rora
+	rora
+	rora
+	sta 1,X                       ; set inverted fg/bg at cursor position
+	lda #0
+	sta hwvga_irq_count           ; set counter back to 0
+	jmp 99f                       ; done
+
+98
+	inca                          ; increment count
+
+99
+	sta hwvga_irq_count           ; update count
+	jsr reset_irq6_ff
+	rts
+
+;; 
+hwvga_compute_addr
+	; Pseudo code
+	; X: computed address
+	; Y: temp value
+	; note: x*160 = (x*2 + x*8) * 16
+	; set X to 0
+	; move A (row) to Y
+	; shift Y left by 2 (times 2)
+	; add Y to X
+	; shift Y left by 6 (times 8)
+	; add Y to X
+	; shift X by 4 (times 16)
+
+	rts
+
+hwvga_map_bank
 
 	rts
 
