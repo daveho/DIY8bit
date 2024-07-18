@@ -12,6 +12,7 @@
 	INCLUDE "../Include/acia.asm"
 	INCLUDE "../Include/kbd.asm"
 	INCLUDE "../Include/tms9918a.asm"
+	INCLUDE "../Include/hwvga.asm"
 
 ;; Addresses of hardware device registers
 
@@ -66,7 +67,7 @@ PORT_YM2149_BASE   EQU $80C0
 PORT_YM2149_ADDR   EQU (PORT_YM2149_BASE + 0)
 PORT_YM2149_DATA   EQU (PORT_YM2149_BASE + 1)
 
-;; Experimental VGA text display implemented using GALs, 74ACT logic,
+;; Experimental VGA text display implemented using GALs, 74ACT/74ALS logic,
 ;; and IDT7134 dual-port static RAM.
 ;;
 ;; The memory range $8800-$8FFF maps a 2K block of the overall 8K VRAM.

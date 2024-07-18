@@ -54,6 +54,9 @@ IRQ3_FF_SET_DEASSERT  EQU 0b00000001
 IRQ6_FF_SET_ASSERT    EQU 0b00000010
 IRQ6_FF_SET_DEASSERT  EQU 0b00000011
 
+;; HWVGA stuff
+HWVGA_DEFAULT_ATTR    EQU (HWVGA_BG_BLACK|HWVGA_FG_BR_CYAN)
+
 ;;**********************************************************************
 ;; Variables (RAM area)
 ;;
@@ -97,6 +100,11 @@ vmodkey RZB 1
 ;; was either \n or \r
 vlasteol RZB 1
 
+;; Current font bits in hwvga bank register.
+;; Any time the bank is changed, these bits should be OR-ed
+;; into the value that is written to the bank register.
+hwvga_cur_font RZB 1
+
 ;;**********************************************************************
 ;; Code
 ;;
@@ -132,6 +140,9 @@ entry
 
 ;	; Initialize TMS9918A VDP
 ;	jsr tms9918a_init
+
+	; Initialize hardware VGA text display
+	jsr hwvga_init
 
 	;; Initialize monitor I/O routines
 	jsr mon_init
@@ -1136,6 +1147,57 @@ kbd_check_mod_keys
 ;	nop
 ;	nop
 ;	rts
+
+;;**********************************************************************
+;; Hardware VGA 80x30 text display routines
+;;**********************************************************************
+
+hwvga_init
+	lda #0
+	sta hwvga_cur_font            ; default to font 0
+
+	lda #0
+	jsr hwvga_set_bank
+	lda #$20                      ; space
+	ldb #HWVGA_DEFAULT_ATTR       ; default attribute
+	jsr hwvga_fill_bank
+
+	lda #1
+	jsr hwvga_set_bank
+	lda #$20                      ; space
+	ldb #HWVGA_DEFAULT_ATTR       ; default attribute
+	jsr hwvga_fill_bank
+
+	lda #2
+	jsr hwvga_set_bank
+	lda #$20                      ; space
+	ldb #HWVGA_DEFAULT_ATTR       ; default attribute
+	jsr hwvga_fill_bank
+
+	rts
+
+;; Select a bank without changing the font
+;; Parameters:
+;;   A - bank to set (0-3)
+hwvga_set_bank
+	anda #3                       ; zero out all bits other than bank
+	ora hwvga_cur_font            ; incorporate the current font bits
+	sta HWVGA_BANKREG             ; store new value in bank register
+	rts
+
+;; Fill currently-selected VRAM bank with specified character and attribute.
+;; Parameters:
+;;   A - fill character
+;;   B - fill attribute
+;; Clobbers X.
+hwvga_fill_bank
+	ldx #HWVGA_VRAM
+1
+	sta ,X+
+	stb ,X+
+	cmpx #HWVGA_VRAM_END
+	blt 1b
+	rts
 
 ;;**********************************************************************
 ;; A routine to display something fun in the terminal
