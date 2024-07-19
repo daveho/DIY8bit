@@ -11,13 +11,14 @@ entry
 	ldy OFFTAB_HWVGA_COMPUTE_ADDR
 	jsr ,y
 
-	rts
-
 	ldy OFFTAB_HWVGA_MAP_BANK
 	jsr ,y
 	; At this point, X should contain the correct address to write
 	; to in the VRAM window in order to modify the character cell
 	; at row 3, column 5
+
+	rts
+
 	lda #1                        ; smiley face
 	sta ,X
 	rts
