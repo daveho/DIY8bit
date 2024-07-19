@@ -16,6 +16,9 @@ hwvga_cursor_row RZB 1
 ;; Current cursor column (should be in range 0-79)
 hwvga_cursor_col RZB 1
 
+;; Current attribute for output operations
+hwvga_cur_attr RZB 1
+
 ;; Saved attribute of the character cell where the cursor is currently
 ;; positioned. Will be restored if the cursor is moved.
 ;; (The cursor is rendered in software, so the current attribute

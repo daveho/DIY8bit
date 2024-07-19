@@ -6,26 +6,12 @@ hwvga_init
 	lda #0
 	sta hwvga_cur_font            ; default to font 0
 
-	; Clear bank 0
-	lda #0
-	jsr hwvga_set_bank
-	lda #$20                      ; space
-	ldb #HWVGA_DEFAULT_ATTR       ; default attribute
-	jsr hwvga_fill_bank
+	; default to bright green on black
+	lda #HWVGA_DEFAULT_ATTR
+	sta hwvga_cur_attr
 
-	; Clear bank 1
-	lda #1
-	jsr hwvga_set_bank
-	lda #$20                      ; space
-	ldb #HWVGA_DEFAULT_ATTR       ; default attribute
-	jsr hwvga_fill_bank
-
-	; Clear bank 2
-	lda #2
-	jsr hwvga_set_bank
-	lda #$20                      ; space
-	ldb #HWVGA_DEFAULT_ATTR       ; default attribute
-	jsr hwvga_fill_bank
+	; clear display
+	jsr hwvga_clear_screen
 
 ;	; Initialize cursor
 ;	lda #HWVGA_DEFAULT_ATTR
@@ -46,6 +32,33 @@ hwvga_init
 ;	lda #$BF
 ;	sta PORT_IRQCTRL
 
+	rts
+
+;; Clear screen using current fg/bg colors.
+;; Clobbers A, B, and X
+hwvga_clear_screen
+	lda #0                        ; counter (starts at 0)
+	pshs A                        ; counter variable is on stack
+
+1
+	jsr hwvga_set_bank            ; Set bank
+
+	; Increment bank (for next loop iteration)
+	lda ,S
+	inca
+	sta ,S
+
+	; Fill bank
+	lda #$20                      ; space
+	ldb hwvga_cur_attr            ; current attribute
+	jsr hwvga_fill_bank
+
+	; Done with banks 0-2?
+	lda ,S
+	cmpa #3
+	bne 1b                        ; continue loop if not done with all banks
+
+	leas 1,S                      ; clear stack
 	rts
 
 ;; Default handler for vertical refresh interrupt (IRQ6).
@@ -147,6 +160,13 @@ hwvga_set_font
 	sta hwvga_cur_font            ; keep track of current font bits
 	ora hwvga_cur_bank            ; preserve currently-selected bank
 	sta HWVGA_BANKREG             ; store new value in bank/font register
+	rts
+
+;; Set current attribute (to be used for subsequent output operations.)
+;; Parameters:
+;;   A - attribute to set
+hwvga_set_attr
+	sta hwvga_cur_attr
 	rts
 
 ;; Fill currently-selected VRAM bank with specified character and attribute.

@@ -267,6 +267,8 @@ REVERSE_ATTR
 	FDB hwvga_compute_addr
 	FDB hwvga_map_bank
 	FDB hwvga_set_font
+	FDB hwvga_clear_screen
+	FDB hwvga_set_attr
 
 ;;**********************************************************************
 ;; Interrupt vectors
