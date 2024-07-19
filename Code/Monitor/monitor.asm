@@ -263,6 +263,10 @@ REVERSE_ATTR
 	FDB acia_recv
 	FDB delay
 	FDB kbd_poll
+	FDB hwvga_set_bank
+	FDB hwvga_compute_addr
+	FDB hwvga_map_bank
+	FDB hwvga_set_font
 
 ;;**********************************************************************
 ;; Interrupt vectors

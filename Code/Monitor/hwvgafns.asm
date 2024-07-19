@@ -119,7 +119,7 @@ hwvga_map_bank
 	pshs D                        ; save computed VRAM addr
 	tfr X,D                       ; move bank to A:B (bank will be in B)
 	orb hwvga_cur_font            ; keep font bits the same
-	stb HWVGA_BANKREG             ; set bank
+	stb HWVGA_BANKREG             ; set bank/font
 	puls X                        ; pop computed VRAM addr into X
 
 	rts
@@ -129,8 +129,24 @@ hwvga_map_bank
 ;;   A - bank to set (0-3)
 hwvga_set_bank
 	anda #3                       ; zero out all bits other than bank
+	sta hwvga_cur_bank            ; keep track of the current bank
 	ora hwvga_cur_font            ; incorporate the current font bits
-	sta HWVGA_BANKREG             ; store new value in bank register
+	sta HWVGA_BANKREG             ; store new value in bank/font register
+	rts
+
+;; Select a font without changing the bank
+;; Parameters:
+;;   A - font to set (0-15)
+hwvga_set_font
+    ; Left-shift the bank by 4 bits to put it in the correct part
+    ; of the bank/font selection register bits
+	lsla
+	lsla
+	lsla
+	lsla
+	sta hwvga_cur_font            ; keep track of current font bits
+	ora hwvga_cur_bank            ; preserve currently-selected bank
+	sta HWVGA_BANKREG             ; store new value in bank/font register
 	rts
 
 ;; Fill currently-selected VRAM bank with specified character and attribute.

@@ -2,6 +2,9 @@
 ;; Hardware VGA text mode variables
 ;;**********************************************************************
 
+;; Currently-selected VRAM bank (0-3)
+hwvga_cur_bank RZB 1
+
 ;; Current font bits in hwvga bank register.
 ;; Any time the bank is changed, these bits should be OR-ed
 ;; into the value that is written to the bank register.
