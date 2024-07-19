@@ -85,7 +85,6 @@ hwvga_irq_handler
 ;;   B - the column (should be in range 0-79)
 ;; Return (in X register):
 ;;   the VRAM address of the first byte of the character cell
-;; Clobbers Y
 hwvga_compute_addr
 	pshs B                        ; push column value
 	ldb #160                      ; number of bytes per row
