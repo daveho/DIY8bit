@@ -14,8 +14,6 @@ all : $(PROGS)
 freqreg_vals.asm : gen_synthfreq.rb synthkeys.txt
 	./gen_synthfreq.rb < synthkeys.txt > freqreg_vals.asm
 
-vram_test.ihx : vram_test.asm $(INCLUDES)
-
 .PHONY: depend
 depend :
 	rm -f depend.mak
