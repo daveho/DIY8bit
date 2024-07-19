@@ -161,10 +161,10 @@ mon_q_cmd
 99
 	rts
 
-;; This is just for fun
-mon_k_cmd
-	jsr display_cat_picture
-	rts
+;;; This is just for fun
+;mon_k_cmd
+;	jsr display_cat_picture
+;	rts
 
 ;; vim:ft=asm6809:
 ;; vim:ts=4:
