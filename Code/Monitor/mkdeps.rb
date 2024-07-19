@@ -1,7 +1,19 @@
 #! /usr/bin/env ruby
 
-raise "Usage: ./mkdeps.rb <make var name> < <asm source>" if ARGV.length != 1 
-varname = ARGV[0]
+def usage
+  STDERR.puts "Usage: ./mkdeps.rb <target name> < <asm source>"
+  STDERR.puts "       ./mkdeps.rb -v <variable name> < <asm source>"
+end
+
+mode = :target
+if ARGV.length >= 1 && ARGV[0] == '-v'
+  # Define a variable rather than 
+  ARGV.shift
+  mode = :var
+end
+
+raise  if ARGV.length != 1 
+$name = ARGV[0]
 
 $deps = []
 $worklist = [['<STDIN>',STDIN]]
@@ -34,7 +46,7 @@ while !$worklist.empty?
   end
 end
 
-print "#{varname} = "
+print (mode == :target) ? "#{$name}:" : "#{$name} ="
 $deps.each do |dep|
   print " \\\n\t#{dep}"
 end
