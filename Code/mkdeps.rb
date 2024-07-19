@@ -1,22 +1,23 @@
 #! /usr/bin/env ruby
 
 def usage
-  STDERR.puts "Usage: ./mkdeps.rb <target name> < <asm source>"
-  STDERR.puts "       ./mkdeps.rb -v <variable name> < <asm source>"
+  STDERR.puts "Usage: ./mkdeps.rb <target name> <asm source>"
+  STDERR.puts "       ./mkdeps.rb -v <variable name> <asm source>"
 end
 
 mode = :target
 if ARGV.length >= 1 && ARGV[0] == '-v'
-  # Define a variable rather than 
+  # Define a variable rather than a target
   ARGV.shift
   mode = :var
 end
 
-raise  if ARGV.length != 1 
+raise  if ARGV.length != 2
 $name = ARGV[0]
+$asm_source = ARGV[1]
 
 $deps = []
-$worklist = [['<STDIN>',STDIN]]
+$worklist = [[$asm_source, File.open($asm_source)]]
 $processed = {}
 
 def scan(f)
@@ -47,6 +48,7 @@ while !$worklist.empty?
 end
 
 print (mode == :target) ? "#{$name}:" : "#{$name} ="
+print " \\\n\t#{$asm_source}"
 $deps.each do |dep|
   print " \\\n\t#{dep}"
 end

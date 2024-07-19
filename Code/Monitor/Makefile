@@ -23,11 +23,11 @@ tms9918a_font.asm : tms9918a_font.txt
 	./mk_tms9918a_font.rb
 
 depend.mak :
-	../mkdeps.rb -v INCLUDES < monitor.asm > depend.mak
+	../mkdeps.rb -v INCLUDES monitor.asm > depend.mak
 
 .PHONY: depend
 depend :
-	../mkdeps.rb -v INCLUDES < monitor.asm > depend.mak
+	../mkdeps.rb -v INCLUDES monitor.asm > depend.mak
 
 clean:
 	rm -rf *.ihx *.bin *.lst depend.mak
