@@ -27,24 +27,24 @@ hwvga_init
 	ldb #HWVGA_DEFAULT_ATTR       ; default attribute
 	jsr hwvga_fill_bank
 
-	; Initialize cursor
-	lda #HWVGA_DEFAULT_ATTR
-	sta hwvga_cursor_saved_attr
-	lda #0
-	sta hwvga_cursor_row
-	sta hwvga_cursor_col
-	sta hwvga_irq_count
-
-	; Install cursor interrupt handler, which is invoked 60 times/sec
-	; when vertical refresh interrupts occur
-	ldx #hwvga_irq_handler
-	ldy #virqtab
-	stx 12,y
-
-	; Unmask IRQ6 so that the cursor animation routine can run
-	; FIXME: need a variable to store current IRQ mask, since we can't read it
-	lda #$BF
-	sta PORT_IRQCTRL
+;	; Initialize cursor
+;	lda #HWVGA_DEFAULT_ATTR
+;	sta hwvga_cursor_saved_attr
+;	lda #0
+;	sta hwvga_cursor_row
+;	sta hwvga_cursor_col
+;	sta hwvga_irq_count
+;
+;	; Install cursor interrupt handler, which is invoked 60 times/sec
+;	; when vertical refresh interrupts occur
+;	ldx #hwvga_irq_handler
+;	ldy #virqtab
+;	stx 12,y
+;
+;	; Unmask IRQ6 so that the cursor animation routine can run
+;	; FIXME: need a variable to store current IRQ mask, since we can't read it
+;	lda #$BF
+;	sta PORT_IRQCTRL
 
 	rts
 
@@ -87,15 +87,15 @@ hwvga_irq_handler
 ;;   the VRAM address of the first byte of the character cell
 ;; Clobbers Y
 hwvga_compute_addr
-	pshs B                        ; save column
-	ldb #0
-	pshs B                        ; push 0 byte onto stack
-	tfr S,Y                       ; Y points to 0-extended column value
+	pshs B                        ; push column value
 	ldb #160                      ; number of bytes per row
-	mul                           ; set D to row*160
-	addd ,Y                       ; add column to row*160
-	puls X                        ; clear 0-extended column from stack
-	tfr D,X                       ; move computed address to X
+	mul                           ; D=row*bytes_per_row
+	addb ,S                       ; add column
+	bcc 99f                       ; if carry flag is clear, continue
+	inca                          ; carry overflow into high byte
+99
+	tfr D, X                      ; copy result into X
+	puls B                        ; clear stack
 	rts
 
 ;; Map the VRAM address in X to a bank.

@@ -4,7 +4,7 @@
 # and can be loaded by the ROM monitor into RAM
 # using the "d" (download) command.
 
-PROGS = testprog.ihx inttest.ihx kbdtest.ihx synth.ihx vram_test.ihx
+PROGS = testprog.ihx inttest.ihx kbdtest.ihx synth.ihx vram_test.ihx hwvga_test.ihx
 
 %.ihx : %.asm
 	asm6809 -H $*.asm -s $*.lst -o $*.ihx
