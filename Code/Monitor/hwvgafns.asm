@@ -86,6 +86,7 @@ hwvga_irq_handler
 ;; Return (in X register):
 ;;   the VRAM address of the first byte of the character cell
 hwvga_compute_addr
+	lslb                          ; scale col by 2 (each ch/attr pair is 2 bytes)
 	pshs B                        ; push column value
 	ldb #160                      ; number of bytes per row
 	mul                           ; D=row*bytes_per_row
