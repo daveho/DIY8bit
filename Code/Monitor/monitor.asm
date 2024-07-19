@@ -1242,7 +1242,7 @@ hwvga_irq_handler
 
 99
 	sta hwvga_irq_count           ; update count
-	jsr reset_irq6_ff
+	jsr reset_irq6_ff             ; reset the IRQ6 flip flop
 	rts
 
 ;; Compute the VRAM address of the first byte of the character cell
