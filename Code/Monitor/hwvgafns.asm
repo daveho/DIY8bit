@@ -249,5 +249,36 @@ hwvga_write_dumb
 	leas 2,S                      ; clear stack
 	rts
 
+;; Move the cursor.
+;; Interrupts must be enabled!
+;;
+;; Parameters:
+;;   A - row
+;;   B - column
+hwvga_move_cursor
+	pshs A,B                      ; save row and column params
+
+	jsr mon_q_cmd                 ; disable interrupts
+
+	; Restore correct attribute to character at current cursor position
+	lda hwvga_cursor_row          ; get cursor row
+	ldb hwvga_cursor_col          ; get cursor column
+	jsr hwvga_compute_addr        ; compute VRAM address
+	jsr hwvga_map_bank            ; map VRAM address into VRAM window
+	lda hwvga_cursor_saved_attr   ; get saved attribute
+	sta 1,X                       ; restore saved attribute
+
+	puls A,B                      ; restore row and column params
+	sta hwvga_cursor_row          ; update cursor row
+	stb hwvga_cursor_col          ; update cursor column
+	jsr hwvga_compute_addr        ; compute VRAM address
+	jsr hwvga_map_bank            ; map VRAM address into VRAM window
+	lda 1,X                       ; get correct attribute at new cursor position
+	sta hwvga_cursor_saved_attr   ; store true attribute at cursor position
+
+	jsr mon_q_cmd                 ; enable interrupts
+
+	rts
+
 ;; vim:ft=asm6809:
 ;; vim:ts=4:

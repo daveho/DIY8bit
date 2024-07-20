@@ -271,6 +271,8 @@ REVERSE_ATTR
 	FDB hwvga_set_attr
 	FDB hwvga_copy_dumb
 	FDB hwvga_write_dumb
+	FDB mon_q_cmd
+	FDB hwvga_move_cursor
 
 ;;**********************************************************************
 ;; Interrupt vectors
