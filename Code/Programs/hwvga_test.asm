@@ -78,6 +78,21 @@ entry
 	ldd #32
 	jsr [OFFTAB_HWVGA_WRITE_DUMB]
 
+	lda #(HWVGA_BG_BLACK | HWVGA_FG_BR_GREEN)
+	jsr [OFFTAB_HWVGA_SET_ATTR]
+
+	lda #4
+	ldb #0
+	jsr [OFFTAB_HWVGA_COMPUTE_ADDR]
+	jsr [OFFTAB_HWVGA_MAP_BANK]
+	ldy #buf7
+	ldd #6
+	jsr [OFFTAB_HWVGA_WRITE_DUMB]
+
+	lda #4
+	ldb #6
+	jsr [OFFTAB_HWVGA_MOVE_CURSOR]
+
 	rts
 
 buf1
@@ -97,6 +112,9 @@ buf5
 
 buf6
 	FCB 34,"All Your Base Are Belong To Us",34
+
+buf7
+	FCB "0000> "
 
 ;; vim:ft=asm6809:
 ;; vim:ts=4:
