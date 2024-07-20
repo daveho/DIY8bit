@@ -197,103 +197,32 @@ hwvga_fill_bank
 	blt 1b
 	rts
 
-;; Copy data to VRAM.
-;; Handles bank switching and such.
-;; Assumes that amount of data to copy is a multiple of 2!
-;; I.e., don't use this unless you're copying character/attribute
-;; pairs.
-;;
+;; Dumb copy to VRAM. Won't work correctly if it needs to cross a
+;; bank boundary!
 ;; Parameters:
-;;   X - pointer to a location in VRAM (i.e., as computed by hwvga_compute_addr)
-;;   Y - pointer to data to copy
-;;   D - how many bytes of data
-hwvga_copy
-	;-----------------------------------------------------
-	; Memory variables in frame:
-	;   2,S    number of bytes remaining to write
-	;   0,S    # bytes to write in current bank
-	;
-	; Register use:
-	;   X      pointer into VRAM window (dest pointer)
-	;   Y      pointer to data to copy (src pointer)
-	;
-	; This routine assumes that X and Y will not be
-	; modified by any subroutine calls! Since the only
-	; subroutine called is hwvga_set_bank, we can safely
-	; assume this. (Actually, we call hwvga_map_bank
-	; at the beginning, but we carefully preserve Y
-	; around this call.)
-	;-----------------------------------------------------
+;;   X - destination in VRAM window (assumes bank is already valid!)
+;;   Y - data to copy
+;;   D - number of bytes to copy (should be multiple of 2)
+hwvga_copy_dumb
+	pshs X                        ; push dest ptr to stack
+	addd 0,S                      ; add number of bytes to copy (D=upper bound dest ptr)
+	std 0,S                       ; set memory variable to upper bound dest ptr
 
-	leas -4,S                     ; Reserve space
-	std 2,S                       ; store number of bytes to write
+	; Note that A/B/D are now available to use
 
-	; Preserve Y
-	pshs Y
+	jmp 20f                       ; enter loop
 
-	; Map to bank (so that X is an address in the VRAM window)
-	jsr hwvga_map_bank
-
-	; Restore Y
-	puls Y
-
-	; From here on, we assume that no subroutine calls will
-	; modify X or Y...
-
-1
-	; Top of outer loop:
-	; Determine how many bytes can be written within the current bank
-	ldd #HWVGA_VRAM_END           ; subtract from upper bound of VRAM bank
-	stx 0,S                       ; store VRAM window pointer temporarily
-	subd 0,S                      ; D=VRAM upper bound - VRAM pointer (remaining space in bank)
-	std 0,S                       ; 0,S now contains # bytes remaining in bank
-	cmpd 2,S                      ; compare remaining space in bank to # bytes to write
-	blt 20f                        ; remaining space is <= # bytes to write?
-
-	; Amount of data to write is less than or equal remaining space in bank,
-	; so set bytes to write in current bank to entirety of remaining data
-	ldd 2,S                       ; get number of bytes remaining to write
-	std 0,S                       ; that's how many bytes to write in current window
-	ldd #0                        ; 0 bytes will remain to write
-	std 2,S                       ; update # bytes remaining to write
-	jmp 40f                       ; enter body of inner loop
+10
+	lda ,Y+                       ; get source byte and advance
+	sta ,X+                       ; store dest byte and advance
+	lda ,Y+                       ; get source byte and advance
+	sta ,X+                       ; store dest byte and advance
 
 20
-	; Amount of data to write is greater than remaining space in bank
-	ldd 2,S                       ; get number of bytes remaining to write
-	subd 0,S                      ; decrease by # bytes remaining in bank
-	std 2,S                       ; update # bytes remaining to write
-	jmp 40f                       ; enter body of inner loop
+	cmpx 0,S                      ; compare dest ptr to upper bound
+	blt 10b                       ; if hasn't reached upper bound, continue loop
 
-30
-	; Top of inner loop:
-	; Check whether more data needs to be copied
-	cmpx #HWVGA_VRAM_END
-	bge 50f
-
-40
-	; Copy data from source buffer to VRAM window
-	lda ,Y+                       ; read source byte and advance
-	sta ,X+                       ; store dest byte and advance
-	lda ,Y+                       ; read source byte and advance
-	sta ,X+                       ; store dest byte and advance
-	jmp 30b                       ; continue inner loop
-
-50
-	; More data to write?
-	ldd 2,S                       ; get number of bytes remaining to write
-	cmpd #0                       ; is zero?
-	ble 99f                       ; if so, we're done
-
-	; Advance to next bank
-	lda hwvga_cur_bank            ; get current bank
-	inca                          ; increment bank number
-	jsr hwvga_set_bank            ; set the bank
-	ldx #HWVGA_VRAM               ; will start copying at beginning of VRAM window
-	jmp 1b                        ; continue outer loop
-
-99
-	leas 4,S                      ; Clear stack
+	leas 2,S                      ; clear stack
 	rts
 
 ;; vim:ft=asm6809:

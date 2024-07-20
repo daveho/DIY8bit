@@ -30,14 +30,15 @@ entry
 	lda #0
 	ldb #20
 	jsr [OFFTAB_HWVGA_COMPUTE_ADDR]
+	jsr [OFFTAB_HWVGA_MAP_BANK]
 	ldy #buf1
 	ldd #8
-	jsr [OFFTAB_HWVGA_COPY]
+	jsr [OFFTAB_HWVGA_COPY_DUMB]
 
 	rts
 
 buf1
-	FCB 223,$9b,223,$9b,223,$9b,223,$9b,
+	FCB 223,$9b,223,$90,223,$90,223,$90,
 
 ;; vim:ft=asm6809:
 ;; vim:ts=4:
