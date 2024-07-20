@@ -270,6 +270,7 @@ REVERSE_ATTR
 	FDB hwvga_clear_screen
 	FDB hwvga_set_attr
 	FDB hwvga_copy_dumb
+	FDB hwvga_write_dumb
 
 ;;**********************************************************************
 ;; Interrupt vectors

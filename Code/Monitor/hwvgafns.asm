@@ -204,9 +204,9 @@ hwvga_fill_bank
 ;;   Y - data to copy
 ;;   D - number of bytes to copy (should be multiple of 2)
 hwvga_copy_dumb
-	pshs X                        ; push dest ptr to stack
-	addd 0,S                      ; add number of bytes to copy (D=upper bound dest ptr)
-	std 0,S                       ; set memory variable to upper bound dest ptr
+	pshs Y                        ; push source ptr to stack
+	addd 0,S                      ; add number of bytes to copy (D=upper bound source ptr)
+	std 0,S                       ; set memory variable to upper bound source ptr
 
 	; Note that A/B/D are now available to use
 
@@ -219,7 +219,31 @@ hwvga_copy_dumb
 	sta ,X+                       ; store dest byte and advance
 
 20
-	cmpx 0,S                      ; compare dest ptr to upper bound
+	cmpy 0,S                      ; compare source ptr to upper bound
+	blt 10b                       ; if hasn't reached upper bound, continue loop
+
+	leas 2,S                      ; clear stack
+	rts
+
+;; Like hwvga_copy_dumb, but only copies text bytes, and uses the current
+;; attribute.
+hwvga_write_dumb
+	pshs Y                        ; push source ptr to stack
+	addd 0,S                      ; add number of bytes to copy (D=upper bound source ptr)
+	std 0,S                       ; set memory variable to upper bound source ptr
+
+	; Note that A/B/D are now available to use
+
+	jmp 20f                       ; enter loop
+
+10
+	lda ,Y+                       ; get source byte and advance
+	sta ,X+                       ; store dest byte and advance
+	lda hwvga_cur_attr            ; get current attribute
+	sta ,X+                       ; store dest byte and advance
+
+20
+	cmpy 0,S                      ; compare source ptr to upper bound
 	blt 10b                       ; if hasn't reached upper bound, continue loop
 
 	leas 2,S                      ; clear stack
