@@ -2,7 +2,9 @@
 ;; Hardware VGA text mode functions
 ;;**********************************************************************
 
-HWVGA_CURS_MAX EQU 4
+;; How many timer ticks occur before reversing the attributes
+;; of the character at the current cursor position.
+HWVGA_CURS_MAX EQU 5
 
 hwvga_init
 	lda #0
@@ -72,6 +74,12 @@ hwvga_irq_handler
 	cmpa #HWVGA_CURS_MAX          ; less than max count?
 	blt 98f                       ; if so, just incr count, and done
 
+	; Preserve current bank, since hwvga_map_bank will change the bank,
+	; and this could disturb the code that was interrupted by this
+	; IRQ handler if it was expecting a specific bank to be selected.
+	lda hwvga_cur_bank            ; get current bank
+	pshs A                        ; push it on stack
+
 	; count reached 30, so invert attribute at cursor position
 	lda hwvga_cursor_row          ; get cursor row
 	ldb hwvga_cursor_col          ; get cursol column
@@ -82,7 +90,11 @@ hwvga_irq_handler
 	ldy #REVERSE_ATTR             ; load address of attribute reversal table
 	lda A,Y                       ; get reversed attribute
 	sta 1,X                       ; set reversed fg/bg at cursor position
-	lda #0
+
+	puls A                        ; retrieve saved current bank
+	jsr hwvga_set_bank            ; restore saved current bank
+
+	lda #0                        ; next count should be 0
 	jmp 99f                       ; done
 
 98
@@ -185,6 +197,104 @@ hwvga_fill_bank
 	blt 1b
 	rts
 
+;; Copy data to VRAM.
+;; Handles bank switching and such.
+;; Assumes that amount of data to copy is a multiple of 2!
+;; I.e., don't use this unless you're copying character/attribute
+;; pairs.
+;;
+;; Parameters:
+;;   X - pointer to a location in VRAM (i.e., as computed by hwvga_compute_addr)
+;;   Y - pointer to data to copy
+;;   D - how many bytes of data
+hwvga_copy
+	;-----------------------------------------------------
+	; Memory variables in frame:
+	;   2,S    number of bytes remaining to write
+	;   0,S    # bytes to write in current bank
+	;
+	; Register use:
+	;   X      pointer into VRAM window (dest pointer)
+	;   Y      pointer to data to copy (src pointer)
+	;
+	; This routine assumes that X and Y will not be
+	; modified by any subroutine calls! Since the only
+	; subroutine called is hwvga_set_bank, we can safely
+	; assume this. (Actually, we call hwvga_map_bank
+	; at the beginning, but we carefully preserve Y
+	; around this call.)
+	;-----------------------------------------------------
+
+	leas -4,S                     ; Reserve space
+	std 2,S                       ; store number of bytes to write
+
+	; Preserve Y
+	pshs Y
+
+	; Map to bank (so that X is an address in the VRAM window)
+	jsr hwvga_map_bank
+
+	; Restore Y
+	puls Y
+
+	; From here on, we assume that no subroutine calls will
+	; modify X or Y...
+
+1
+	; Top of outer loop:
+	; Determine how many bytes can be written within the current bank
+	ldd #HWVGA_VRAM_END           ; subtract from upper bound of VRAM bank
+	stx 0,S                       ; store VRAM window pointer temporarily
+	subd 0,S                      ; D=VRAM upper bound - VRAM pointer (remaining space in bank)
+	std 0,S                       ; 0,S now contains # bytes remaining in bank
+	cmpd 2,S                      ; compare remaining space in bank to # bytes to write
+	blt 20f                        ; remaining space is <= # bytes to write?
+
+	; Amount of data to write is less than or equal remaining space in bank,
+	; so set bytes to write in current bank to entirety of remaining data
+	ldd 2,S                       ; get number of bytes remaining to write
+	std 0,S                       ; that's how many bytes to write in current window
+	ldd #0                        ; 0 bytes will remain to write
+	std 2,S                       ; update # bytes remaining to write
+	jmp 40f                       ; enter body of inner loop
+
+20
+	; Amount of data to write is greater than remaining space in bank
+	ldd 2,S                       ; get number of bytes remaining to write
+	subd 0,S                      ; decrease by # bytes remaining in bank
+	std 2,S                       ; update # bytes remaining to write
+	jmp 40f                       ; enter body of inner loop
+
+30
+	; Top of inner loop:
+	; Check whether more data needs to be copied
+	cmpx #HWVGA_VRAM_END
+	bge 50f
+
+40
+	; Copy data from source buffer to VRAM window
+	lda ,Y+                       ; read source byte and advance
+	sta ,X+                       ; store dest byte and advance
+	lda ,Y+                       ; read source byte and advance
+	sta ,X+                       ; store dest byte and advance
+	jmp 30b                       ; continue inner loop
+
+50
+	; More data to write?
+	ldd 2,S                       ; get number of bytes remaining to write
+	cmpd #0                       ; is zero?
+	ble 99f                       ; if so, we're done
+
+	; Advance to next bank
+	lda hwvga_cur_bank            ; get current bank
+	inca                          ; increment bank number
+	jsr hwvga_set_bank            ; set the bank
+	ldx #HWVGA_VRAM               ; will start copying at beginning of VRAM window
+	jmp 1b                        ; continue outer loop
+
+99
+	leas 4,S                      ; Clear stack
+	rts
 
 ;; vim:ft=asm6809:
 ;; vim:ts=4:
