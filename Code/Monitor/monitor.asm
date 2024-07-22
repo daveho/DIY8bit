@@ -61,8 +61,11 @@ entry
 ;	; Initialize TMS9918A VDP
 ;	jsr tms9918a_init
 
-	; Initialize hardware VGA text display
+	; Initialize hardware VGA text display,
+	; and enable interrupts (since the timer interrupt handler
+	; is used to blink the cursor)
 	jsr hwvga_init
+	jsr mon_q_cmd
 
 	;; Initialize monitor I/O routines
 	jsr mon_init
