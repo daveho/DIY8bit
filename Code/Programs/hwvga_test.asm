@@ -27,7 +27,7 @@ entry
 ;	lda #(HWVGA_BG_MAGENTA|HWVGA_FG_BR_GREEN)
 ;	sta 1,x
 
-	lda #0
+	lda #1
 	ldb #8
 	jsr [OFFTAB_HWVGA_COMPUTE_ADDR]
 	jsr [OFFTAB_HWVGA_MAP_BANK]
@@ -35,7 +35,7 @@ entry
 	ldd #28
 	jsr [OFFTAB_HWVGA_COPY_DUMB]
 
-	lda #1
+	lda #2
 	ldb #8
 	jsr [OFFTAB_HWVGA_COMPUTE_ADDR]
 	jsr [OFFTAB_HWVGA_MAP_BANK]
@@ -43,7 +43,7 @@ entry
 	ldd #28
 	jsr [OFFTAB_HWVGA_COPY_DUMB]
 
-	lda #2
+	lda #3
 	ldb #8
 	jsr [OFFTAB_HWVGA_COMPUTE_ADDR]
 	jsr [OFFTAB_HWVGA_MAP_BANK]
@@ -54,7 +54,7 @@ entry
 	lda #(HWVGA_BG_BLACK | HWVGA_FG_WHITE)
 	jsr [OFFTAB_HWVGA_SET_ATTR]
 
-	lda #0
+	lda #1
 	ldb #28
 	jsr [OFFTAB_HWVGA_COMPUTE_ADDR]
 	jsr [OFFTAB_HWVGA_MAP_BANK]
@@ -62,7 +62,7 @@ entry
 	ldd #27
 	jsr [OFFTAB_HWVGA_WRITE_DUMB]
 
-	lda #1
+	lda #2
 	ldb #32
 	jsr [OFFTAB_HWVGA_COMPUTE_ADDR]
 	jsr [OFFTAB_HWVGA_MAP_BANK]
@@ -70,7 +70,7 @@ entry
 	ldd #25
 	jsr [OFFTAB_HWVGA_WRITE_DUMB]
 
-	lda #2
+	lda #3
 	ldb #36
 	jsr [OFFTAB_HWVGA_COMPUTE_ADDR]
 	jsr [OFFTAB_HWVGA_MAP_BANK]
@@ -81,7 +81,7 @@ entry
 	lda #(HWVGA_BG_BLACK | HWVGA_FG_BR_GREEN)
 	jsr [OFFTAB_HWVGA_SET_ATTR]
 
-	lda #4
+	lda #5
 	ldb #0
 	jsr [OFFTAB_HWVGA_COMPUTE_ADDR]
 	jsr [OFFTAB_HWVGA_MAP_BANK]
@@ -89,7 +89,7 @@ entry
 	ldd #6
 	jsr [OFFTAB_HWVGA_WRITE_DUMB]
 
-	lda #4
+	lda #5
 	ldb #6
 	jsr [OFFTAB_HWVGA_MOVE_CURSOR]
 
