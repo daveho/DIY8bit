@@ -187,7 +187,7 @@ MONITOR_IDENT_MSG FCB "6809 ROM monitor, 2019-2023 by daveho hacks",CR,NL,0
 
 ;; Monitor command codes.
 ;; This must be NUL-terminated.
-MONITOR_COMMANDS FCB "?earwdxsmq",0
+MONITOR_COMMANDS FCB "?earwdxsmqc",0
 
 ;; Handler routines for monitor commands.
 ;; Order should match MONITOR_COMMANDS.
@@ -202,6 +202,7 @@ MONITOR_DISPATCH_TABLE
 	FDB mon_s_cmd
 	FDB mon_m_cmd
 	FDB mon_q_cmd
+	FDB mon_c_cmd
 ;	FDB mon_k_cmd
 
 ;; Default interrupt handler routines.

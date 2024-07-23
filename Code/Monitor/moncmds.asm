@@ -161,6 +161,12 @@ mon_q_cmd
 99
 	rts
 
+;; Command handler for 'c' (Clear) command.
+;; It just clears the (80x30 VGA text) screen.
+mon_c_cmd
+	jsr hwvga_clear_screen
+	rts
+
 ;;; This is just for fun
 ;mon_k_cmd
 ;	jsr display_cat_picture
