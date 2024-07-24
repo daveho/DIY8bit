@@ -1,0 +1,120 @@
+GAL22V10
+Sync
+
+Clock    NRST   HBPulse  HEPulse VBPulse VEPulse HCEND   VCZERO   HVisEnd  VVisEnd VCEND GND
+VEActive HSync  VSync    HVis    VVis    NVis    VActive VRefresh VActPrev NC      NC       VCC
+
+; Sync pulses are negative
+; (which means that in reset we definitely want a high output)
+
+; Horizontal sync:
+;   - if /NRST is asserted, next HSync should be high
+;   - if HEPulse is asserted, next HSync should be high
+;   - if neither HBPulse nor HEPulse is asserted, next HSync value
+;     should be the same as the current one
+HSync.R =   /NRST
+          + HEPulse
+          + /HBPulse * /HEPulse * HSync
+
+; Vertical sync:
+;   - if /NRST is asserted, next VSync should be high
+;   - if VEPulse is asserted, next VSync should be high
+;   - if neither VBPulse nor VEPulse is asserted, next VSync value
+;     should be the same as the current one
+VSync.R =   /NRST
+          + VEPulse
+          + /VBPulse * /VEPulse * VSync
+
+; Horizontal visibility:
+;   - true on reset or when HCOUNT_END is asserted
+;   - if HVisEnd is not asserted, next HVis value should
+;     be the same as the current one
+HVis.R  =   /NRST
+          + HCEND
+          + /HVisEnd * HVis
+
+; Vertical visibility:
+;   - next VVis **false** on reset (we assume that the initial VCOUNT
+;     is in the back porch, which is not visisble)
+;   - if -RST is NOT asserted, then
+;     * next VVis true if HCOUNT_END & VCOUNT_ZERO (end of frame)
+;     * if VVisEnd is not asserted, next VVis value should be
+;       the same as the current one
+;     * if VVisEnd is asserted and HCOUNT_END is not asserted,
+;       next VVis value should be the same as the current one
+VVis.R  =   NRST * HCEND * VCZERO
+          + NRST * /VVisEnd * VVis
+          + NRST * VVisEnd * /HCEND * VVis
+
+; Current pixel visibility
+; Note that this output is active-low.
+; The Output module uses this signal to ensure that the color
+; signals output 0V (black) in the non-visible regions of the
+; frame.
+NVis     =   /HVis
+          + /VVis
+
+; Vertical activity signal. Is high on scanlines where memory
+; fetch and rasterization should occur. This is slightly different
+; than vertical visibility, since activity must start *before*
+; the first visible line of the frame.
+;   - is *false* on reset (initial VCOUNT should be in the
+;     back porch, but not on the last line of the frame)
+;   - if -RST is NOT asserted, then
+;     * next VActive is true if HCOUNT_END & VCOUNT_END
+;       (i.e., both HCOUNT and VCOUNT are at their terminal count,
+;       so activity should start on the next scanline, just prior
+;       to the first visible scanline)
+;     * if VEndActive is not asserted, next VActive value should be
+;       the same as the current one
+;     * if VEndActive is asserted and HCOUNT_END is not asserted,
+;       next VActive value should be the same as the current one
+VActive.R =   NRST * HCEND * VCEND
+            + NRST * /VEActive * VActive
+            + NRST * VEActive * /HCEND * VActive
+
+; Vertical refresh interrupt pulse.
+; It goes high for one clock cycle when VActive transitions from
+; high to low.
+VRefresh.R = NRST * VActPrev * /VActive
+
+; Previous VActive value.
+; Used to detect high-to-low transitions on VActive.
+VActPrev.R = VActive
+
+DESCRIPTION
+
+HSync, VSync, and pixel visibility signal generation.
+
+Inputs (active-high unless otherwise noted):
+
+  Clock    25.175 MHz pixel clock
+  NRST     active-low reset signal
+  HBPulse  a HSync pulse should start
+  HEPulse  the HSync pulse should end
+  VBPulse  a VSync pulse should start
+  VEPulse  the VSync pulse should end
+  HCEND    end of horizontal count (HCOUNT=799)
+  VCZERO   VCOUNT is 0 (meaning that we are about to be
+             back in the vertical visible region)
+  HVisEnd  end of horizontal visible region (HCOUNT=639)
+  VVisEnd  end of vertical visible region (VCOUNT=479)
+  VCEND    beginning of vertical activity (memfetch+rasterization),
+            which occurs when VCOUNT is at its maximum (VCOUNT=479)
+  VEActive end of vertical activity (memfetch+rasterization)
+
+Outputs:
+
+  HSync    horizontal sync
+  VSync    vertical sync
+  HVis     active-high: current pixel is in the visible horizontal region
+  VVis     active-high: current pixel is in the visible vertical region
+  NVis     active-low: current pixel is visible (HVis & VVis)
+  VActive  active-high: asserted when in vertical activity region
+             (where memory fetch and rasterization should occur)
+  VRefresh one cycle positive pulse generated when vertical activity ends;
+             used as a vertical refresh interrupt
+  VActPrev register storing previous VActive value: used to detect
+             high-to-low transitions of VActive
+
+; vim:ft=text:

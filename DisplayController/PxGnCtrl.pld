@@ -1,0 +1,78 @@
+GAL22V10
+PxGnCtrl
+
+CLK    NRST   VActive HBActive HEActive nVis     NC       NC       NC       NC NC GND
+NC     Active Count0  Count1   Phase    nSRLoad  nSRShift LdAttrCP LdCharCP NC NC VCC
+
+; This GAL has the same timing state machine as the readout control
+; GAL (ROutCtrl.pld). In theory we could have had that GAL control
+; the pixel generator (e.g., character register, attibute register,
+; output shift register), but there weren't enough pins.
+
+Active.R =   NRST * /HEActive * VActive * Active
+           + NRST * HBActive * VActive
+
+Count0.R = Active * /Count0
+
+Count1.R =   /Active
+           + Active * /Count1 * Count0
+           + Active * Count1 * /Count0
+
+Phase.R =   Active * Count1 * Count0 * /Phase    ; Phase goes high if Count=11 and Phase=0
+          + Active * /Count1 * Phase             ; Phase stays same if Count=0x
+          + Active * /Count0 * Phase             ; Phase stays same if Count=x0
+
+; The output shift register gets loaded with a row of pixels
+; (read from the font ROM) at the very end of Phase 1
+/nSRLoad  = Active * Count1 * Count0 * Phase
+
+; Data in the shift register should be shifted at all times
+; **during visibility** other than when data is being loaded
+/nSRShift =   /nVis * /Count1
+            + /nVis * /Count0
+            + /nVis * /Phase
+
+; The positive clock edge to load attribute data into the attribute
+; register happens at the very end of phase 1
+LdAttrCP.R = Active * Count1 * Count0 * Phase
+
+; The positive clock edge to load character data into the character
+; register happens at the very end of phase 0
+LdCharCP.R = Active * Count1 * Count0 * /Phase
+
+DESCRIPTION
+
+Pixel generator control GAL.
+Clocks data from the VRAM into the character register, attribute
+register, and output shift register, and moves data through the
+shift register on cycles (during visibility) other than when
+a new pattern is loaded into the shift register.
+
+Inputs:
+
+  CLK      - 25.175 MHz VGA dot clock
+  NRST     - active-low reset signal
+  VActive  - active-high vertical activity signal (does activity occur
+               on this scanline)
+  HBActive - positive timing pulse indicating that horizontal activity is starting
+  HEActive - positive timing pulse indicating that horizontal activity is ending
+  nVis     - active-low visibility signal, asserted when a visible pixel is being
+               displayed; we should only shift data in the output shift register
+               during visibility
+
+Outputs:
+
+  Active   - true when readout/pixgen activity is occurring
+  Count0   - low bit of 4 cycle activity counter
+  Count1   - high bit of 4 cycle activity counter
+  Phase    - which 4-cycle activity phase is occurring (0=fetch character,
+               1=fetch attribute)
+  nSRLoad  - active-low signal to indicate that VRAM data should be
+               loaded into the output shift register
+  nSRShift - active-low signal to indicate that the shift register
+               contents should be shifted (bits are right shifted by 1,
+               i.e., towards the MSB)
+  LdAttrCP - a positive edge clocks VRAM data into the attribute register
+  LdCharCP - a positive edge clocks VRAM data into the character register
+
+vim:ft=text:

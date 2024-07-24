@@ -1,0 +1,153 @@
+GAL22V10
+ROutCtrl
+
+Clock   NRST    VActive  HBActive  HEActive  VC0     VC1    VC2    VC3   RowBA12 VSync  GND
+HBPulse Active  Count0   Count1    Phase     UpdRBCP nLdRDA IncRDA RDA12 nRBClr  RATCnt VCC
+
+; Active register.
+; Next value should be high if
+;   - not in reset, and HEActive not asserted, and VActive is asserted,
+;     and currently active (maintain current value)
+;   - not in reset, and HBActive is asserted, and VActive is asserted
+;     (turn on when HBActive pulse is seen, and in we're ready to start
+;     generating the visible part of the frame)
+Active.R =   NRST * /HEActive * VActive * Active
+           + NRST * HBActive * VActive
+
+; Two-bit timing counter. In general, we'll increment the readout
+; address when count is 1 (so initiate the pulse when count is 0),
+; and commit data from VRAM (to the character register or attribute
+; register) when count is 0 (so initiate the pulse when count is 3).
+
+; Low counter bit.
+; It just toggles when there is activity.
+Count0.R = Active * /Count0
+
+; High counter bit.
+; Note that this is forced high when Active is not asserted,
+; which means that the counter begins with Count=2.
+; More generally, Count1 should change to or remain at
+; 1 if Count=01 (change to 1) or Count=10 (stay at 1).
+Count1.R =   /Active
+           + Active * /Count1 * Count0
+           + Active * Count1 * /Count0
+
+; Phase bit.
+; Phase=0 means we're fetching a character from VRAM,
+; and Phase=1 means we're fetching an attribute from VRAM.
+; This is essentially a 3rd counter bit, since each phase
+; is 4 cycles long.
+Phase.R =   Active * Count1 * Count0 * /Phase    ; Phase goes high if Count=11 and Phase=0
+          + Active * /Count1 * Phase             ; Phase stays same if Count=0x
+          + Active * /Count0 * Phase             ; Phase stays same if Count=x0
+
+; Update row begin clock pulse.
+; If VCOUNT[0..3] = 15, and HBPulse is asserted, generate a single
+; positive pulse to copy current readout address into the row begin
+; address register.
+;
+; Note that VActive must be asserted, but we don't require
+; Active to be asserted. This is because HBPulse is asserted
+; outside the horizontal activity region. (This is desirable:
+; updating the row begin and/or readout address registers
+; should be done at a time when we're not actively fetching
+; values from VRAM.)
+UpdRBCP.R = VActive * HBPulse * VC3 * VC2 * VC1 * VC0
+
+; Active-low load readout address signal. Goes low in order to load the
+; contents of the row begin address register into the readout address
+; register. This happens whenever VCOUNT[0..3] != 15, i.e., when
+; the next row of pixels is part of the same character row as the
+; current one.
+;
+; Controlled by VActive rather than Active for same reasons that
+; UpdRBCP is.
+/nLdRDA.R =   VActive * HBPulse * /VC3
+            + VActive * HBPulse * /VC2
+            + VActive * HBPulse * /VC1
+            + VActive * HBPulse * /VC0
+
+; Active-high increment readout address signal. Goes high in order to
+; increment the readout address register. Relative to the 2-bit (4-cycle)
+; counter, we want the counter to increment exactly when Count=1, so this
+; combinational output checks for Count=0. (Bear in mind that '163 counters
+; are completely synchronous, so the count enable and parallel load inputs
+; tell the chip what to do when the next positive clock edge arrives.)
+IncRDA   =   Active * /Count1 * /Count0
+
+; Bit A12 of the readout address. This is maintained by this GAL
+; because the three '163 counters implementing the other bits
+; only allow for a total of 12 bits (A0..A11), and it seemed excessive
+; to add a fourth '163 for a single bit. Mostly, this bit will be 0.
+; However, it transitions to 1 when the readout counter is
+; incremented while the rest of the counter is at terminal count,
+; and counting is enabled. If the readout address register is being
+; updated (i.e., initialized with the contents of the row begin
+; address register), then the current value of A12 of the row
+; begin address is copied into bit A12 of the readout address.
+RDA12.R   =   Active * /Count1 * /Count0 * RATCnt  ; set to 1 on readout address increment at terminal count
+            + /nLdRDA * RowBA12                    ; copy from RowBA12 if loading readout address from row begin address
+            + nLdRDA * /Active * RDA12             ; keep current if neither incrementing nor loading
+            + nLdRDA * Count1 * RDA12              ; keep current if neither incrementing nor loading
+            + nLdRDA * Count0 * RDA12              ; keep current if neither incrementing nor loading
+            + nLdRDA * /RATCnt * RDA12             ; keep current if neither incrementing nor loading
+
+; Clear the row begin register if either
+;   -RST is asserted, or
+;   VSync is low
+nRBClr.R  = NRST * VSync
+
+DESCRIPTION
+
+Readout control logic.
+
+The readout module has two registers:
+
+  The readout address register (a.k.a. memory fetch address register),
+  which is implemented as three 74ACT163 counters.
+
+  The row begin address register, which is implemented as two
+  74ACT273 registers.
+
+Because VRAM addresses are 13 bits, and three 74ACT163 counters is
+only 12 bits, this GAL maintains the thirteenth bit of the readout
+address.
+
+Inputs:
+
+  Clock    - VGA 25.175MHz dot clock
+  NRST     - active-low reset signal
+  VActive  - active-high vertical activity signal
+  HBActive - high if horizontal activity should begin
+  HEActive - high if horizontal activity should end
+  VC0..VC3 - least significant 4 bits of VCOUNT
+  RowBA12  - current value of bit 12 of row begin address register
+  VSync    - vertical sync signal (clears row begin address register bits
+               when low)
+  HBPulse  - true when the horizontal sync pulse should be initiated;
+               used in this module for timing of "once per row" events
+  RATCnt   - true when address bits 0..11 of the readout address register
+               are at the terminal count (all set to 1), and counting
+               is enabled
+
+Outputs:
+
+  Active   - true during activity
+  Count0   - low bit of 2-bit counter used for control signal generation
+  Count1   - high bit of 2-bit counter used for control signal generation
+  Phase    - which 4 cycle phase is active (phase 0 reads a character
+               from VRAM, phase 1 reads an attribute from VRAM)
+  UpdRBCP  - update row begin address clock pulse: used to set the row
+               begin address to the current readout address (happens
+               after each full character row is rendered, in order to
+               advance to the next row of characters)
+  nLdRDA   - a low value indicates that a value should be loaded into
+               the readout address register from the row begin address
+               register; done before rendering each row of pixels
+  IncRDA   - a high value indicates that the readout address should be
+               incremented
+  RDA12    - thirteenth bit (A12) of the readout address
+  nRBClr   - driven low to clear the row begin address register
+               (either during reset or during a VSync pulse)
+
+vim:ft=text:

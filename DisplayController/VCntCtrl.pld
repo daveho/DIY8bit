@@ -1,0 +1,59 @@
+GAL22V10
+VCntCtrl
+
+VC0    VC1    VC2      VC3      VC4     VC5   VC6    VC7      VC8   VC9   HCEND GND
+VCIncr VCZERO NVCCLR PulseBeg PulseEnd VVisEnd VCEND VEActive NC    NC    NC    VCC
+
+; VCCOUNT_END asserted when VCOUNT=524 (binary 1000001100)
+VCEND    = VC9 * /VC8 * /VC7 * /VC6 * /VC5 * /VC4 * VC3 * VC2 * /VC1 * /VC0
+
+; Clear counters when (VCOUNT_END & VCOUNT_INCR)
+/NVCCLR  = VCEND * VCIncr
+
+; VSync pulse begins when HCEND asserted and VCOUNT=490 (binary 111101010)
+PulseBeg = HCEND * VC8 * VC7 * VC6 * VC5 * /VC4 * VC3 * /VC2 * VC1 * /VC0
+
+; VSync pulse ends when HCEND asserted and VCOUNT=492 (binary 111101100)
+PulseEnd = HCEND * VC8 * VC7 * VC6 * VC5 * /VC4 * VC3 * VC2 * /VC1 * /VC0
+
+; Vertical visible region ends when VCOUNT=480 (binary 111100000)
+VVisEnd = VC8 * VC7 * VC6 * VC5 * /VC4 * /VC3 * /VC2 * /VC1 * /VC0
+
+; VCOUNT_ZERO is asserted when VCOUNT=0
+VCZERO = /VC9 * /VC8 * /VC7 * /VC6 * /VC5 * /VC4 * /VC3 * /VC2 * /VC1 * /VC0
+
+; VEndActive is asserted when VCOUNT=480 (binary 111100000)
+VEActive = VC8 * VC7 * VC6 * VC5 * /VC4 * /VC3 * /VC2 * /VC1 * /VC0
+
+DESCRIPTION
+
+Control logic for VCount module. Note that this is entirely
+combinational logic.
+
+Pin functions:
+
+VC0..VC9  current VCOUNT
+HCEND     input HCOUNT_END signal, from HCount module
+VCIncr    active high VCOUNT_INCR signal indicating that it is time
+            to increment VCOUNT; note that this happens
+            before the end of the scanline, to ensure that
+            VCOUNT is accurate during memory fetch and
+            rasterization of the next visible line
+VCZERO    generated active-high signal indicating that
+            VCOUNT is 0
+NVCCLR    generated active-low clear signal to counters
+            (on VCOUNT_END & VCOUNT_INCR)
+PulseBeg  generated active-high signal telling VSync module
+            to begin the VSync pulse
+PulseEnd  generated active-high signal telling VSync module
+            to end the VSync pulse
+VVisEnd   generated active-high signal indicating when the end of
+            vertical visible region is reached (VCOUNT=480)
+VCEND     generated active-high VCOUNT_END signal
+            (when VCOUNT=524): note that this signal
+            is only used internally to this GAL
+VEActive  generated active-high signal indicating when readout
+            activity can end: at end of last visible scanline,
+            VCOUNT=480
+
+; vim:ft=text:

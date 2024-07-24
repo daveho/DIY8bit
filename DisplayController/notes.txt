@@ -1,0 +1,11 @@
+June 18, 2024
+
+VCOUNT_INCR input of VCount module should be driven by HEndPulse signal
+rather than HBeginPulse signal. This will allow once-per-line register
+updates in the Readout module to happen before VCOUNT is incremented.
+This will require a hardware mod!
+
+June 19, 2024
+
+Need to update VCntCtrl.pld to generate VEActive (VEndActive) signal
+(pin 20.)

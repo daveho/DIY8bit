@@ -1,0 +1,85 @@
+GAL22V10
+VRAMCtrl
+
+nHstRMEM nHstWMEM nVBRegEN NC      NC       HostA11  HostA12  HostA13  HostA14  HostA15 BankA12 GND
+ROutA12  VBRegCP  nLowerOE LowerRW nLowerCE nUpperOE UpperRW  nUpperCE nROutA12 NC      NC      VCC
+
+; Bank register write clock pulse signal. It goes low when
+; both host -WMEM and the bank register chip enable are asserted,
+; and goes high when either is deasserted (producing the positive
+; clock edge that clocks data into the bank select register.)
+VBRegCP     =   nHstWMEM
+              + nVBRegEN
+
+; Lower VRAM chip output enable should be asserted (low) only if
+;   - the lower VRAM chip is selected, and
+;   - nHstRMEM is asserted
+; So, if either the lower VRAM chip is not selected, or
+; nHstRMEM is not asserted, the lower chip -OE should be high.
+nLowerOE    =   nLowerCE
+              + nHstRMEM
+
+; Lower VRAM chip R/-W should be low (write) only if
+;   - the lower VRAM chip is selected, and
+;   - nHstWMEM is asserted
+; So, if either the lower VRAM chip is not selected, or
+; nHstWMEM is not asserted, then lower chip R/-W should
+; be high.
+LowerRW     =   nLowerCE
+              + nHstWMEM
+
+; Lower VRAM chip is enabled if both
+;   - a host address in the VRAM window (8800h..9000h) is asserted, and
+;   - BankA12 is not asserted
+/nLowerCE   = HostA15 * /HostA14 * /HostA13 * /HostA12 * HostA11 * /BankA12
+
+; Same idea as nLowerOE: upper VRAM chip -OE should be asserted only
+; if the upper VRAM chip is selected and nHstRMEM is asserted.
+nUpperOE    =   nUpperCE
+              + nHstRMEM
+
+; Same idea as LowerRW: upper VRAM R/-W should be low only
+; if upper VRAM chip is selected and nHstWMEM is asserted.
+UpperRW     =   nUpperCE
+              + nHstWMEM
+
+; Upper VRAM chip is enabled if both
+;   - a host address in the VRAM window (8800h..9000h) is asserted, and
+;   - BankA12 is asserted
+/nUpperCE    = HostA15 * /HostA14 * /HostA13 * /HostA12 * HostA11 * BankA12
+
+; Inversion of readout A12, used as display-controller-side chip select
+; and output enable for the upper VRAM chip.
+nROutA12   = /ROutA12
+
+DESCRIPTION
+
+VRAM control logic. Note that this is entirely combinational logic.
+
+Inputs ("n" prefix indicates active low):
+
+nHstRMEM          host memory read strobe
+nHstWMEM          host memory write strobe
+nVBRegEN          chip enable for bank select register
+HostA9..HostA15   host address lines 9..15
+BankA12           high bit of bank select (effectively, selects
+                    low or high VRAM chip from host side)
+ROutA12           high address bit from display controller memory
+                    fetch hardware (selects low or high VRAM chip
+                    from display controller side)
+
+Outputs ("n" prefix indicates active low):
+
+VBRegCP           clock pulse signal for clocking host data
+                    into the bank select register
+nLowerOE          output enable signal for the low VRAM chip
+LowerRW           R/-W signal for the low VRAM chip
+nLowerCE          chip enable signal for the low VRAM chip
+nUpperOE          output enable signal for the high VRAM chip
+UpperRW           R/-W signal for the high VRAM chip
+nUpperCE          chip enable signal for the high VRAM chip
+nROutA12          negated readout A12 signal (used as chip select/
+                    output enable for the high VRAM chip on the
+                    display controller readout side)
+
+; vim:ft=text:

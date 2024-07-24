@@ -1,0 +1,52 @@
+GAL22V10
+HCntCtrl
+
+NRST  HC0    HC1   HC2      HC3      HC4     HC5      HC6      HC7   HC8   HC9   GND
+NC    HCEND NHCCLR PulseBeg PulseEnd HVisEnd HBActive HEActive NC    NC    NC    VCC
+
+; HCOUNT_END is when HCOUNT=799 (1100011111 binary)
+HCEND   = HC9 * HC8 * /HC7 * /HC6 * /HC5 * HC4 * HC3 * HC2 * HC1 * HC0
+
+; Counters should be cleared (reset to 0) if either NRST is asserted
+; or HCOUNT_END is asserted
+/NHCCLR =   /NRST
+          + HCEND
+
+; Sync pulse initiated when HCOUNT=655 (binary 1010001111)
+PulseBeg = HC9 * /HC8 * HC7 * /HC6 * /HC5 * /HC4 * HC3 * HC2 * HC1 * HC0
+
+; Sync pulse terminated when HCOUNT=751 (binary 1011101111)
+PulseEnd = HC9 * /HC8 * HC7 * HC6 * HC5 * /HC4 * HC3 * HC2 * HC1 * HC0
+
+; Visible line ends at HCOUNT=639 (binary 1001111111)
+HVisEnd = HC9 * /HC8 * /HC7 * HC6 * HC5 * HC4 * HC3 * HC2 * HC1 * HC0
+
+; Horizontal activity begin (when HCOUNT=793, binary 1100011001)
+HBActive = HC9 * HC8 * /HC7 * /HC6 * /HC5 * HC4 * HC3 * /HC2 * /HC1 * HC0
+
+; Horizontal activity end (when HCOUNT=633, binary 1001111001)
+HEActive = HC9 * /HC8 * /HC7 * HC6 * HC5 * HC4 * HC3 * /HC2 * /HC1 * HC0
+
+DESCRIPTION
+
+Control logic for HCount module. Note that this is entirely
+combinational logic.
+
+Pin functions:
+
+HC0..HC9  current HCOUNT
+HCEND     generated active-high HCOUNT_END signal (when HCOUNT=799)
+NHCCLR    generated active-low clear signal to counters
+            (on reset or HCOUNT_END)
+PulseBeg  generated active-high signal telling HSync module
+            to begin the HSync pulse
+PulseEnd  generated active-high signal telling HSync module
+            to end the HSync pulse
+HVisEnd   generated active-high signal indicating when the end of
+            horizontal visible region is reached (HCOUNT=639)
+HBActive  generated active-high horizontal activity begin signal
+            (when HCOUNT=793, binary 1100011001)
+HEActive  generated active-high horizontal activity end signal
+            (when HCOUNT=633, binary 1001111001)
+
+; vim:ft=text:
