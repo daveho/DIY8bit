@@ -12519,7 +12519,7 @@
 			(uuid "29e30d93-77c9-44ea-8f73-576304667299")
 		)
 		(pin "Bout" output
-			(at 289.56 165.1 0)
+			(at 289.56 170.18 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12539,7 +12539,7 @@
 			(uuid "58b312c8-eb3c-447c-9bff-3d3083bde8fb")
 		)
 		(pin "Rout" output
-			(at 289.56 170.18 0)
+			(at 289.56 165.1 0)
 			(effects
 				(font
 					(size 1.27 1.27)
