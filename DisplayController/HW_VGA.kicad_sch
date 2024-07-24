@@ -3228,6 +3228,177 @@
 				)
 			)
 		)
+		(symbol "Oscillator:SG-7050CAN"
+			(pin_names
+				(offset 0.254)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "X"
+				(at -5.08 6.35 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Value" "SG-7050CAN"
+				(at 1.27 -6.35 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Footprint" "Oscillator:Oscillator_SMD_SeikoEpson_SG8002CA-4Pin_7.0x5.0mm"
+				(at 17.78 -8.89 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "https://support.epson.biz/td/api/doc_check.php?dl=brief_SG7050CAN&lang=en"
+				(at -2.54 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "CMOS Clock Oscillator 1 to 75 MHz"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "Crystal Clock Oscillator"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "Oscillator*SMD*SeikoEpson*SG8002CA*7.0x5.0mm*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "SG-7050CAN_0_1"
+				(rectangle
+					(start -5.08 5.08)
+					(end 5.08 -5.08)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.27 -0.762) (xy -1.016 -0.762) (xy -1.016 0.762) (xy -0.508 0.762) (xy -0.508 -0.762) (xy 0 -0.762)
+						(xy 0 0.762) (xy 0.508 0.762) (xy 0.508 -0.762) (xy 0.762 -0.762)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "SG-7050CAN_1_1"
+				(pin input line
+					(at -7.62 0 0)
+					(length 2.54)
+					(name "~{ST}"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at 0 -7.62 90)
+					(length 2.54)
+					(name "GND"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin output line
+					(at 7.62 0 180)
+					(length 2.54)
+					(name "OUT"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin power_in line
+					(at 0 7.62 270)
+					(length 2.54)
+					(name "VCC"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+		)
 		(symbol "VCC_1"
 			(power)
 			(pin_numbers hide)
@@ -4362,142 +4533,10 @@
 				)
 			)
 		)
-		(symbol "ya68k:XTAL_OSC_HALF_CAN"
-			(pin_names
-				(offset 1.016)
-			)
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(property "Reference" "U"
-				(at 0 7.62 0)
-				(effects
-					(font
-						(size 1.524 1.524)
-					)
-				)
-			)
-			(property "Value" "XTAL_OSC_HALF_CAN"
-				(at 0 -7.62 0)
-				(effects
-					(font
-						(size 1.524 1.524)
-					)
-				)
-			)
-			(property "Footprint" ""
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.524 1.524)
-					)
-				)
-			)
-			(property "Datasheet" ""
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.524 1.524)
-					)
-				)
-			)
-			(property "Description" ""
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(symbol "XTAL_OSC_HALF_CAN_0_1"
-				(rectangle
-					(start -8.89 6.35)
-					(end 8.89 -6.35)
-					(stroke
-						(width 0)
-						(type solid)
-					)
-					(fill
-						(type none)
-					)
-				)
-			)
-			(symbol "XTAL_OSC_HALF_CAN_1_1"
-				(pin input line
-					(at -16.51 -3.81 0)
-					(length 7.62)
-					(name "-INH"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin input line
-					(at -16.51 1.27 0)
-					(length 7.62)
-					(name "GND"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "4"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin input line
-					(at 16.51 3.81 180)
-					(length 7.62)
-					(name "CLK"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "5"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin input line
-					(at -16.51 3.81 0)
-					(length 7.62)
-					(name "VCC"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "8"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-		)
+	)
+	(no_connect
+		(at 36.83 53.34)
+		(uuid "f69f056c-48d3-424b-ad7f-9cb6a139d9ea")
 	)
 	(wire
 		(pts
@@ -4841,16 +4880,6 @@
 	)
 	(wire
 		(pts
-			(xy 29.21 45.72) (xy 29.21 53.34)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "1a34e045-43b1-46e3-9372-04db083758b8")
-	)
-	(wire
-		(pts
 			(xy 83.82 166.37) (xy 104.14 166.37)
 		)
 		(stroke
@@ -4958,6 +4987,16 @@
 			(type default)
 		)
 		(uuid "229a7c26-fb7d-45c7-81a9-a78ba6e810da")
+	)
+	(wire
+		(pts
+			(xy 48.26 60.96) (xy 48.26 63.5)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "23490a6f-1c8a-4980-a3e0-4dc302382827")
 	)
 	(wire
 		(pts
@@ -5371,16 +5410,6 @@
 	)
 	(wire
 		(pts
-			(xy 34.29 45.72) (xy 29.21 45.72)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "4635b0a7-b0ed-40c4-8bf8-c2388659f98f")
-	)
-	(wire
-		(pts
 			(xy 175.26 143.51) (xy 190.5 143.51)
 		)
 		(stroke
@@ -5551,7 +5580,7 @@
 	)
 	(wire
 		(pts
-			(xy 67.31 43.18) (xy 74.93 43.18)
+			(xy 55.88 53.34) (xy 63.5 53.34)
 		)
 		(stroke
 			(width 0)
@@ -5588,16 +5617,6 @@
 			(type default)
 		)
 		(uuid "51e46fde-1edb-4046-8bfb-44516987e01d")
-	)
-	(wire
-		(pts
-			(xy 34.29 43.18) (xy 29.21 43.18)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "51ec9132-fba9-4be5-abb0-5a585e73f623")
 	)
 	(wire
 		(pts
@@ -6091,16 +6110,6 @@
 	)
 	(wire
 		(pts
-			(xy 29.21 38.1) (xy 29.21 43.18)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "835433de-dce1-4e57-ba0b-e20f4fc7885b")
-	)
-	(wire
-		(pts
 			(xy 302.26 127) (xy 320.04 127)
 		)
 		(stroke
@@ -6278,6 +6287,16 @@
 			(type default)
 		)
 		(uuid "93862a98-3700-4da4-a752-316edb03f0eb")
+	)
+	(wire
+		(pts
+			(xy 36.83 53.34) (xy 40.64 53.34)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "96ff3282-e94b-412f-9164-5444b11decc6")
 	)
 	(wire
 		(pts
@@ -7148,6 +7167,16 @@
 			(type default)
 		)
 		(uuid "f09f7299-1cea-4a56-8418-447fef160323")
+	)
+	(wire
+		(pts
+			(xy 48.26 43.18) (xy 48.26 45.72)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f1c45037-85fa-403b-b976-8bc2d688baf9")
 	)
 	(wire
 		(pts
@@ -9188,7 +9217,7 @@
 		(uuid "c1915d94-493e-41cd-a3ac-01bd822f25e7")
 	)
 	(label "CLK"
-		(at 68.58 43.18 0)
+		(at 57.15 53.34 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -10199,7 +10228,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 29.21 53.34 0)
+		(at 48.26 63.5 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -10208,7 +10237,7 @@
 		(fields_autoplaced yes)
 		(uuid "178de209-8fc9-4902-b9a8-b5baac020093")
 		(property "Reference" "#PWR02"
-			(at 29.21 59.69 0)
+			(at 48.26 69.85 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10217,7 +10246,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 29.21 58.42 0)
+			(at 48.26 68.58 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10225,7 +10254,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 29.21 53.34 0)
+			(at 48.26 63.5 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10234,7 +10263,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 29.21 53.34 0)
+			(at 48.26 63.5 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10243,7 +10272,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 29.21 53.34 0)
+			(at 48.26 63.5 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10258,78 +10287,6 @@
 			(project "HW_VGA"
 				(path "/c4bd4b39-993a-4195-805f-b4de6fa4aea5"
 					(reference "#PWR02")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "ya68k:XTAL_OSC_HALF_CAN")
-		(at 50.8 46.99 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "217f3ad2-5997-4caf-9b99-cd3e4624a2d0")
-		(property "Reference" "U1"
-			(at 50.8 35.56 0)
-			(effects
-				(font
-					(size 1.524 1.524)
-				)
-			)
-		)
-		(property "Value" "25.175 MHz"
-			(at 50.8 38.1 0)
-			(effects
-				(font
-					(size 1.524 1.524)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 50.8 46.99 0)
-			(effects
-				(font
-					(size 1.524 1.524)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 50.8 46.99 0)
-			(effects
-				(font
-					(size 1.524 1.524)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 50.8 46.99 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "5"
-			(uuid "a2aa7f16-885d-40a3-a476-86285e72f2ab")
-		)
-		(pin "1"
-			(uuid "a8447cf1-5c40-47a1-942b-3731ea287197")
-		)
-		(pin "4"
-			(uuid "1b10d8e5-0040-4e0f-84ee-da2f55901bf6")
-		)
-		(pin "8"
-			(uuid "df5b0621-80f4-466e-850c-8a1e474f4377")
-		)
-		(instances
-			(project "HW_VGA"
-				(path "/c4bd4b39-993a-4195-805f-b4de6fa4aea5"
-					(reference "U1")
 					(unit 1)
 				)
 			)
@@ -10860,7 +10817,7 @@
 	)
 	(symbol
 		(lib_id "power:VCC")
-		(at 29.21 38.1 0)
+		(at 48.26 43.18 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -10869,7 +10826,7 @@
 		(fields_autoplaced yes)
 		(uuid "8d695ae5-622b-472b-af9a-c9e7a068a7b6")
 		(property "Reference" "#PWR01"
-			(at 29.21 41.91 0)
+			(at 48.26 46.99 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10878,7 +10835,7 @@
 			)
 		)
 		(property "Value" "VCC"
-			(at 29.21 33.02 0)
+			(at 48.26 38.1 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10886,7 +10843,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 29.21 38.1 0)
+			(at 48.26 43.18 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10895,7 +10852,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 29.21 38.1 0)
+			(at 48.26 43.18 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10904,7 +10861,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 29.21 38.1 0)
+			(at 48.26 43.18 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10986,6 +10943,80 @@
 			(project "HW_VGA"
 				(path "/c4bd4b39-993a-4195-805f-b4de6fa4aea5"
 					(reference "#PWR037")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Oscillator:SG-7050CAN")
+		(at 48.26 53.34 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "a91b7d53-9081-4ed5-8a04-da8f8fe9d444")
+		(property "Reference" "X1"
+			(at 60.96 47.0214 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "25.175 MHz"
+			(at 60.96 49.5614 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Oscillator:Oscillator_SMD_SeikoEpson_SG8002CA-4Pin_7.0x5.0mm"
+			(at 66.04 62.23 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://support.epson.biz/td/api/doc_check.php?dl=brief_SG7050CAN&lang=en"
+			(at 45.72 53.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "CMOS Clock Oscillator 1 to 75 MHz"
+			(at 48.26 53.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "3"
+			(uuid "70e68ef5-ca5a-42a4-96a6-c8b306294ba5")
+		)
+		(pin "1"
+			(uuid "016ba373-14e2-45c6-8da1-2831a6d378fd")
+		)
+		(pin "4"
+			(uuid "06c6c93f-5688-425e-adfb-b4eee7a86d13")
+		)
+		(pin "2"
+			(uuid "5c14b0a4-8119-411f-a7e8-62ff2b4684b0")
+		)
+		(instances
+			(project ""
+				(path "/c4bd4b39-993a-4195-805f-b4de6fa4aea5"
+					(reference "X1")
 					(unit 1)
 				)
 			)
@@ -11092,6 +11123,7 @@
 				(font
 					(size 1.524 1.524)
 				)
+				(hide yes)
 			)
 		)
 		(property "Datasheet" ""
