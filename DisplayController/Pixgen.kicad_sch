@@ -6031,7 +6031,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "0de7a572-0afd-4290-b696-877f39fd9e96")
-		(property "Reference" "C3"
+		(property "Reference" "C603"
 			(at 58.42 184.1499 0)
 			(effects
 				(font
@@ -6085,7 +6085,7 @@
 		(instances
 			(project "HW_VGA"
 				(path "/c4bd4b39-993a-4195-805f-b4de6fa4aea5/ada96480-51d2-4212-ac45-aae2a8a63ede"
-					(reference "C3")
+					(reference "C603")
 					(unit 1)
 				)
 			)
@@ -6101,7 +6101,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "0fac48d1-e942-49c7-98f1-45f6719c58e2")
-		(property "Reference" "C2"
+		(property "Reference" "C602"
 			(at 43.18 184.1499 0)
 			(effects
 				(font
@@ -6155,7 +6155,7 @@
 		(instances
 			(project "HW_VGA"
 				(path "/c4bd4b39-993a-4195-805f-b4de6fa4aea5/ada96480-51d2-4212-ac45-aae2a8a63ede"
-					(reference "C2")
+					(reference "C602")
 					(unit 1)
 				)
 			)
@@ -6975,7 +6975,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "530891d5-e7dd-48a3-b17c-a4865cec28cf")
-		(property "Reference" "C4"
+		(property "Reference" "C604"
 			(at 73.66 184.1499 0)
 			(effects
 				(font
@@ -7029,7 +7029,7 @@
 		(instances
 			(project "HW_VGA"
 				(path "/c4bd4b39-993a-4195-805f-b4de6fa4aea5/ada96480-51d2-4212-ac45-aae2a8a63ede"
-					(reference "C4")
+					(reference "C604")
 					(unit 1)
 				)
 			)
@@ -7045,7 +7045,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "6496a60d-2ac8-4e76-a578-f4fdf16f8f46")
-		(property "Reference" "C1"
+		(property "Reference" "C601"
 			(at 27.94 184.1499 0)
 			(effects
 				(font
@@ -7099,7 +7099,7 @@
 		(instances
 			(project "HW_VGA"
 				(path "/c4bd4b39-993a-4195-805f-b4de6fa4aea5/ada96480-51d2-4212-ac45-aae2a8a63ede"
-					(reference "C1")
+					(reference "C601")
 					(unit 1)
 				)
 			)
@@ -7247,7 +7247,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "6b87c93c-b956-42a3-b1f6-7342b1f35e09")
-		(property "Reference" "C5"
+		(property "Reference" "C605"
 			(at 88.9 184.1499 0)
 			(effects
 				(font
@@ -7301,7 +7301,7 @@
 		(instances
 			(project "HW_VGA"
 				(path "/c4bd4b39-993a-4195-805f-b4de6fa4aea5/ada96480-51d2-4212-ac45-aae2a8a63ede"
-					(reference "C5")
+					(reference "C605")
 					(unit 1)
 				)
 			)
