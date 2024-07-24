@@ -10066,7 +10066,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
 			(at 83.5152 199.39 0)
 			(effects
 				(font
@@ -10203,7 +10203,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
 			(at 37.7952 199.39 0)
 			(effects
 				(font
@@ -10472,7 +10472,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Package_LCC:PLCC-52_THT-Socket"
 			(at 86.36 48.26 0)
 			(effects
 				(font
@@ -10728,7 +10728,7 @@
 				)
 			)
 		)
-		(property "Footprint" "MODULE"
+		(property "Footprint" "Package_LCC:PLCC-52_THT-Socket"
 			(at 232.41 165.1 0)
 			(effects
 				(font
@@ -11081,7 +11081,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
 			(at 53.0352 199.39 0)
 			(effects
 				(font
@@ -11149,7 +11149,7 @@
 				)
 			)
 		)
-		(property "Footprint" "MODULE"
+		(property "Footprint" "Package_LCC:PLCC-52_THT-Socket"
 			(at 232.41 69.85 0)
 			(effects
 				(font
@@ -11499,7 +11499,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Package_DIP:DIP-24_W7.62mm_Socket"
 			(at 100.33 127 0)
 			(effects
 				(font
@@ -11701,7 +11701,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
 			(at 68.2752 199.39 0)
 			(effects
 				(font

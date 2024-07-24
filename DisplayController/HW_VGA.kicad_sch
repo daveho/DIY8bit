@@ -10316,7 +10316,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
 			(at 27.6352 57.15 0)
 			(effects
 				(font
@@ -10452,7 +10452,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder"
 			(at 290.5252 35.56 0)
 			(effects
 				(font
@@ -10522,7 +10522,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x01_P2.54mm_Vertical"
 			(at 303.53 54.61 0)
 			(effects
 				(font
@@ -10592,7 +10592,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x06_P2.54mm_Vertical"
 			(at 306.07 170.18 0)
 			(effects
 				(font
@@ -11106,7 +11106,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Oscillator:Oscillator_SMD_SeikoEpson_SG8002CA-4Pin_7.0x5.0mm"
+		(property "Footprint" "SG-636P:SG-636P"
 			(at 66.04 62.23 0)
 			(effects
 				(font
@@ -11249,7 +11249,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Package_DIP:DIP-24_W7.62mm_Socket"
 			(at 261.62 60.96 0)
 			(effects
 				(font
