@@ -10472,7 +10472,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Package_LCC:PLCC-52_THT-Socket"
+		(property "Footprint" "Package_SO:SOIC-20W_7.5x12.8mm_P1.27mm"
 			(at 86.36 48.26 0)
 			(effects
 				(font
