@@ -4,7 +4,7 @@
 	(generator_version "8.0")
 	(layer "F.Cu")
 	(property "Reference" "REF**"
-		(at 0 -0.5 0)
+		(at -5.3 -3.3 0)
 		(unlocked yes)
 		(layer "F.SilkS")
 		(uuid "9ed6a8a8-0b4c-45fd-be99-889ecefae559")
@@ -16,7 +16,7 @@
 		)
 	)
 	(property "Value" "SG-636P"
-		(at 0 2.5 0)
+		(at -0.2 -0.6 0)
 		(unlocked yes)
 		(layer "F.Fab")
 		(uuid "01d79caa-4275-44ec-8258-a8ca56319613")
@@ -67,8 +67,59 @@
 		)
 	)
 	(attr smd)
+	(fp_line
+		(start -5.2 -2.5)
+		(end -5.2 2.5)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "8ac43aff-7860-46ea-81e9-755d000a261c")
+	)
+	(fp_line
+		(start -5.2 -2.5)
+		(end 5.2 -2.5)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "efc51e9f-08d2-4378-b93d-b6afdfd35668")
+	)
+	(fp_line
+		(start -5.2 2.5)
+		(end 5.2 2.5)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "a44691f7-f5d8-43f6-bc47-33521487e5b9")
+	)
+	(fp_line
+		(start 5.2 -2.5)
+		(end 5.2 2.5)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "98c92186-b71a-4be1-b3bc-c79401d1f1dc")
+	)
+	(fp_arc
+		(start -5.2 -0.8)
+		(mid -4.4 0)
+		(end -5.2 0.8)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "b0cf7369-3fa9-43d5-a437-79d32dbba309")
+	)
 	(fp_text user "${REFERENCE}"
-		(at 0 4 0)
+		(at -0.1 0.8 0)
 		(unlocked yes)
 		(layer "F.Fab")
 		(uuid "05c3b326-7d3a-486f-8494-1e32b2308541")
@@ -80,7 +131,7 @@
 		)
 	)
 	(pad "1" smd roundrect
-		(at -2.58 6)
+		(at -2.58 2.3)
 		(size 1.3 2.1)
 		(layers "F.Cu" "F.Paste" "F.Mask")
 		(roundrect_rratio 0.25)
@@ -88,7 +139,7 @@
 		(uuid "79f0fb9d-97ea-4fad-9229-6f1f708cb444")
 	)
 	(pad "2" smd roundrect
-		(at 2.5 6)
+		(at 2.5 2.3)
 		(size 1.3 2.1)
 		(layers "F.Cu" "F.Paste" "F.Mask")
 		(roundrect_rratio 0.25)
@@ -96,7 +147,7 @@
 		(uuid "186f1ac6-a85b-43e3-ba94-2d2ac85ad335")
 	)
 	(pad "3" smd roundrect
-		(at 2.5 1.4)
+		(at 2.5 -2.3)
 		(size 1.3 2.1)
 		(layers "F.Cu" "F.Paste" "F.Mask")
 		(roundrect_rratio 0.25)
@@ -104,7 +155,7 @@
 		(uuid "44c5a9fc-d744-4acb-84e2-c0748ce84724")
 	)
 	(pad "4" smd roundrect
-		(at -2.58 1.4)
+		(at -2.58 -2.3)
 		(size 1.3 2.1)
 		(layers "F.Cu" "F.Paste" "F.Mask")
 		(roundrect_rratio 0.25)
