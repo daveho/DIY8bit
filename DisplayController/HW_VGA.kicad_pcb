@@ -26950,7 +26950,7 @@
 		)
 	)
 	(gr_text "https://github.com/daveho/DIY8bit"
-		(at 157.35 134.525 0)
+		(at 75.45 103.325 0)
 		(layer "F.SilkS")
 		(uuid "e19e7018-977f-4b2b-bf8b-c481c4308f6a")
 		(effects
@@ -26963,7 +26963,7 @@
 		)
 	)
 	(gr_text "F68 6809 microcomputer\nVGA text display\nXX-Aug-2024"
-		(at 195.975 130.725 0)
+		(at 94.225 93.85 0)
 		(layer "F.SilkS")
 		(uuid "fc291574-8695-42c6-bdcd-14969c5aac9f")
 		(effects
@@ -28280,6 +28280,14 @@
 		(uuid "21bc6765-8ed1-462e-ac68-00d9772b1f5c")
 	)
 	(segment
+		(start 176.925 111.25)
+		(end 176.925 110.577)
+		(width 0.6)
+		(layer "F.Cu")
+		(net 2)
+		(uuid "40d15b20-2590-4222-b9c0-e3c2ce3c8fae")
+	)
+	(segment
 		(start 198.125 88.495)
 		(end 196.278 88.495)
 		(width 0.6)
@@ -28318,6 +28326,14 @@
 		(layers "F.Cu" "B.Cu")
 		(net 2)
 		(uuid "40feb5b3-0043-4313-a165-e7f73912f267")
+	)
+	(via
+		(at 176.925 110.577)
+		(size 0.6)
+		(drill 0.3)
+		(layers "F.Cu" "B.Cu")
+		(net 2)
+		(uuid "bffb24dd-2360-495c-97be-fa7f3270bab0")
 	)
 	(segment
 		(start 136.575 136.9)
