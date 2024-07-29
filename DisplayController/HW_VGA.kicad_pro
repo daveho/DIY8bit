@@ -491,7 +491,7 @@
       "gencad": "",
       "idf": "",
       "netlist": "",
-      "plot": "",
+      "plot": "./gerbers_displaycontroller",
       "pos_files": "",
       "specctra_dsn": "",
       "step": "",
