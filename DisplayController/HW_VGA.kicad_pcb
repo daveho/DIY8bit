@@ -832,7 +832,7 @@
 				)
 			)
 		)
-		(property "Value" "GAL22V10"
+		(property "Value" "ATF22V10"
 			(at 0 8.65 0)
 			(layer "F.SilkS")
 			(uuid "4b071c73-290f-49d6-ba9b-40ddedb09b51")
@@ -3357,7 +3357,7 @@
 				)
 			)
 		)
-		(property "Value" "GAL22V10"
+		(property "Value" "ATF22V10"
 			(at 0 8.65 0)
 			(layer "F.SilkS")
 			(uuid "6c04de53-08ae-4347-8618-0d459ebbd1d7")
@@ -5159,7 +5159,7 @@
 				)
 			)
 		)
-		(property "Value" "GAL22V10"
+		(property "Value" "ATF22V10"
 			(at 0 8.65 0)
 			(layer "F.SilkS")
 			(uuid "e96c9dc9-6378-4abf-9b64-7e715b433776")
@@ -14584,7 +14584,7 @@
 				)
 			)
 		)
-		(property "Value" "GAL22V10"
+		(property "Value" "ATF22V10"
 			(at 0 8.65 0)
 			(layer "F.SilkS")
 			(uuid "91cc200a-e7ad-4e1a-a78c-057b887952f7")
@@ -15313,7 +15313,7 @@
 				)
 			)
 		)
-		(property "Value" "GAL22V10"
+		(property "Value" "ATF22V10"
 			(at 0 8.65 0)
 			(layer "F.SilkS")
 			(uuid "bfd2225b-3583-463f-9738-e4050cf88a83")
@@ -16042,7 +16042,7 @@
 				)
 			)
 		)
-		(property "Value" "GAL22V10"
+		(property "Value" "ATF22V10"
 			(at 0 8.65 0)
 			(layer "F.SilkS")
 			(uuid "66434dcf-947e-460d-b64b-93067ae3f9eb")
@@ -16771,7 +16771,7 @@
 				)
 			)
 		)
-		(property "Value" "GAL22V10"
+		(property "Value" "ATF22V10"
 			(at 0 8.65 0)
 			(layer "F.SilkS")
 			(uuid "13c6703a-4c41-4bab-b601-2c1e3fb54472")
