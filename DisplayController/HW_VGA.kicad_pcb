@@ -26999,6 +26999,19 @@
 			(justify left bottom)
 		)
 	)
+	(gr_text "VRefresh\nIRQ6"
+		(at 138.325 97.35 0)
+		(layer "F.SilkS")
+		(uuid "beb2315b-3511-4e65-ba01-75b8a122796d")
+		(effects
+			(font
+				(size 0.8128 0.8128)
+				(thickness 0.1524)
+				(bold yes)
+			)
+			(justify bottom)
+		)
+	)
 	(gr_text "https://github.com/daveho/DIY8bit"
 		(at 75.45 103.325 0)
 		(layer "F.SilkS")
