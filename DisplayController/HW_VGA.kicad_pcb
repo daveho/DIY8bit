@@ -1561,9 +1561,9 @@
 			)
 		)
 		(property "Value" "25.175 MHz"
-			(at -0.2 -0.6 0)
+			(at -0.1 4.1 0)
 			(unlocked yes)
-			(layer "F.Fab")
+			(layer "F.SilkS")
 			(uuid "637f9b68-ffc8-4da5-a487-b740bb20c764")
 			(effects
 				(font
