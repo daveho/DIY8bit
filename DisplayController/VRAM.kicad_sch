@@ -6653,16 +6653,6 @@
 	)
 	(bus
 		(pts
-			(xy 1.27 25.4) (xy 1.27 66.04)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "c388335b-ce54-4587-a9a2-5099497ff2f2")
-	)
-	(bus
-		(pts
 			(xy 292.1 175.26) (xy 292.1 177.8)
 		)
 		(stroke
