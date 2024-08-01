@@ -1,7 +1,7 @@
 M48
-; DRILL file {KiCad 8.0.4-8.0.4-0~ubuntu22.04.1} date 2024-07-29T10:17:25-0400
+; DRILL file {KiCad 8.0.4-8.0.4-0~ubuntu22.04.1} date 2024-08-01T15:45:43-0400
 ; FORMAT={-:-/ absolute / metric / decimal}
-; #@! TF.CreationDate,2024-07-29T10:17:25-04:00
+; #@! TF.CreationDate,2024-08-01T15:45:43-04:00
 ; #@! TF.GenerationSoftware,Kicad,Pcbnew,8.0.4-8.0.4-0~ubuntu22.04.1
 ; #@! TF.FileFunction,MixedPlating,1,2
 FMAT,2
@@ -98,6 +98,7 @@ X77.4Y-107.675
 X77.4Y-128.65
 X77.4Y-132.475
 X77.449Y-77.724
+X77.9Y-104.577
 X77.902Y-114.402
 X77.925Y-108.427
 X77.925Y-109.357
@@ -169,6 +170,7 @@ X86.65Y-81.45
 X86.66Y-86.04
 X86.7Y-97.6
 X86.725Y-101.0
+X87.3Y-104.577
 X87.3Y-107.979
 X87.925Y-76.2
 X87.95Y-85.625
