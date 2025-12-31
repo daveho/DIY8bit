@@ -10866,48 +10866,6 @@
 		)
 	)
 	(sheet
-		(at 214.63 34.29)
-		(size 24.13 29.21)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(stroke
-			(width 0)
-			(type solid)
-		)
-		(fill
-			(color 0 0 0 0.0000)
-		)
-		(uuid "00000000-0000-0000-0000-000060b8196b")
-		(property "Sheetname" "Display"
-			(at 214.63 33.5784 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left bottom)
-			)
-		)
-		(property "Sheetfile" "Display.kicad_sch"
-			(at 214.63 64.0846 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-			)
-		)
-		(instances
-			(project "F68"
-				(path "/3ee3db30-9766-46ad-a44a-7caf8406baca"
-					(page "4")
-				)
-			)
-		)
-	)
-	(sheet
 		(at 105.41 181.61)
 		(size 26.67 60.96)
 		(exclude_from_sim no)
