@@ -2,7 +2,7 @@
 
 In this episode, I implement my
 [FPGA VGA text display](https://github.com/daveho/FPGA_VGA)
-as a module for the 6809 system.
+design as a module for the 6809 system.
 
 Link to video: coming soon!
 
