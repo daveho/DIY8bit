@@ -5992,16 +5992,6 @@
 	)
 	(wire
 		(pts
-			(xy 281.94 119.38) (xy 281.94 184.15)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "14bc62f6-7edf-42af-82f8-7f076e97601f")
-	)
-	(wire
-		(pts
 			(xy 262.89 48.26) (xy 252.73 48.26)
 		)
 		(stroke
@@ -6249,6 +6239,16 @@
 			(type default)
 		)
 		(uuid "24d7a27f-67d8-4e37-a47b-34787b520d59")
+	)
+	(wire
+		(pts
+			(xy 280.67 184.15) (xy 321.31 184.15)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "253a9756-574b-48f2-baae-8dda277d51c1")
 	)
 	(wire
 		(pts
@@ -7100,6 +7100,16 @@
 		)
 		(uuid "5fa2918a-856a-49ec-9713-d1db7a4e8a33")
 	)
+	(wire
+		(pts
+			(xy 281.94 119.38) (xy 281.94 186.69)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "60836445-1a02-4e5d-9aa1-bb7c92eae20c")
+	)
 	(bus
 		(pts
 			(xy 184.15 92.71) (xy 184.15 90.17)
@@ -7459,16 +7469,6 @@
 			(type default)
 		)
 		(uuid "78f825e8-1599-4a32-8c50-fc55f52cbe04")
-	)
-	(wire
-		(pts
-			(xy 280.67 186.69) (xy 321.31 186.69)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "7a4e93a3-0bb8-4e40-bbf0-d5d41919497a")
 	)
 	(wire
 		(pts
@@ -7972,16 +7972,6 @@
 	)
 	(wire
 		(pts
-			(xy 281.94 184.15) (xy 321.31 184.15)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "9921a3f1-9991-4c1d-bd5d-47681ec37cb5")
-	)
-	(wire
-		(pts
 			(xy 109.22 218.44) (xy 119.38 218.44)
 		)
 		(stroke
@@ -8382,7 +8372,7 @@
 	)
 	(wire
 		(pts
-			(xy 280.67 121.92) (xy 280.67 186.69)
+			(xy 280.67 121.92) (xy 280.67 184.15)
 		)
 		(stroke
 			(width 0)
@@ -9300,6 +9290,16 @@
 		)
 		(uuid "eccda05f-dfb5-4cd8-b12a-8f9b78788d70")
 	)
+	(wire
+		(pts
+			(xy 281.94 186.69) (xy 321.31 186.69)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ee0992f3-26c4-48c1-a18b-d2d6bf2928c4")
+	)
 	(bus
 		(pts
 			(xy 106.68 144.78) (xy 106.68 147.32)
@@ -9529,6 +9529,16 @@
 			(justify left bottom)
 		)
 		(uuid "0ab4fd42-3e08-4d8b-94a2-7d6c963bb83e")
+	)
+	(label "HSync"
+		(at 313.69 184.15 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "0f5632db-0929-47ff-8cac-825ec9e1feed")
 	)
 	(label "T~{R}"
 		(at 199.39 124.46 0)
@@ -9801,7 +9811,7 @@
 		(uuid "4afe739c-ef5b-4a63-85eb-9d39aad63ba1")
 	)
 	(label "VSync"
-		(at 261.62 121.92 0)
+		(at 261.62 119.38 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -10031,7 +10041,7 @@
 		(uuid "68c6d2dd-8f95-43ca-bd2f-fe07d696f660")
 	)
 	(label "HSync"
-		(at 261.62 119.38 0)
+		(at 261.62 121.92 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -10489,6 +10499,16 @@
 			(justify left bottom)
 		)
 		(uuid "b27652ae-7886-43f8-8e53-2a977e60c30e")
+	)
+	(label "VSync"
+		(at 313.69 186.69 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "b44b2aec-bcd6-4ce8-8863-7c168dab0d34")
 	)
 	(label "TA10"
 		(at 172.72 149.86 0)
