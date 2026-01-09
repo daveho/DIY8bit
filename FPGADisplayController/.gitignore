@@ -1,0 +1,14 @@
+/*.asc
+/*.bin
+/*.json
+/*.out
+/~*
+/#*
+/*.vvp
+/*.vcd
+/.sconsign.dblite
+/abc.history
+/*.chp
+/*.fus
+/*.jed
+/*.pin

@@ -1,5 +1,10 @@
 # DIY 8-bit Computer, Episode 1D
 
+**Update**: A working FPGA text display is now in the main
+schematic as the "FPGADisplayController" sheet, and the
+Verilog code is in the [FPGADisplayController](../FPGADisplayController)
+directory. You can ignore everything in this directory.
+
 The goal of this episode is to fully implement the display controller.
 Desired features:
 
