@@ -108,7 +108,7 @@ buf4
 	FCB "A 6809 microcomputer system"
 
 buf5
-	FCB "2016-2024 by daveho hacks"
+	FCB "2016-2026 by daveho hacks"
 
 buf6
 	FCB 34,"All Your Base Are Belong To Us",34
